@@ -1,0 +1,48 @@
+.centered-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.centered-title h1 {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.content-top {
+  pointer-events: none;
+}
+.title-container {
+  position: absolute;
+  left: 12%;
+  top: 20%;
+  z-index: 10;
+  pointer-events: none;
+  user-select: none;
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  margin: 0;
+  white-space: nowrap;
+  font-family: Arial, sans-serif;
+}

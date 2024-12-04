@@ -10,10 +10,17 @@
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.5.5",
+    "@react-three/drei": "^9.119.0",
+    "@react-three/fiber": "^8.17.10",
+    "@react-three/postprocessing": "^2.16.3",
     "aws-amplify": "^6.6.6",
+    "motion": "^11.13.1",
     "next": "14.2.10",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "three": "^0.171.0",
+    "valtio": "^2.1.2",
+    "zustand": "^5.0.1"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.5.1",

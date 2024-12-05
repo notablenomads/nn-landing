@@ -37,7 +37,6 @@ const FragmentShader = `
   }
 
   float pattern(vec2 uv, float seed, float time, inout vec2 q, inout vec2 r) {
-    // Scale the initial noise based on diversity
     q = vec2(noise(uv * u_diversity + vec2(0.0, 0.0), seed), 
              noise(uv * u_diversity + vec2(5.2, 1.3), seed));
              
@@ -75,11 +74,10 @@ const FragmentShader = `
 `;
 
 const ShaderPlane = () => {
-  const materialRef = useRef();
+  const materialRef = useRef<THREE.ShaderMaterial>(null);
   const dividerPosition = useStore((state) => state.dividerPosition);
 
-  const lerpColor = (start: number, end: number, t: number): number =>
-    start + (end - start) * t;
+  const lerpColor = (start: number, end: number, t: number): number => start + (end - start) * t;
 
   const uniforms = useMemo(
     () => ({
@@ -106,17 +104,9 @@ const ShaderPlane = () => {
       const t = dividerPosition / 100;
       const pulseEffect = Math.sin(clock.getElapsedTime() * 2) * 0.1;
 
-      uniforms.u_color1.value.set(
-        lerpColor(0.5, 0.78, t) + pulseEffect,
-        lerpColor(0.5, 0.43, t),
-        lerpColor(0.5, 0, t)
-      );
+      uniforms.u_color1.value.set(lerpColor(0.5, 0.78, t) + pulseEffect, lerpColor(0.5, 0.43, t), lerpColor(0.5, 0, t));
 
-      uniforms.u_color2.value.set(
-        lerpColor(0.5, 0.78 * 0.9, t),
-        lerpColor(0.5, 0.43 * 0.9, t),
-        lerpColor(0.5, 0, t)
-      );
+      uniforms.u_color2.value.set(lerpColor(0.5, 0.78 * 0.9, t), lerpColor(0.5, 0.43 * 0.9, t), lerpColor(0.5, 0, t));
 
       uniforms.u_color3.value.set(
         lerpColor(0.5, 0.78 * 1.1, t) + pulseEffect,
@@ -125,22 +115,18 @@ const ShaderPlane = () => {
       );
     }
   });
+
   return (
     <mesh>
       <planeGeometry args={[2, 2]} />
-      <shaderMaterial
-        ref={materialRef}
-        vertexShader={VertexShader}
-        fragmentShader={FragmentShader}
-        uniforms={uniforms}
-      />
+      <shaderMaterial ref={materialRef} vertexShader={VertexShader} fragmentShader={FragmentShader} uniforms={uniforms} />
     </mesh>
   );
 };
 
 const BottomComponent = () => {
   return (
-    <div style={{ width: "100dwv", height: "100dvh" }}>
+    <div style={{ width: "100vw", height: "100vh" }}>
       <Header />
       <Canvas>
         <ShaderPlane />

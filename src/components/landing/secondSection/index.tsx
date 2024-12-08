@@ -16,7 +16,7 @@ const SecondSection = () => {
           What is our Mission?
         </motion.h2>
         <motion.p
-          className="text-center mt-4 text-sm text-gray-200 mb-0 sm:mb-4"
+          className="text-center mt-4 text-sm text-gray-200 mb-4"
           transition={{ ease: "easeInOut", delay: 0.5, duration: 2 }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}

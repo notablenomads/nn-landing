@@ -1,9 +1,9 @@
 import React, { useMemo, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import useStore from "./store";
+import useStore from "../store";
 import * as THREE from "three";
-import "./styles.css";
-import Header from "../header";
+import "../styles.css";
+import Header from "../../header";
 
 const VertexShader = `
   void main() {
@@ -77,7 +77,8 @@ const ShaderPlane = () => {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const dividerPosition = useStore((state) => state.dividerPosition);
 
-  const lerpColor = (start: number, end: number, t: number): number => start + (end - start) * t;
+  const lerpColor = (start: number, end: number, t: number): number =>
+    start + (end - start) * t;
 
   const uniforms = useMemo(
     () => ({
@@ -104,9 +105,17 @@ const ShaderPlane = () => {
       const t = dividerPosition / 100;
       const pulseEffect = Math.sin(clock.getElapsedTime() * 2) * 0.1;
 
-      uniforms.u_color1.value.set(lerpColor(0.5, 0.78, t) + pulseEffect, lerpColor(0.5, 0.43, t), lerpColor(0.5, 0, t));
+      uniforms.u_color1.value.set(
+        lerpColor(0.5, 0.78, t) + pulseEffect,
+        lerpColor(0.5, 0.43, t),
+        lerpColor(0.5, 0, t)
+      );
 
-      uniforms.u_color2.value.set(lerpColor(0.5, 0.78 * 0.9, t), lerpColor(0.5, 0.43 * 0.9, t), lerpColor(0.5, 0, t));
+      uniforms.u_color2.value.set(
+        lerpColor(0.5, 0.78 * 0.9, t),
+        lerpColor(0.5, 0.43 * 0.9, t),
+        lerpColor(0.5, 0, t)
+      );
 
       uniforms.u_color3.value.set(
         lerpColor(0.5, 0.78 * 1.1, t) + pulseEffect,
@@ -119,7 +128,12 @@ const ShaderPlane = () => {
   return (
     <mesh>
       <planeGeometry args={[2, 2]} />
-      <shaderMaterial ref={materialRef} vertexShader={VertexShader} fragmentShader={FragmentShader} uniforms={uniforms} />
+      <shaderMaterial
+        ref={materialRef}
+        vertexShader={VertexShader}
+        fragmentShader={FragmentShader}
+        uniforms={uniforms}
+      />
     </mesh>
   );
 };

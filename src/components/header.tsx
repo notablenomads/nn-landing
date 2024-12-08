@@ -21,7 +21,13 @@ const Header = () => {
         animate={{ opacity: 1, top: 0 }}
         transition={{ duration: 1.5 }}
       >
-        <Image src="/nn-logo.svg" alt="logo" width={65} height={65} layout="" />
+        <Image
+          src="/nn-logo-white.svg"
+          alt="logo"
+          width={75}
+          height={75}
+          layout=""
+        />
       </motion.div>
     </div>
   );

@@ -4,10 +4,12 @@ import "../styles.css";
 import useStore from "../store";
 import TopComponent from "./topComponent";
 import BottomComponent from "./bottomComponent";
+
 const FirstSection = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const dividerElementRef = useRef<HTMLDivElement>(null);
   const setDividerPosition = useStore((state) => state.setDividerPosition);
+  const dividerPosition = useStore((state) => state.dividerPosition);
   const isDraggingRef = useRef(false);
 
   const handleMouseMove = (e: MouseEvent) => {
@@ -47,12 +49,15 @@ const FirstSection = () => {
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleDragEnd);
   };
+
+  const isDividerAnimated = dividerPosition >= 90;
+
   return (
     <div className="overlap-container" ref={containerRef}>
       <div
         className="content content-top"
         style={{
-          clipPath: `polygon(0 0, var(--divider-position, 50%) 0, var(--divider-position, 50%) 100%, 0% 100%)`,
+          clipPath: `polygon(0 0, ${dividerPosition}% 0, ${dividerPosition}% 100%, 0% 100%)`,
         }}
       >
         <TopComponent />
@@ -60,15 +65,20 @@ const FirstSection = () => {
       <div
         className="content content-bottom"
         style={{
-          clipPath: `polygon(var(--divider-position, 50%) 0, 100% 0, 100% 100%, var(--divider-position, 50%) 100%)`,
+          clipPath: `polygon(${dividerPosition}% 0, 100% 0, 100% 100%, ${dividerPosition}% 100%)`,
         }}
       >
+        <div className="relative flex flex-col h-[100vh] items-center justify-centerbg-black transition-bg opacity-0">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="jumbo absolute -inset-[10px] opacity-50" />
+          </div>
+        </div>
         <BottomComponent />
       </div>
       <div
-        className="divider"
+        className={`divider ${isDividerAnimated ? "divider-pulse" : ""}`}
         ref={dividerElementRef}
-        style={{ left: `var(--divider-position, 50%)` }}
+        style={{ left: `${dividerPosition}%` }}
         onMouseDown={handleDragStart}
       />
     </div>

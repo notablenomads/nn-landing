@@ -3,7 +3,6 @@ body,
 #root {
   height: 100%;
   margin: 0;
-  font-family: Arial, sans-serif;
 }
 
 .overlap-container {
@@ -34,17 +33,6 @@ body,
   box-sizing: border-box;
 }
 
-.divider {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 6px;
-  background-color: #333;
-  cursor: col-resize;
-  z-index: 10;
-  transform: translateX(-50%);
-}
-
 .title-container {
   position: absolute;
   left: 12%;
@@ -61,7 +49,15 @@ body,
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
   margin: 0;
   white-space: nowrap;
-  font-family: Arial, sans-serif;
+}
+
+.title-bottom {
+  font-size: 4rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+  margin: 0;
+  white-space: nowrap;
 }
 .description {
   font-size: 1.5rem;
@@ -72,7 +68,6 @@ body,
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
   margin: 0;
   white-space: nowrap;
-  font-family: Arial, sans-serif;
 }
 .bottom-title-container {
   mix-blend-mode: difference;
@@ -82,4 +77,100 @@ body,
 
 .bottom-title-container .title {
   color: white;
+}
+
+/* Add these styles to your styles.css file */
+
+@keyframes leftPulse {
+  0% {
+    box-shadow: 0 0 0 0px rgba(225, 225, 225, 0.25);
+  }
+  100% {
+    box-shadow: -30px 0 0 20px rgba(220, 220, 220, 0);
+  }
+}
+
+.divider {
+  position: absolute;
+  width: 4px;
+  height: 100%;
+  background-color: #282828;
+  cursor: ew-resize;
+  transition: background-color 2s ease;
+}
+
+.divider-pulse {
+  animation: leftPulse 2s ease-in infinite;
+  /* Constant glow effect */
+  box-shadow: 0 0 15px rgba(128, 128, 128, 0.6);
+}
+
+/* Add hover effect for additional feedback */
+.divider-pulse:hover {
+  background-color: #888;
+  box-shadow: 0 0 20px rgba(128, 128, 128, 0.8);
+}
+
+@keyframes jumbo {
+  from {
+    background-position: 50% 50%, 50% 50%;
+  }
+  to {
+    background-position: 350% 50%, 350% 50%;
+  }
+}
+
+.jumbo {
+  --stripes: repeating-linear-gradient(
+    100deg,
+    #fff 0%,
+    #fff 7%,
+    transparent 10%,
+    transparent 12%,
+    #fff 16%
+  );
+  --stripesDark: repeating-linear-gradient(
+    100deg,
+    #000 0%,
+    #000 7%,
+    transparent 10%,
+    transparent 12%,
+    #000 16%
+  );
+  --rainbow: repeating-linear-gradient(
+    100deg,
+    #60a5fa 10%,
+    #e879f9 15%,
+    #60a5fa 20%,
+    #5eead4 25%,
+    #60a5fa 30%
+  );
+  background-image: var(--stripes), var(--rainbow);
+  background-size: 300%, 200%;
+  background-position: 50% 50%, 50% 50%;
+
+  filter: invert(100%);
+
+  mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+
+  pointer-events: none;
+}
+
+.jumbo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--stripes), var(--rainbow);
+  background-size: 200%, 100%;
+  animation: jumbo 60s linear infinite;
+  background-attachment: fixed;
+  mix-blend-mode: difference;
+}
+
+.dark .jumbo {
+  background-image: var(--stripesDark), var(--rainbow);
+  filter: blur(10px) opacity(50%) saturate(200%);
+}
+.dark .jumbo::after {
+  background-image: var(--stripesDark), var(--rainbow);
 }

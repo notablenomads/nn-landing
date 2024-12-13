@@ -4,22 +4,19 @@ import { Html, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { GPUComputationRenderer } from "three/examples/jsm/misc/GPUComputationRenderer.js";
 import { computeShader, fragmentShader, vertexShader } from "./shaders";
+import Image from "next/image";
 
 interface EffectConfig {
-  // Mouse interaction
-  mouseRadius: number; // Radius of effect around mouse (0.0 to 1.0)
-  mouseStrength: number; // Strength of mouse movement effect (0.0 to 1000.0)
+  mouseRadius: number;
+  mouseStrength: number;
 
-  // Distortion
-  distortionStrength: number; // Base distortion amount (0.0 to 0.1)
-  distortionThreshold: number; // Minimum displacement to show effect (0.0 to 0.01)
+  distortionStrength: number;
+  distortionThreshold: number;
 
-  // RGB Shift
-  rgbShiftStrength: number; // Strength of RGB separation (0.0 to 0.05)
+  rgbShiftStrength: number;
 
-  // Animation
-  decaySpeed: number; // How quickly effect fades (0.0 to 1.0)
-  flowStrength: number; // Strength of flow effect (0.0 to 1.0)
+  decaySpeed: number;
+  flowStrength: number;
 }
 
 const defaultConfig: EffectConfig = {
@@ -124,7 +121,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
       gpuCompute.current.compute();
       materialRef.current.uniforms.uGrid.value =
         gpuCompute.current.getCurrentRenderTarget(
-          computeVariable.current as any
+          computeVariable.current as never
         ).texture;
     }
   });
@@ -222,6 +219,8 @@ interface TeamMember {
   name: string;
   role: string;
   image: string;
+  linkedin:string;
+  github:string;
 }
 
 interface Position extends Array<number> {
@@ -236,16 +235,22 @@ const TeamSection: React.FC = () => {
       name: "Milad Ghamati",
       role: "FrontEnd Engineer",
       image: "./milad-ghamati.png",
+      linkedin:'https://www.google.com',
+      github:'https://www.google.com'
     },
     {
       name: "Mahdi Rashidi",
       role: "Cloud-Native & Backend Specialist",
       image: "./mahdi-rashidi.png",
+      linkedin:'https://www.google.com',
+      github:'https://www.google.com'
     },
     {
       name: "Sarah Wilson",
       role: "Senior Developer",
       image: "./team-3.jpg",
+      linkedin:'https://www.google.com',
+      github:'https://www.google.com'
     },
   ];
 
@@ -284,14 +289,22 @@ const TeamSection: React.FC = () => {
         }}
       >
         {teamMembers.map((member, index) => (
-          <group key={index} position={getPosition(index) as any}>
+          <group key={index} position={getPosition(index) as never}>
             <ImageWithEffect imageUrl={member.image} />
-            <Html position={[0, -2, 0]} center className="pointer-events-none">
+            <Html position={[0, -2, 0]} center >
               <div className="text-center bg-black bg-opacity-75 p-4 w-72 rounded">
                 <h3 className="text-xl font-semibold text-white">
                   {member.name}
                 </h3>
                 <p className="text-gray-300">{member.role}</p>
+                <div className='flex justify-center items-center my-2 space-x-2'>
+                  <a href={member.github} target='_blank'>
+                    <Image src={'/github.png'} alt='github' width='30' height='30'/>
+                  </a>
+                  <a href={member.linkedin} target='_blank'>
+                    <Image src={'/linkedin.png'} alt='linkedin' width='30' height='30'/>
+                  </a>
+                </div>
               </div>
             </Html>
           </group>

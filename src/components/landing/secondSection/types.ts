@@ -20,7 +20,7 @@ export interface TeamMember {
   role: string;
   image: string;
   position: [number, number, number];
-  dimensions: any;
+  dimensions: never;
 }
 
 export interface DistortionImageProps {

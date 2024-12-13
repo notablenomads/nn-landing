@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, {useCallback, useEffect, useRef} from "react";
 import { motion, useInView, useAnimationControls } from "framer-motion";
 
 interface FilterValues {
@@ -132,7 +132,7 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
     }
   };
 
-  const playAnimation = async () => {
+  const playAnimation = useCallback(async () => {
     const filterId = `text-filter-${effectNumber}`;
     const { start, end, motion } = getAnimationValues();
 
@@ -148,7 +148,7 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
         ease: "easeOut",
       },
     });
-  };
+  },[animate, controls, delay, duration, effectNumber, getAnimationValues]);
 
   const resetAnimation = () => {
     if (animationRef.current) {
@@ -167,7 +167,7 @@ const AnimatedText: React.FC<AnimatedTextProps> = ({
         cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [isInView]);
+  }, [isInView, playAnimation]);
 
   return (
     <div ref={ref} className="relative">

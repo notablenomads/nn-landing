@@ -7,7 +7,7 @@ interface StoreState {
 }
 
 const useStore = create<StoreState>((set) => ({
-  dividerPosition: 50,
+  dividerPosition: 98,
   setDividerPosition: (position) => set({ dividerPosition: position }),
 }));
 

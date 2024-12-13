@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Montserrat } from "next/font/google";
 import "./app.css";
 
-const inter = Inter({ subsets: ["latin"] });
-
+const mont = Montserrat({
+  subsets: ['latin'],
+  // You can specify different weights if needed
+  weight: ['300','400', '500', '600', '700'],
+})
 export const metadata: Metadata = {
   title: "Notable Nomads",
   description: "Code Without Borders",
@@ -15,8 +18,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className={`overflow-x-hidden ${mont.className}`}>
+      <body>{children}</body>
     </html>
   );
 }

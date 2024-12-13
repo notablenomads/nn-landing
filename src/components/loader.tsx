@@ -25,7 +25,7 @@ export default function ProgressLogoLoader({
     }, 100);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [doneCallback]);
 
   return (
     <div className="flex items-center justify-center w-full h-full min-h-[200px] ">

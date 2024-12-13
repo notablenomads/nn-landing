@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // types.ts
 import * as THREE from "three";
 import { ThreeEvent } from "@react-three/fiber";

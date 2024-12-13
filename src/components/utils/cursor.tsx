@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
-import useStore from "../landing/store";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {useState, useEffect, useRef} from "react";
+import useStore from '../landing/store'
 
 const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);

@@ -32,6 +32,7 @@ import {
   SiUbuntu,
   SiTrello,
 } from "react-icons/si";
+import {useMediaQuery} from "@/hooks/useMediaQuery";
 
 interface ServiceItem {
   title: string;
@@ -179,7 +180,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       onMouseEnter={() => onHover(title)}
       onMouseLeave={() => onHover(null)}
     >
-      <div className="relative z-10">
+      <div className="relative z-10 flex flex-col justify-center">
         <h2 className="text-2xl font-bold text-white mb-6">{title}</h2>
         <ul className="space-y-4">
           {items.map((item, idx) => (
@@ -209,13 +210,14 @@ const IconsLayout: React.FC<IconsLayoutProps> = ({
       transition: "all 0.3s ease-out",
       filter: isActive ? `drop-shadow(0 0 10px ${color}80)` : "none",
     };
+    const is4k = useMediaQuery('(min-width: 2400px)');
 
     return (
       <div
         key={index}
         className="flex items-center justify-center transform hover:scale-110 transition-transform"
       >
-        <Icon size={28} style={style} />
+        <Icon size={is4k ? 65 :28} style={style} />
       </div>
     );
   };
@@ -267,9 +269,9 @@ const ThirdSection: React.FC = () => {
   const [activeService, setActiveService] = useState<string | null>(null);
 
   return (
-    <div className="relative min-h-dvh p-8 py-14 my-12 overflow-hidden">
+    <div className="relative min-h-dvh p-8 py-14 overflow-hidden">
       <IconsLayout activeService={activeService} services={services} />
-      <div className="relative z-10">
+      <div className="relative z-10 flex-col flex justify-center h-dvh">
         <h2 className="text-4xl text-center font-bold tracking-tight text-white mb-4">
           Our Services
         </h2>

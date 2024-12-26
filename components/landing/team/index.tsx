@@ -3,11 +3,10 @@ import { motion } from "motion/react";
 import TeamSection from "./teamSection";
 
 const SecondSection = () => {
-  console.log("hhehehe");
   return (
     <>
       <div
-        className="w-full min-h-dvh text-white py-9 container mx-auto"
+        className="w-full min-h-dvh text-white py-9 container mx-auto flex-col flex justify-center"
         id="about"
       >
         <motion.h2

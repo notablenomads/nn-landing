@@ -12,6 +12,7 @@ export const metadata: Metadata = {
   description: "Code Without Borders",
 };
 
+
 export default function RootLayout({
   children,
 }: {
@@ -19,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`overflow-x-hidden ${mont.className}`}>
-      <body>{children}</body>
+        <body>{children}</body>
     </html>
   );
 }

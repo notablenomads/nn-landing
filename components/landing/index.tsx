@@ -1,10 +1,11 @@
 "use client";
 import React, { useState } from "react";
-import FirstSection from "./firstSection";
-import SecondSection from "./secondSection";
+import Jumbo from "./jumbo";
+import Team from "./team";
 import ProgressLogoLoader from "../loader";
-import ThirdSection from "./thirdSection";
-import FourthSection from "@/src/components/landing/fourthSection";
+import OurServices from "./ourServices";
+import Contact from "./contact";
+import BlogSection from "@/components/landing/blog";
 
 const Landing: React.FC = () => {
   const [done, setDone] = useState(false);
@@ -15,10 +16,11 @@ const Landing: React.FC = () => {
         <ProgressLogoLoader doneCallback={handleDone} />
       ) : (
         <>
-          <FirstSection />
-          <SecondSection />
-          <ThirdSection />
-          <FourthSection/>
+          <Jumbo />
+          <Team />
+          <OurServices />
+          <BlogSection />
+          <Contact />
         </>
       )}
     </>

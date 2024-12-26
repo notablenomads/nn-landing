@@ -70,7 +70,7 @@ const Header = () => {
                         key={item.id}
                         variants={itemVariants}
                         onClick={() => handleScroll(item.id)}
-                        className="text-gray-400 text-md cursor-pointer hover:text-gray-200 transition-colors bg-transparent z-50"
+                        className="text-gray-400 text-sm sm:text-lg cursor-pointer hover:text-gray-200 transition-colors bg-transparent z-50"
                     >
                         {item.title}
                     </motion.button>
@@ -96,13 +96,12 @@ const Header = () => {
                     />
                 </motion.div>
 
-                {/* Last two nav items */}
                 {navItems.slice(2, 4).map((item) => (
                     <motion.button
                         key={item.id}
                         variants={itemVariants}
                         onClick={() => handleScroll(item.id)}
-                        className="text-gray-400 text-md cursor-pointer hover:text-gray-200 transition-colors bg-transparent z-50"
+                        className="text-gray-400 text-sm cursor-pointer sm:text-lg hover:text-gray-200 transition-colors bg-transparent z-50"
                     >
                         {item.title}
                     </motion.button>

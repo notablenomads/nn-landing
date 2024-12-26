@@ -40,6 +40,13 @@ body,
   z-index: 10;
   pointer-events: none;
   user-select: none;
+  @media (max-width: 768px) {
+    top: auto;
+    bottom: 15dvh;
+    left: 0;
+    width: 100%;
+    text-align: center;
+  }
 }
 
 .title {
@@ -49,6 +56,9 @@ body,
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
   margin: 0;
   white-space: nowrap;
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 }
 
 .title-bottom {
@@ -68,10 +78,11 @@ body,
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
   margin: 0;
   white-space: nowrap;
+  @media (max-width: 768px) {
+      font-size: 1.2rem;
+  }
 }
 .bottom-title-container {
-  mix-blend-mode: difference;
-  isolation: isolate;
   z-index: 2;
 }
 
@@ -173,4 +184,26 @@ body,
 }
 .dark .jumbo::after {
   background-image: var(--stripesDark), var(--rainbow);
+}
+
+.divider-wrap {
+  position: absolute;
+  height: 100%;
+  z-index: 10;
+}
+
+.divider-text {
+  z-index: 11;
+  pointer-events: none;
+}
+
+/* Update hover state to affect text as well */
+.divider-wrap:hover .divider-text {
+  opacity: 1 !important;
+  background: rgba(60, 60, 60, 0.9);
+}
+
+/* Hide text while dragging */
+.divider-wrap.dragging .divider-text {
+  opacity: 0;
 }

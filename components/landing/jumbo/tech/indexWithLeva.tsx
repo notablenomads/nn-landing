@@ -2,18 +2,19 @@ import React, { useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import * as THREE from "three";
-import { useControls } from "leva";
-import { Leva } from "leva";
+import {Leva, useControls} from "leva";
+// import { Leva } from "leva";
 import {
   EffectComposer,
   Noise,
-  Bloom,
   ChromaticAberration,
 } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
-
-import CatModel from "./Cat";
 import useStore from "../../store";
+
+import BackTechBackground from "@/components/landing/jumbo/tech/backTech";
+
+import PezDuckModel from "../models/PezDucky";
 
 interface TechStackTowerProps {
   withEffects?: boolean;
@@ -98,7 +99,7 @@ const AnimatedScene = ({ withEffects = false }) => {
 
   const { modelRotation, modelScale, modelPosition } = useControls("Model", {
     modelRotation: { value: -6.8, min: -10, max: 0, step: 0.01 },
-    modelScale: { value: 2.4, min: 0.1, max: 5, step: 0.1 },
+    modelScale: { value: 0.3, min: 0.1, max: 5, step: 0.1 },
     modelPosition: {
       value: { x: 5, y: 0, z: 0 },
       step: 0.1,
@@ -126,7 +127,7 @@ const AnimatedScene = ({ withEffects = false }) => {
   });
 
   useEffect(() => {
-    const handleMouseMove = (event:MouseEvent) => {
+    const handleMouseMove = (event: MouseEvent) => {
       mousePosition.current = {
         x: (event.clientX / window.innerWidth) * 2 - 1,
         y: 0,
@@ -223,7 +224,7 @@ const AnimatedScene = ({ withEffects = false }) => {
         scale={modelScale}
         position={[modelPosition.x, modelPosition.y, modelPosition.z]}
       >
-        <CatModel />
+        <PezDuckModel />
       </group>
       <Floor />
       {withEffects && <SunLight />}
@@ -245,19 +246,17 @@ const Effects: React.FC = () => {
   };
 
   const noiseOpacity = lerp(0.4, 0, progress);
-  const bloomStrength = lerp(3.0, 0, progress);
   const aberrationStrength = lerp(0.008, 0, progress);
-  const luminanceThreshold = lerp(0.001, 0.1, progress);
-  const luminanceSmoothing = lerp(0.7, 2, progress);
+
   return (
     <EffectComposer multisampling={0}>
-      <Bloom
+      {/* <Bloom
         intensity={bloomStrength}
         luminanceThreshold={luminanceThreshold}
         luminanceSmoothing={luminanceSmoothing}
         mipmapBlur
         resolutionScale={0.5}
-      />
+      /> */}
       <Noise
         opacity={noiseOpacity}
         blendFunction={BlendFunction.SOFT_LIGHT}
@@ -277,7 +276,8 @@ const TechStackTower: React.FC<TechStackTowerProps> = ({
 }) => {
   return (
     <>
-      <Leva collapsed={false} oneLineLabels flat hidden={true} />
+       <Leva collapsed={false} oneLineLabels flat hidden={false} />
+      <BackTechBackground activeNeon={withEffects} />
       <div className="absolute inset-0">
         <Canvas shadows gl={{ antialias: true }}>
           <AnimatedScene withEffects={withEffects} />

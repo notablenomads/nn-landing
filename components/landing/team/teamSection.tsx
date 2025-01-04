@@ -46,34 +46,29 @@ const defaultConfig: EffectConfig = {
 const teamMembers: TeamMember[] = [
   {
     name: "Milad Ghamati",
-    role: "FrontEnd Engineer",
+    role: "Frontend Engineer",
     image: "/milad-ghamati.png",
-    linkedin: 'https://www.google.com',
-    github: 'https://www.google.com'
+    linkedin: "https://www.linkedin.com/in/milad-ghamati-0517a8151/",
+    github: "https://github.com/Moouren",
   },
   {
     name: "Mahdi Rashidi",
-    role: "Cloud-Native & Backend Specialist",
+    role: "Backend Engineer",
     image: "/mahdi-rashidi.png",
-    linkedin: 'https://www.google.com',
-    github: 'https://www.google.com'
+    linkedin: "https://www.linkedin.com/in/mrdevx/",
+    github: "https://github.com/MRdevX",
   },
   {
     name: "Sarah Wilson",
     role: "Senior Developer",
     image: "/team-3.jpg",
-    linkedin: 'https://www.google.com',
-    github: 'https://www.google.com'
+    linkedin: "https://www.google.com",
+    github: "https://www.google.com",
   },
 ];
 
-
 // WebGL Image Effect Component
-const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
-                                                           imageUrl,
-                                                           config = defaultConfig,
-                                                           borderRadius = 10,
-                                                         }) => {
+const ImageWithEffect: React.FC<ImageWithEffectProps> = ({ imageUrl, config = defaultConfig, borderRadius = 10 }) => {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const meshRef = useRef<THREE.Mesh>(null);
   const timeRef = useRef(0);
@@ -103,11 +98,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
       theArray[i + 3] = 1;
     }
 
-    const variable = computeRenderer.addVariable(
-        "uGrid",
-        computeShader,
-        dataTexture
-    );
+    const variable = computeRenderer.addVariable("uGrid", computeShader, dataTexture);
 
     computeVariable.current = variable;
 
@@ -140,7 +131,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
       computeVariable.current.material.uniforms.uTime.value = timeRef.current;
       gpuCompute.current.compute();
       materialRef.current.uniforms.uGrid.value = gpuCompute.current.getCurrentRenderTarget(
-          computeVariable.current as never
+        computeVariable.current as never
       ).texture;
     }
   });
@@ -166,157 +157,114 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
   };
 
   return (
-      <mesh
-          ref={meshRef}
-          onPointerMove={handlePointerMove}
-          onPointerLeave={handlePointerLeave}
-      >
-        <planeGeometry args={[width, height, 32, 32]} />
-        <shaderMaterial
-            ref={materialRef}
-            vertexShader={vertexShader}
-            fragmentShader={fragmentShader}
-            transparent={true}
-            uniforms={{
-              uTexture: { value: texture },
-              uGrid: { value: null },
-              uImageResolution: {
-                value: new THREE.Vector2(
-                    texture.image?.width || 1,
-                    texture.image?.height || 1
-                ),
-              },
-              uViewport: {
-                value: new THREE.Vector2(viewport.width, viewport.height),
-              },
-              uDistortionStrength: { value: config.distortionStrength },
-              uDistortionThreshold: { value: config.distortionThreshold },
-              uRgbShiftStrength: { value: config.rgbShiftStrength },
-              uBorderRadius: {
-                value: borderRadius / (texture.image?.width || 200),
-              },
-            }}
-        />
-      </mesh>
+    <mesh ref={meshRef} onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
+      <planeGeometry args={[width, height, 32, 32]} />
+      <shaderMaterial
+        ref={materialRef}
+        vertexShader={vertexShader}
+        fragmentShader={fragmentShader}
+        transparent={true}
+        uniforms={{
+          uTexture: { value: texture },
+          uGrid: { value: null },
+          uImageResolution: {
+            value: new THREE.Vector2(texture.image?.width || 1, texture.image?.height || 1),
+          },
+          uViewport: {
+            value: new THREE.Vector2(viewport.width, viewport.height),
+          },
+          uDistortionStrength: { value: config.distortionStrength },
+          uDistortionThreshold: { value: config.distortionThreshold },
+          uRgbShiftStrength: { value: config.rgbShiftStrength },
+          uBorderRadius: {
+            value: borderRadius / (texture.image?.width || 200),
+          },
+        }}
+      />
+    </mesh>
   );
 };
 
 const MobileTeamSection: React.FC = () => {
-
   return (
-      <div className="w-full py-12 bg-gray-900">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="space-y-8">
-            {teamMembers.map((member, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  <div className="relative w-64 h-64 mb-4 overflow-hidden rounded-lg">
-                    <Image
-                        src={member.image}
-                        alt={member.name}
-                        fill
-                        className="object-cover"
-                        sizes="100vw"
-                        priority={index < 2}
-                    />
-                  </div>
-                  <div className="text-center bg-black bg-opacity-75 p-4 w-64 rounded">
-                    <h3 className="text-lg font-semibold text-white mb-2">
-                      {member.name}
-                    </h3>
-                    <p className="text-gray-300 mb-4">{member.role}</p>
-                    <div className="flex justify-center space-x-4">
-                      <a
-                          href={member.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="transition-opacity hover:opacity-80"
-                      >
-                        <Image
-                            src="/github.png"
-                            alt="GitHub"
-                            width={30}
-                            height={30}
-                            className="rounded"
-                        />
-                      </a>
-                      <a
-                          href={member.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="transition-opacity hover:opacity-80"
-                      >
-                        <Image
-                            src="/linkedin.png"
-                            alt="LinkedIn"
-                            width={30}
-                            height={30}
-                            className="rounded"
-                        />
-                      </a>
-                    </div>
-                  </div>
+    <div className="w-full py-12 bg-gray-900">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="space-y-8">
+          {teamMembers.map((member, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <div className="relative w-64 h-64 mb-4 overflow-hidden rounded-lg">
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                  priority={index < 2}
+                />
+              </div>
+              <div className="text-center bg-black bg-opacity-75 p-4 w-64 rounded">
+                <h3 className="text-lg font-semibold text-white mb-2">{member.name}</h3>
+                <p className="text-gray-300 mb-4">{member.role}</p>
+                <div className="flex justify-center space-x-4">
+                  <a
+                    href={member.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-opacity hover:opacity-80"
+                  >
+                    <Image src="/github.png" alt="GitHub" width={30} height={30} className="rounded" />
+                  </a>
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-opacity hover:opacity-80"
+                  >
+                    <Image src="/linkedin.png" alt="LinkedIn" width={30} height={30} className="rounded" />
+                  </a>
                 </div>
-            ))}
-          </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
+    </div>
   );
 };
 
 // WebGL Team Section Component
 const WebGLTeamSection: React.FC = () => {
-
   return (
-      <div className="w-full h-[600px]">
-        <Canvas
-            camera={{
-              position: [0, 0, 15],
-              fov: 25,
-              near: 0.1,
-              far: 1000,
-            }}
-        >
-          {teamMembers.map((member, index) => (
-              <group key={index} position={[(index - 1) * 4, 0, 0]}>
-                <ImageWithEffect imageUrl={member.image} />
-                <Html position={[0, -2, 0]} center>
-                  <div className="text-center bg-black bg-opacity-75 p-4 w-72 rounded">
-                    <h3 className="text-lg font-semibold text-white">
-                      {member.name}
-                    </h3>
-                    <p className="text-gray-300">{member.role}</p>
-                    <div className="flex justify-center space-x-4 my-2">
-                      <a
-                          href={member.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                      >
-                        <Image
-                            src="/github.png"
-                            alt="GitHub"
-                            width={30}
-                            height={30}
-                        />
-                      </a>
-                      <a
-                          href={member.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                      >
-                        <Image
-                            src="/linkedin.png"
-                            alt="LinkedIn"
-                            width={30}
-                            height={30}
-                        />
-                      </a>
-                    </div>
-                  </div>
-                </Html>
-              </group>
-          ))}
-        </Canvas>
-      </div>
+    <div className="w-full h-[600px]">
+      <Canvas
+        camera={{
+          position: [0, 0, 15],
+          fov: 25,
+          near: 0.1,
+          far: 1000,
+        }}
+      >
+        {teamMembers.map((member, index) => (
+          <group key={index} position={[(index - 1) * 4, 0, 0]}>
+            <ImageWithEffect imageUrl={member.image} />
+            <Html position={[0, -2, 0]} center>
+              <div className="text-center bg-black bg-opacity-75 p-4 w-72 rounded">
+                <h3 className="text-lg font-semibold text-white">{member.name}</h3>
+                <p className="text-gray-300">{member.role}</p>
+                <div className="flex justify-center space-x-4 my-2">
+                  <a href={member.github} target="_blank" rel="noopener noreferrer">
+                    <Image src="/github.png" alt="GitHub" width={30} height={30} />
+                  </a>
+                  <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
+                    <Image src="/linkedin.png" alt="LinkedIn" width={30} height={30} />
+                  </a>
+                </div>
+              </div>
+            </Html>
+          </group>
+        ))}
+      </Canvas>
+    </div>
   );
 };
 
@@ -332,8 +280,8 @@ const TeamSection: React.FC = () => {
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   if (!isClient) {

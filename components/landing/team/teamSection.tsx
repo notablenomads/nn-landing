@@ -46,14 +46,14 @@ const defaultConfig: EffectConfig = {
 const teamMembers: TeamMember[] = [
   {
     name: "Milad Ghamati",
-    role: "Frontend Engineer",
+    role: "Co-Founder & \nFrontend Engineer",
     image: "/milad-ghamati.png",
     linkedin: "https://www.linkedin.com/in/milad-ghamati-0517a8151/",
     github: "https://github.com/Moouren",
   },
   {
     name: "Mahdi Rashidi",
-    role: "Backend Engineer",
+    role: "Co-Founder & \nBackend Engineer",
     image: "/mahdi-rashidi.png",
     linkedin: "https://www.linkedin.com/in/mrdevx/",
     github: "https://github.com/MRdevX",

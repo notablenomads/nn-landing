@@ -230,7 +230,7 @@ const IconsLayout: React.FC<IconsLayoutProps> = ({
 
   return (
     <div className="absolute inset-0 -z-10 hidden lg:block">
-      <div className="absolute inset-0 bg-gray-900/85 backdrop-blur-sm" />
+      <div className="absolute inset-0 bg-gray-950 backdrop-blur-sm" />
       <div className="absolute inset-0 flex flex-col">
         {/* Top section */}
         <div className="grid grid-cols-12 gap-4 p-4">
@@ -269,9 +269,9 @@ const ThirdSection: React.FC = () => {
   const [activeService, setActiveService] = useState<string | null>(null);
 
   return (
-    <div className="relative min-h-dvh p-8 py-14 overflow-hidden">
+    <div className="relative min-h-dvh p-8 py-14 overflow-hidden flex justify-center items-center">
       <IconsLayout activeService={activeService} services={services} />
-      <div className="relative z-10 flex-col flex justify-center h-dvh">
+      <div className="relative z-10 flex-col flex justify-center">
         <h2 className="text-4xl text-center font-bold tracking-tight text-white mb-4">
           Our Services
         </h2>

@@ -5,7 +5,7 @@ import Team from "./team";
 import ProgressLogoLoader from "../loader";
 import OurServices from "./ourServices";
 import Contact from "./contact";
-import BlogSection from "@/components/landing/blog";
+// import BlogSection from "@/components/landing/blog";
 
 const Landing: React.FC = () => {
   const [done, setDone] = useState(false);
@@ -19,7 +19,7 @@ const Landing: React.FC = () => {
           <Jumbo />
           <Team />
           <OurServices />
-          <BlogSection />
+          {/*<BlogSection />*/}
           <Contact />
         </>
       )}

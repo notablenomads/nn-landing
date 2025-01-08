@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { GPUComputationRenderer } from "three/examples/jsm/misc/GPUComputationRenderer.js";
 import { computeShader, fragmentShader, vertexShader } from "./shaders";
 import Image from "next/image";
+import PopupWrapper from "@/components/landing/team/popupWrapper";
 
 interface TeamMember {
   name: string;
@@ -12,6 +13,7 @@ interface TeamMember {
   image: string;
   linkedin: string;
   github: string;
+  description:string;
 }
 
 interface EffectConfig {
@@ -49,21 +51,24 @@ const teamMembers: TeamMember[] = [
     role: "FrontEnd Engineer",
     image: "/milad-ghamati.png",
     linkedin: 'https://www.google.com',
-    github: 'https://www.google.com'
+    github: 'https://www.google.com',
+    description:'I\'m Milad, a FrontEnd Engineer with 7+ years of experience, I have led and contributed to successful projects, utilizing ReactJS, Next.js, and modern JavaScript libraries. I’ve built cutting-edge dashboards, developed reusable libraries, and implemented performance improvements across multiple platforms. My expertise in mentoring teams and leading code reviews has helped establish efficient development practices and enhanced project outcomes.'
   },
   {
     name: "Mahdi Rashidi",
     role: "Cloud-Native & Backend Specialist",
     image: "/mahdi-rashidi.png",
     linkedin: 'https://www.google.com',
-    github: 'https://www.google.com'
+    github: 'https://www.google.com',
+    description:'I\'m Mahdi Rashidi, a Backend Engineer and Software Architect with 9+ years of experience building scalable backend services and microservices aligned with business needs. Skilled in TypeScript and NestJS, I specialize in cloud-native applications and high-performance architectures.'
   },
   {
     name: "Sarah Wilson",
     role: "Senior Developer",
     image: "/team-3.jpg",
     linkedin: 'https://www.google.com',
-    github: 'https://www.google.com'
+    github: 'https://www.google.com',
+    description:'As a Senior Developer with 10+ years of experience, I have led and contributed to successful projects, utilizing ReactJS, Next.js, and modern JavaScript libraries. I’ve built cutting-edge dashboards, developed reusable libraries, and implemented performance improvements across multiple platforms. My expertise in mentoring teams and leading code reviews has helped establish efficient development practices and enhanced project outcomes.'
   },
 ];
 
@@ -204,7 +209,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
 const MobileTeamSection: React.FC = () => {
 
   return (
-      <div className="w-full py-12 bg-gray-900">
+      <div className="w-full py-12 sm:bg-gray-950">
         <div className="max-w-7xl mx-auto px-4">
           <div className="space-y-8">
             {teamMembers.map((member, index) => (
@@ -253,8 +258,13 @@ const MobileTeamSection: React.FC = () => {
                             className="rounded"
                         />
                       </a>
+
                     </div>
+                    <PopupWrapper title={member.name} >
+                      {member.description}
+                    </PopupWrapper>
                   </div>
+
                 </div>
             ))}
           </div>
@@ -310,7 +320,10 @@ const WebGLTeamSection: React.FC = () => {
                             height={30}
                         />
                       </a>
+
                     </div>
+                    <PopupWrapper title={member.name}>
+                      {member.description}</PopupWrapper>
                   </div>
                 </Html>
               </group>

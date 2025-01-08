@@ -48,37 +48,32 @@ const defaultConfig: EffectConfig = {
 const teamMembers: TeamMember[] = [
   {
     name: "Milad Ghamati",
-    role: "FrontEnd Engineer",
+    role: "Co-Founder & \nFrontend Engineer",
     image: "/milad-ghamati.png",
-    linkedin: 'https://www.google.com',
-    github: 'https://www.google.com',
+    linkedin: "https://www.linkedin.com/in/milad-ghamati-0517a8151/",
+    github: "https://github.com/Moouren",
     description:'I\'m Milad, a FrontEnd Engineer with 7+ years of experience, I have led and contributed to successful projects, utilizing ReactJS, Next.js, and modern JavaScript libraries. I’ve built cutting-edge dashboards, developed reusable libraries, and implemented performance improvements across multiple platforms. My expertise in mentoring teams and leading code reviews has helped establish efficient development practices and enhanced project outcomes.'
   },
   {
     name: "Mahdi Rashidi",
-    role: "Cloud-Native & Backend Specialist",
+    role: "Co-Founder & \nBackend Engineer",
     image: "/mahdi-rashidi.png",
-    linkedin: 'https://www.google.com',
-    github: 'https://www.google.com',
+    linkedin: "https://www.linkedin.com/in/mrdevx/",
+    github: "https://github.com/MRdevX",
     description:'I\'m Mahdi Rashidi, a Backend Engineer and Software Architect with 9+ years of experience building scalable backend services and microservices aligned with business needs. Skilled in TypeScript and NestJS, I specialize in cloud-native applications and high-performance architectures.'
   },
   {
     name: "Sarah Wilson",
     role: "Senior Developer",
     image: "/team-3.jpg",
-    linkedin: 'https://www.google.com',
-    github: 'https://www.google.com',
+    linkedin: "https://www.google.com",
+    github: "https://www.google.com",
     description:'As a Senior Developer with 10+ years of experience, I have led and contributed to successful projects, utilizing ReactJS, Next.js, and modern JavaScript libraries. I’ve built cutting-edge dashboards, developed reusable libraries, and implemented performance improvements across multiple platforms. My expertise in mentoring teams and leading code reviews has helped establish efficient development practices and enhanced project outcomes.'
   },
 ];
 
-
 // WebGL Image Effect Component
-const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
-                                                           imageUrl,
-                                                           config = defaultConfig,
-                                                           borderRadius = 10,
-                                                         }) => {
+const ImageWithEffect: React.FC<ImageWithEffectProps> = ({ imageUrl, config = defaultConfig, borderRadius = 10 }) => {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const meshRef = useRef<THREE.Mesh>(null);
   const timeRef = useRef(0);
@@ -108,11 +103,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
       theArray[i + 3] = 1;
     }
 
-    const variable = computeRenderer.addVariable(
-        "uGrid",
-        computeShader,
-        dataTexture
-    );
+    const variable = computeRenderer.addVariable("uGrid", computeShader, dataTexture);
 
     computeVariable.current = variable;
 
@@ -145,7 +136,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
       computeVariable.current.material.uniforms.uTime.value = timeRef.current;
       gpuCompute.current.compute();
       materialRef.current.uniforms.uGrid.value = gpuCompute.current.getCurrentRenderTarget(
-          computeVariable.current as never
+        computeVariable.current as never
       ).texture;
     }
   });
@@ -171,43 +162,35 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
   };
 
   return (
-      <mesh
-          ref={meshRef}
-          onPointerMove={handlePointerMove}
-          onPointerLeave={handlePointerLeave}
-      >
-        <planeGeometry args={[width, height, 32, 32]} />
-        <shaderMaterial
-            ref={materialRef}
-            vertexShader={vertexShader}
-            fragmentShader={fragmentShader}
-            transparent={true}
-            uniforms={{
-              uTexture: { value: texture },
-              uGrid: { value: null },
-              uImageResolution: {
-                value: new THREE.Vector2(
-                    texture.image?.width || 1,
-                    texture.image?.height || 1
-                ),
-              },
-              uViewport: {
-                value: new THREE.Vector2(viewport.width, viewport.height),
-              },
-              uDistortionStrength: { value: config.distortionStrength },
-              uDistortionThreshold: { value: config.distortionThreshold },
-              uRgbShiftStrength: { value: config.rgbShiftStrength },
-              uBorderRadius: {
-                value: borderRadius / (texture.image?.width || 200),
-              },
-            }}
-        />
-      </mesh>
+    <mesh ref={meshRef} onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
+      <planeGeometry args={[width, height, 32, 32]} />
+      <shaderMaterial
+        ref={materialRef}
+        vertexShader={vertexShader}
+        fragmentShader={fragmentShader}
+        transparent={true}
+        uniforms={{
+          uTexture: { value: texture },
+          uGrid: { value: null },
+          uImageResolution: {
+            value: new THREE.Vector2(texture.image?.width || 1, texture.image?.height || 1),
+          },
+          uViewport: {
+            value: new THREE.Vector2(viewport.width, viewport.height),
+          },
+          uDistortionStrength: { value: config.distortionStrength },
+          uDistortionThreshold: { value: config.distortionThreshold },
+          uRgbShiftStrength: { value: config.rgbShiftStrength },
+          uBorderRadius: {
+            value: borderRadius / (texture.image?.width || 200),
+          },
+        }}
+      />
+    </mesh>
   );
 };
 
 const MobileTeamSection: React.FC = () => {
-
   return (
       <div className="w-full py-12 sm:bg-gray-950">
         <div className="max-w-7xl mx-auto px-4">
@@ -275,7 +258,6 @@ const MobileTeamSection: React.FC = () => {
 
 // WebGL Team Section Component
 const WebGLTeamSection: React.FC = () => {
-
   return (
       <div className="w-full h-[600px]">
         <Canvas
@@ -345,8 +327,8 @@ const TeamSection: React.FC = () => {
     };
 
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   if (!isClient) {

@@ -1,15 +1,11 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import React, {FormEvent, useState} from 'react';
+import {Label} from "@/components/ui/label";
+import {Input} from "@/components/ui/input";
+import {Textarea} from "@/components/ui/textarea";
+import {Button} from "@/components/ui/button";
+import {Alert, AlertDescription} from "@/components/ui/alert";
+import {toast} from "sonner";
 
-interface FormData {
-    name: string;
-    email: string;
-    message: string;
-}
 
 interface FormErrors {
     name?: string;
@@ -20,7 +16,7 @@ interface FormErrors {
 type SubmitStatus = 'success' | 'error' | null;
 
 const ContactForm: React.FC = () => {
-    const [formData, setFormData] = useState<FormData>({
+    const [formData, setFormData] = useState({
         name: '',
         email: '',
         message: ''
@@ -46,37 +42,53 @@ const ContactForm: React.FC = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setIsSubmitting(true);
+        setSubmitStatus(null);
 
         if (validateForm()) {
             try {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                console.log('Form submitted:', formData);
-                setSubmitStatus('success');
-                setFormData({ name: '', email: '', message: '' });
-                // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            } catch (error) {
-                setSubmitStatus('error');
-            }
-        }
-        setIsSubmitting(false);
-    };
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}email/contact`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-        const { name, value } = e.target;
+                const data = await response.json();
+
+                if (!response.ok) {
+                    console.log('data', data)
+                    setSubmitStatus('error');
+                    toast.error(data.message); // Directly show the error message from response
+                    return;
+                }
+
+                setSubmitStatus('success');
+                setFormData({name: '', email: '', message: ''});
+                toast.success("Your message has been sent successfully.");
+
+            } catch (error) {
+                console.error('Error:', error);
+                setSubmitStatus('error');
+                toast.error("Failed to send message");
+            } finally {
+                setIsSubmitting(false);
+            }
+        } else {
+            toast.error("Please fill in all required fields correctly.");
+            setIsSubmitting(false);
+        }
+    };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const {name, value} = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
-        // Clear error when user starts typing
-        if (errors[name as keyof FormErrors]) {
-            setErrors(prev => ({
-                ...prev,
-                [name]: ''
-            }));
-        }
     };
 
     return (
@@ -98,13 +110,6 @@ const ContactForm: React.FC = () => {
                             </Alert>
                         )}
 
-                        {submitStatus === 'error' && (
-                            <Alert className="bg-red-500/20 text-red-400 border-red-500">
-                                <AlertDescription>
-                                    There was an error sending your message. Please try again.
-                                </AlertDescription>
-                            </Alert>
-                        )}
 
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
                             <div className="text-left w-full">

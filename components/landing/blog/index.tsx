@@ -6,6 +6,7 @@ import { Clock, ArrowRight, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import Link from "next/link";
+import Image from "next/image";
 
 interface Post {
   id: number;
@@ -173,7 +174,9 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
       <div className="relative z-10 p-6">
         <div className="relative overflow-hidden rounded-lg mb-6 group">
           <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent z-10" />
-          <img
+          <Image
+            width={200}
+            height={300}
             src={post.imageUrl}
             alt={post.title}
             className={`w-full h-48 object-cover transition-transform duration-700 ease-out

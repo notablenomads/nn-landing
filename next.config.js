@@ -1,14 +1,18 @@
 /** @type {import('next').NextConfig} */
 
-const withPWA = require('next-pwa')({
-    dest: 'public',
-    disable: process.env.NODE_ENV === 'development',
-    register: true,
-    skipWaiting: true
-})
+const withPWA = require("next-pwa")({
+  dest: "public",
+  disable: process.env.NODE_ENV === "development",
+  register: true,
+  skipWaiting: true,
+});
 
 const nextConfig = {
-    reactStrictMode: true,
-}
+  reactStrictMode: true,
+  images: {
+    domains: ["cdn-images-1.medium.com", "medium.com"],
+  },
+};
 
-module.exports = withPWA(nextConfig)
+// @ts-ignore
+module.exports = withPWA(nextConfig);

@@ -13,7 +13,7 @@ interface TeamMember {
   image: string;
   linkedin: string;
   github: string;
-  description:string;
+  description: string;
 }
 
 interface EffectConfig {
@@ -49,31 +49,38 @@ const teamMembers: TeamMember[] = [
   {
     name: "Milad Ghamati",
     role: "Co-Founder & \nFrontend Engineer",
-    image: "/milad-ghamati.png",
+    image: "/team/milad-ghamati.png",
     linkedin: "https://www.linkedin.com/in/milad-ghamati-0517a8151/",
     github: "https://github.com/Moouren",
-    description:'I\'m Milad, a FrontEnd Engineer with 7+ years of experience, I have led and contributed to successful projects, utilizing ReactJS, Next.js, and modern JavaScript libraries. I’ve built cutting-edge dashboards, developed reusable libraries, and implemented performance improvements across multiple platforms. My expertise in mentoring teams and leading code reviews has helped establish efficient development practices and enhanced project outcomes.'
+    description:
+      "I'm Milad, a FrontEnd Engineer with 7+ years of experience, I have led and contributed to successful projects, utilizing ReactJS, Next.js, and modern JavaScript libraries. I’ve built cutting-edge dashboards, developed reusable libraries, and implemented performance improvements across multiple platforms. My expertise in mentoring teams and leading code reviews has helped establish efficient development practices and enhanced project outcomes.",
   },
   {
     name: "Mahdi Rashidi",
     role: "Co-Founder & \nBackend Engineer",
-    image: "/mahdi-rashidi.png",
+    image: "/team/mahdi-rashidi.png",
     linkedin: "https://www.linkedin.com/in/mrdevx/",
     github: "https://github.com/MRdevX",
-    description:'I\'m Mahdi Rashidi, a Backend Engineer and Software Architect with 9+ years of experience building scalable backend services and microservices aligned with business needs. Skilled in TypeScript and NestJS, I specialize in cloud-native applications and high-performance architectures.'
+    description:
+      "I'm Mahdi Rashidi, a Backend Engineer and Software Architect with 9+ years of experience building scalable backend services and microservices aligned with business needs. Skilled in TypeScript and NestJS, I specialize in cloud-native applications and high-performance architectures.",
   },
   {
     name: "Sarah Wilson",
     role: "Senior Developer",
-    image: "/team-3.jpg",
+    image: "/team/team-3.jpg",
     linkedin: "https://www.google.com",
     github: "https://www.google.com",
-    description:'As a Senior Developer with 10+ years of experience, I have led and contributed to successful projects, utilizing ReactJS, Next.js, and modern JavaScript libraries. I’ve built cutting-edge dashboards, developed reusable libraries, and implemented performance improvements across multiple platforms. My expertise in mentoring teams and leading code reviews has helped establish efficient development practices and enhanced project outcomes.'
+    description:
+      "As a Senior Developer with 10+ years of experience, I have led and contributed to successful projects, utilizing ReactJS, Next.js, and modern JavaScript libraries. I’ve built cutting-edge dashboards, developed reusable libraries, and implemented performance improvements across multiple platforms. My expertise in mentoring teams and leading code reviews has helped establish efficient development practices and enhanced project outcomes.",
   },
 ];
 
 // WebGL Image Effect Component
-const ImageWithEffect: React.FC<ImageWithEffectProps> = ({ imageUrl, config = defaultConfig, borderRadius = 10 }) => {
+const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
+  imageUrl,
+  config = defaultConfig,
+  borderRadius = 10,
+}) => {
   const materialRef = useRef<THREE.ShaderMaterial>(null);
   const meshRef = useRef<THREE.Mesh>(null);
   const timeRef = useRef(0);
@@ -92,18 +99,28 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({ imageUrl, config = de
   useEffect(() => {
     timeRef.current = 0;
     const computeSize = 128;
-    const computeRenderer = new GPUComputationRenderer(computeSize, computeSize, gl);
+    const computeRenderer = new GPUComputationRenderer(
+      computeSize,
+      computeSize,
+      gl
+    );
 
     const dataTexture = computeRenderer.createTexture();
-    const theArray = dataTexture.image.data;
+    // Cast image.data to Uint8Array first
+    const theArray = dataTexture.image.data as Uint8Array;
     for (let i = 0; i < theArray.length; i += 4) {
-      theArray[i] = Math.random() * 2 - 1;
-      theArray[i + 1] = Math.random() * 2 - 1;
-      theArray[i + 2] = 0;
-      theArray[i + 3] = 1;
+      // Convert the -1 to 1 range to 0 to 255 for Uint8Array
+      theArray[i] = ((Math.random() * 2 - 1) * 0.5 + 0.5) * 255;
+      theArray[i + 1] = ((Math.random() * 2 - 1) * 0.5 + 0.5) * 255;
+      theArray[i + 2] = 127.5; // Middle value for 0
+      theArray[i + 3] = 255; // Full alpha
     }
 
-    const variable = computeRenderer.addVariable("uGrid", computeShader, dataTexture);
+    const variable = computeRenderer.addVariable(
+      "uGrid",
+      computeShader,
+      dataTexture
+    );
 
     computeVariable.current = variable;
 
@@ -149,7 +166,9 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({ imageUrl, config = de
 
     const delta = currentMouse.current.clone().sub(prevMouse.current);
 
-    computeVariable.current.material.uniforms.uMouse.value.copy(currentMouse.current);
+    computeVariable.current.material.uniforms.uMouse.value.copy(
+      currentMouse.current
+    );
     computeVariable.current.material.uniforms.uDeltaMouse.value.copy(delta);
     computeVariable.current.material.uniforms.uMouseMove.value = 1;
   };
@@ -162,7 +181,11 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({ imageUrl, config = de
   };
 
   return (
-    <mesh ref={meshRef} onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
+    <mesh
+      ref={meshRef}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+    >
       <planeGeometry args={[width, height, 32, 32]} />
       <shaderMaterial
         ref={materialRef}
@@ -173,7 +196,10 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({ imageUrl, config = de
           uTexture: { value: texture },
           uGrid: { value: null },
           uImageResolution: {
-            value: new THREE.Vector2(texture.image?.width || 1, texture.image?.height || 1),
+            value: new THREE.Vector2(
+              texture.image?.width || 1,
+              texture.image?.height || 1
+            ),
           },
           uViewport: {
             value: new THREE.Vector2(viewport.width, viewport.height),
@@ -192,126 +218,124 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({ imageUrl, config = de
 
 const MobileTeamSection: React.FC = () => {
   return (
-      <div className="w-full py-12 sm:bg-gray-950">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="space-y-8">
-            {teamMembers.map((member, index) => (
-                <div key={index} className="flex flex-col items-center">
-                  <div className="relative w-64 h-64 mb-4 overflow-hidden rounded-lg">
+    <div className="w-full py-12 sm:bg-gray-950">
+      <div className="max-w-7xl mx-auto px-4">
+        <div className="space-y-8">
+          {teamMembers.map((member, index) => (
+            <div key={index} className="flex flex-col items-center">
+              <div className="relative w-64 h-64 mb-4 overflow-hidden rounded-lg">
+                <Image
+                  src={member.image}
+                  alt={member.name}
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                  priority={index < 2}
+                />
+              </div>
+              <div className="text-center bg-black bg-opacity-75 p-4 w-64 rounded">
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  {member.name}
+                </h3>
+                <p className="text-gray-300 mb-4">{member.role}</p>
+                <div className="flex justify-center space-x-4">
+                  <a
+                    href={member.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-opacity hover:opacity-80"
+                  >
                     <Image
-                        src={member.image}
-                        alt={member.name}
-                        fill
-                        className="object-cover"
-                        sizes="100vw"
-                        priority={index < 2}
+                      src="/social/github.png"
+                      alt="GitHub"
+                      width={30}
+                      height={30}
+                      className="rounded"
                     />
-                  </div>
-                  <div className="text-center bg-black bg-opacity-75 p-4 w-64 rounded">
-                    <h3 className="text-lg font-semibold text-white mb-2">
-                      {member.name}
-                    </h3>
-                    <p className="text-gray-300 mb-4">{member.role}</p>
-                    <div className="flex justify-center space-x-4">
-                      <a
-                          href={member.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="transition-opacity hover:opacity-80"
-                      >
-                        <Image
-                            src="/github.png"
-                            alt="GitHub"
-                            width={30}
-                            height={30}
-                            className="rounded"
-                        />
-                      </a>
-                      <a
-                          href={member.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="transition-opacity hover:opacity-80"
-                      >
-                        <Image
-                            src="/linkedin.png"
-                            alt="LinkedIn"
-                            width={30}
-                            height={30}
-                            className="rounded"
-                        />
-                      </a>
-
-                    </div>
-                    <PopupWrapper title={member.name} >
-                      {member.description}
-                    </PopupWrapper>
-                  </div>
-
+                  </a>
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition-opacity hover:opacity-80"
+                  >
+                    <Image
+                      src="/social/linkedin.png"
+                      alt="LinkedIn"
+                      width={30}
+                      height={30}
+                      className="rounded"
+                    />
+                  </a>
                 </div>
-            ))}
-          </div>
+                <PopupWrapper title={member.name}>
+                  {member.description}
+                </PopupWrapper>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
+    </div>
   );
 };
 
 // WebGL Team Section Component
 const WebGLTeamSection: React.FC = () => {
   return (
-      <div className="w-full h-[600px]">
-        <Canvas
-            camera={{
-              position: [0, 0, 15],
-              fov: 25,
-              near: 0.1,
-              far: 1000,
-            }}
-        >
-          {teamMembers.map((member, index) => (
-              <group key={index} position={[(index - 1) * 4, 0, 0]}>
-                <ImageWithEffect imageUrl={member.image} />
-                <Html position={[0, -2, 0]} center>
-                  <div className="text-center bg-black bg-opacity-75 p-4 w-72 rounded">
-                    <h3 className="text-lg font-semibold text-white">
-                      {member.name}
-                    </h3>
-                    <p className="text-gray-300">{member.role}</p>
-                    <div className="flex justify-center space-x-4 my-2">
-                      <a
-                          href={member.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                      >
-                        <Image
-                            src="/github.png"
-                            alt="GitHub"
-                            width={30}
-                            height={30}
-                        />
-                      </a>
-                      <a
-                          href={member.linkedin}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                      >
-                        <Image
-                            src="/linkedin.png"
-                            alt="LinkedIn"
-                            width={30}
-                            height={30}
-                        />
-                      </a>
-
-                    </div>
-                    <PopupWrapper title={member.name}>
-                      {member.description}</PopupWrapper>
-                  </div>
-                </Html>
-              </group>
-          ))}
-        </Canvas>
-      </div>
+    <div className="w-full h-[600px]">
+      <Canvas
+        camera={{
+          position: [0, 0, 15],
+          fov: 25,
+          near: 0.1,
+          far: 1000,
+        }}
+      >
+        {teamMembers.map((member, index) => (
+          <group key={index} position={[(index - 1) * 4, 0, 0]}>
+            <ImageWithEffect imageUrl={member.image} />
+            <Html position={[0, -2, 0]} center>
+              <div className="text-center bg-black bg-opacity-75 p-4 w-72 rounded">
+                <h3 className="text-lg font-semibold text-white">
+                  {member.name}
+                </h3>
+                <p className="text-gray-300">{member.role}</p>
+                <div className="flex justify-center space-x-4 my-2">
+                  <a
+                    href={member.github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Image
+                      src="/social/github.png"
+                      alt="GitHub"
+                      width={30}
+                      height={30}
+                    />
+                  </a>
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Image
+                      src="/social/linkedin.png"
+                      alt="LinkedIn"
+                      width={30}
+                      height={30}
+                    />
+                  </a>
+                </div>
+                <PopupWrapper title={member.name}>
+                  {member.description}
+                </PopupWrapper>
+              </div>
+            </Html>
+          </group>
+        ))}
+      </Canvas>
+    </div>
   );
 };
 

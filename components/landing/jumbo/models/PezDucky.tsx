@@ -28,7 +28,7 @@ type GLTFResult = GLTF & {
 
 export default function PezDuckModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
-    "/ducky-pez-transformed.glb"
+    "/models/ducky-pez-transformed.glb"
   ) as GLTFResult;
   return (
     <group {...props} dispose={null}>
@@ -51,4 +51,4 @@ export default function PezDuckModel(props: JSX.IntrinsicElements["group"]) {
   );
 }
 
-useGLTF.preload("/ducky-pez-transformed.glb");
+useGLTF.preload("/models/ducky-pez-transformed.glb");

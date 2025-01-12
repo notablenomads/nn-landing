@@ -24,7 +24,7 @@ type GLTFResult = GLTF & {
 
 export function PlasticDuckModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
-    "/plastic-duck-transformed.glb"
+    "/models/plastic-duck-transformed.glb"
   ) as GLTFResult;
   return (
     <group {...props} dispose={null}>
@@ -39,4 +39,4 @@ export function PlasticDuckModel(props: JSX.IntrinsicElements["group"]) {
   );
 }
 
-useGLTF.preload("/plastic-duck-transformed.glb");
+useGLTF.preload("/models/plastic-duck-transformed.glb");

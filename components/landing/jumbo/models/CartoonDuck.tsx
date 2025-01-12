@@ -1,5 +1,3 @@
-
-
 import * as THREE from "three";
 import React from "react";
 import { useGLTF } from "@react-three/drei";
@@ -16,7 +14,7 @@ type GLTFResult = GLTF & {
 
 export function CartoonDuckModel(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
-    "/cartoon-duck-transformed.glb"
+    "/models/cartoon-duck-transformed.glb"
   ) as GLTFResult;
   return (
     <group {...props} dispose={null}>
@@ -30,4 +28,4 @@ export function CartoonDuckModel(props: JSX.IntrinsicElements["group"]) {
   );
 }
 
-useGLTF.preload("/cartoon-duck-transformed.glb");
+useGLTF.preload("/models/cartoon-duck-transformed.glb");

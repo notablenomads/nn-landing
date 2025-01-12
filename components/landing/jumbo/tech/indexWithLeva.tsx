@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Environment } from "@react-three/drei";
 import * as THREE from "three";
-import {Leva, useControls} from "leva";
+import { Leva, useControls } from "leva";
 // import { Leva } from "leva";
 import {
   EffectComposer,
@@ -276,7 +276,7 @@ const TechStackTower: React.FC<TechStackTowerProps> = ({
 }) => {
   return (
     <>
-       <Leva collapsed={false} oneLineLabels flat hidden={false} />
+      <Leva collapsed={false} oneLineLabels flat hidden={false} />
       <BackTechBackground activeNeon={withEffects} />
       <div className="absolute inset-0">
         <Canvas shadows gl={{ antialias: true }}>

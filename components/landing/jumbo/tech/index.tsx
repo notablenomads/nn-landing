@@ -11,7 +11,7 @@ import { BlendFunction } from "postprocessing";
 import useStore from "../../store";
 
 import dynamic from "next/dynamic";
-import {useMediaQuery} from "@/hooks/useMediaQuery";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 const BackTechBackground = dynamic(
   () => import("@/components/landing/jumbo/tech/backTech"),
@@ -81,8 +81,7 @@ const AnimatedScene = ({ withEffects = false }) => {
   const initialAnimationRef = useRef(true);
   const animationProgressRef = useRef(0);
   const mousePosition = useRef({ x: 0, y: 0 });
-  const isMobile = useMediaQuery('(max-width:768px)');
-  console.log(isMobile)
+  const isMobile = useMediaQuery("(max-width:768px)");
   const sceneConfig = {
     startPos: { x: -25, y: 25, z: 35 },
     mouseRotation: {
@@ -92,7 +91,7 @@ const AnimatedScene = ({ withEffects = false }) => {
     model: {
       rotation: -6.8,
       scale: isMobile ? 0.2 : 0.3,
-      position: isMobile? { x: -6, y: 5, z: 0 }: { x: 5, y: 0, z: 0 },
+      position: isMobile ? { x: -6, y: 5, z: 0 } : { x: 5, y: 0, z: 0 },
     },
     camera: {
       position: { x: -12, y: 12, z: 26 },
@@ -106,8 +105,8 @@ const AnimatedScene = ({ withEffects = false }) => {
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
       mousePosition.current = {
-        x: (event.clientX / window.innerWidth) * 2 - 1,
-        y: 0,
+        x: (event.clientX / window.innerWidth) * 4 - 1,
+        y: (event.clientY / window.innerHeight) * 3 - 1,
       };
     };
 
@@ -237,7 +236,6 @@ const Effects: React.FC = () => {
 
   const noiseOpacity = lerp(0.4, 0, progress);
   const aberrationStrength = lerp(0.008, 0, progress);
-
 
   return (
     <EffectComposer multisampling={0}>

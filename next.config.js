@@ -22,10 +22,21 @@ const nextConfig = {
                 hostname: 'medium.com',
                 port: '',
                 pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: '*.medium.com',
+                port: '',
+                pathname: '/**',
+            },
+            {
+                protocol: 'https',
+                hostname: 'miro.medium.com',
+                port: '',
+                pathname: '/**',
             }
         ],
     },
 };
-
 // @ts-ignore
 module.exports = withPWA(nextConfig);

@@ -5,7 +5,6 @@ import {AlertCircle, ArrowRight, Clock} from "lucide-react";
 import {motion} from "framer-motion";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import Link from "next/link";
-import Image from "next/image";
 
 interface Post {
     id: number;
@@ -34,6 +33,17 @@ interface BlogCardProps {
 const readTimes = ["3 min read", "5 min read", "7 min read", "10 min read"];
 const getRandomItem = (array: string[]): string =>
     array[Math.floor(Math.random() * array.length)];
+
+
+const isValidImageUrl = (url: string): boolean => {
+    try {
+        new URL(url);
+        return true;
+    } catch {
+        return false;
+    }
+};
+
 
 interface ApiPost {
     id: number;
@@ -68,8 +78,7 @@ const fetchBlogPosts = async (): Promise<Post[]> => {
             readTime: getRandomItem(readTimes),
             author: post.author,
             url: post.url,
-            imageUrl:
-            post.imageUrl
+            imageUrl: isValidImageUrl(post.imageUrl) ? post.imageUrl : '/placeholder-image.jpg'
         }));
     } catch (error) {
         // More specific error handling
@@ -137,13 +146,13 @@ const BlogCard: React.FC<BlogCardProps> = ({post}) => {
             <div className="relative z-10 p-6">
                 <div className="relative overflow-hidden rounded-lg mb-6 group">
                     <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent z-10"/>
-                    <Image
-                        width={200}
-                        height={300}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
                         src={post.imageUrl}
                         alt={post.title}
                         className={`w-full h-48 object-cover transition-transform duration-700 ease-out
-                     ${isHovered ? "scale-110 rotate-1" : ""}`}
+    ${isHovered ? "scale-110 rotate-1" : ""}`}
+
                     />
 
                 </div>

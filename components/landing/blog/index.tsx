@@ -1,333 +1,299 @@
-import React, { useState, useRef } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Clock, ArrowRight, AlertCircle } from "lucide-react";
-import { motion } from "framer-motion";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import React, {useRef, useState} from "react";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Skeleton} from "@/components/ui/skeleton";
+import {AlertCircle, ArrowRight, Clock} from "lucide-react";
+import {motion} from "framer-motion";
+import {Alert, AlertDescription} from "@/components/ui/alert";
 import Link from "next/link";
 import Image from "next/image";
 
 interface Post {
-  id: number;
-  title: string;
-  description: string;
-  date: string;
-  readTime: string;
-  category: string;
-  imageUrl: string;
-  url: string;
-  author: IUser;
+    id: number;
+    title: string;
+    description: string;
+    date: string;
+    readTime: string;
+    category: string;
+    imageUrl: string;
+    url: string;
+    author: IUser;
 }
+
 interface IUser {
-  name: string;
+    name: string;
 }
 
 interface MousePosition {
-  x: number;
-  y: number;
+    x: number;
+    y: number;
 }
 
 interface BlogCardProps {
-  post: Post;
+    post: Post;
 }
 
 const categories = ["Technology", "Development", "Design", "Tutorial", "News"];
 const readTimes = ["3 min read", "5 min read", "7 min read", "10 min read"];
 const getRandomItem = (array: string[]): string =>
-  array[Math.floor(Math.random() * array.length)];
+    array[Math.floor(Math.random() * array.length)];
 
 interface ApiPost {
-  id: number;
-  title: string;
-  body: string;
-  userId: number;
-  imageUrl: string;
-  url: string;
-  author: IUser;
+    id: number;
+    title: string;
+    body: string;
+    userId: number;
+    imageUrl: string;
+    url: string;
+    author: IUser;
 }
+
 interface IPost {
-  posts: ApiPost[];
+    posts: ApiPost[];
 }
 
 const fetchBlogPosts = async (): Promise<Post[]> => {
-  try {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}blog/posts?page=1&limit=10`
-    );
-    if (!response.ok) {
-      throw new Error(`Failed to fetch posts: ${response.status}`);
-    }
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_BASE_URL}blog/posts?page=1&limit=10`
+        );
+        if (!response.ok) {
+            throw new Error(`Failed to fetch posts: ${response.status}`);
+        }
 
-    const posts: IPost = await response.json();
+        const posts: IPost = await response.json();
 
-    return posts?.posts.map((post, index) => ({
-      id: post.id,
-      title: post.title.charAt(0).toUpperCase() + post.title.slice(1),
-      description: post.body,
-      date: new Date(Date.now() - index * 86400000).toISOString(),
-      readTime: getRandomItem(readTimes),
-      category: getRandomItem(categories),
-      author: post.author,
-      url: post.url,
-      imageUrl:
-        post.imageUrl ||
-        "https://fastly.picsum.photos/id/866/200/300.jpg?hmac=rcadCENKh4rD6MAp6V_ma-AyWv641M4iiOpe1RyFHeI",
-    }));
-  } catch (error) {
-    // More specific error handling
-    if (error instanceof Error) {
-      throw new Error(`Error fetching blog posts: ${error.message}`);
+        return posts?.posts.map((post, index) => ({
+            id: post.id,
+            title: post.title.charAt(0).toUpperCase() + post.title.slice(1),
+            description: post.body,
+            date: new Date(Date.now() - index * 86400000).toISOString(),
+            readTime: getRandomItem(readTimes),
+            category: getRandomItem(categories),
+            author: post.author,
+            url: post.url,
+            imageUrl:
+            post.imageUrl
+        }));
+    } catch (error) {
+        // More specific error handling
+        if (error instanceof Error) {
+            throw new Error(`Error fetching blog posts: ${error.message}`);
+        }
+        // Handle cases where error is not an Error object
+        throw new Error("Error fetching blog posts: An unknown error occurred");
     }
-    // Handle cases where error is not an Error object
-    throw new Error("Error fetching blog posts: An unknown error occurred");
-  }
 };
-const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
-  const [mousePos, setMousePos] = useState<MousePosition>({
-    x: -1000,
-    y: -1000,
-  });
-  const cardRef = useRef<HTMLDivElement | null>(null);
+const BlogCard: React.FC<BlogCardProps> = ({post}) => {
+    const [mousePos, setMousePos] = useState<MousePosition>({
+        x: -1000,
+        y: -1000,
+    });
+    const cardRef = useRef<HTMLDivElement | null>(null);
+    const [isHovered, setIsHovered] = useState<boolean>(false);
 
-  const [isHovered, setIsHovered] = useState(false);
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>): void => {
+        if (!cardRef.current) return;
+        const bounds = cardRef.current.getBoundingClientRect();
+        const x = e.clientX - bounds.left;
+        const y = e.clientY - bounds.top;
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>): void => {
-    if (!cardRef.current) return;
-    const bounds = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - bounds.left;
-    const y = e.clientY - bounds.top;
-
-    const padding = 50;
-    if (
-      x >= -padding &&
-      x <= bounds.width + padding &&
-      y >= -padding &&
-      y <= bounds.height + padding
-    ) {
-      setMousePos({ x, y });
-    } else {
-      setMousePos({ x: -1000, y: -1000 });
-    }
-  };
-
-  return (
-    <div
-      ref={cardRef}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={() => {
-        setMousePos({ x: -1000, y: -1000 });
-        setIsHovered(false);
-      }}
-      className="relative bg-[#1A1A1A]/80 backdrop-blur-sm rounded-lg overflow-hidden h-full"
-    >
-      <div
-        className="absolute inset-0 pointer-events-none rounded-lg"
-        style={{
-          border: "2px solid rgb(255, 50, 50)",
-          maskImage: `radial-gradient(
-            120px circle at ${mousePos.x - 4}px ${mousePos.y - 1}px,
-            black,
-            transparent
-          )`,
-          WebkitMaskImage: `radial-gradient(
-            120px circle at ${mousePos.x - 4}px ${mousePos.y - 1}px,
-            black,
-            transparent
-          )`,
-        }}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none rounded-lg"
-        style={{
-          border: "2px solid rgb(50, 255, 50)",
-          maskImage: `radial-gradient(
-            120px circle at ${mousePos.x}px ${mousePos.y + 2}px,
-            black,
-            transparent
-          )`,
-          WebkitMaskImage: `radial-gradient(
-            120px circle at ${mousePos.x}px ${mousePos.y + 2}px,
-            black,
-            transparent
-          )`,
-        }}
-      />
-      <div
-        className="absolute inset-0 pointer-events-none rounded-lg"
-        style={{
-          border: "2px solid rgb(50, 50, 255)",
-          maskImage: `radial-gradient(
-            120px circle at ${mousePos.x + 4}px ${mousePos.y - 1}px,
-            black,
-            transparent
-          )`,
-          WebkitMaskImage: `radial-gradient(
-            120px circle at ${mousePos.x + 4}px ${mousePos.y - 1}px,
-            black,
-            transparent
-          )`,
-        }}
-      />
-
-      <div className="relative z-10 p-6">
-        <div className="relative overflow-hidden rounded-lg mb-6 group">
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent z-10" />
-          <Image
-            width={200}
-            height={300}
-            src={post.imageUrl}
-            alt={post.title}
-            className={`w-full h-48 object-cover transition-transform duration-700 ease-out
-                     ${isHovered ? "scale-110 rotate-1" : ""}`}
-          />
-          <Badge className="absolute top-4 right-4 z-20 p-1 rounded bg-gray-800 text-gray-100">
-            {post.category}
-          </Badge>
-        </div>
-
-        <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
-          <Clock className="w-4 h-4" />
-          <span>{post.readTime}</span>
-          <span className="text-gray-600">•</span>
-          <span>{post.author.name}</span>
-          <span className="text-gray-600">•</span>
-          <span>{new Date(post.date).toLocaleDateString()}</span>
-        </div>
-
-        <h3 className="text-xl font-semibold text-white mb-3">{post.title}</h3>
-
-        <p className="text-gray-400 text-sm mb-6 line-clamp-3">
-          {post.description}
-        </p>
-        <Link href={post.url} target="_blank">
-          <Button
-            variant="ghost"
-            className="w-full flex bg-gray-900/50 text-gray-300 hover:text-white hover:bg-gray-700/50"
-          >
-            <span className="mr-2">Read More</span>
-            <ArrowRight className="w-4 h-4" />
-          </Button>
-        </Link>
-      </div>
-    </div>
-  );
-};
-
-const BlogSection: React.FC = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  React.useEffect(() => {
-    const loadPosts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        const data = await fetchBlogPosts();
-        setPosts(data);
-      } catch (error) {
-        setError((error as Error).message);
-      } finally {
-        setLoading(false);
-      }
+        const padding = 50;
+        if (
+            x >= -padding &&
+            x <= bounds.width + padding &&
+            y >= -padding &&
+            y <= bounds.height + padding
+        ) {
+            setMousePos({x, y});
+        } else {
+            setMousePos({x: -1000, y: -1000});
+        }
     };
 
-    loadPosts();
-  }, []);
-
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: {
-      opacity: 0,
-      y: 20,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.5,
-        ease: "easeOut",
-      },
-    },
-  };
-
-  return (
-    <section className="w-full min-h-screen bg-[#121212] pb-16">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
-        <motion.div
-          className="text-center max-w-3xl mx-auto mb-16"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+    return (
+        <div
+            ref={cardRef}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={() => {
+                setMousePos({x: -1000, y: -1000});
+                setIsHovered(false);
+            }}
+            className="relative bg-[#1A1A1A]/80 backdrop-blur-sm rounded-lg overflow-hidden h-full"
         >
-          <h2 className="text-4xl text-center font-bold tracking-tight text-white mb-4">
-            Latest Blog Posts
-          </h2>
-          <p className="text-lg text-gray-400">
-            Stay up to date with the latest news and updates from our team.
-          </p>
-        </motion.div>
+            <div
+                className="absolute inset-0 pointer-events-none rounded-lg border-2 border-secondary"
+                style={{
+                    maskImage: `radial-gradient(
+            120px circle at ${mousePos.x}px ${mousePos.y}px,
+            black,
+            transparent
+          )`,
+                    WebkitMaskImage: `radial-gradient(
+            120px circle at ${mousePos.x}px ${mousePos.y}px,
+            black,
+            transparent
+          )`,
+                }}
+            />
 
-        {error && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="max-w-3xl mx-auto mb-12"
-          >
-            <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          </motion.div>
-        )}
+            <div className="relative z-10 p-6">
+                <div className="relative overflow-hidden rounded-lg mb-6 group">
+                    <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent z-10"/>
+                    <Image
+                        width={200}
+                        height={300}
+                        src={post.imageUrl}
+                        alt={post.title}
+                        className={`w-full h-48 object-cover transition-transform duration-700 ease-out
+                     ${isHovered ? "scale-110 rotate-1" : ""}`}
+                    />
+                    <Badge className="absolute top-4 right-4 z-20 p-1 bg-gray-800 text-gray-100">
+                        {post.category}
+                    </Badge>
+                </div>
 
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {loading
-            ? Array(6)
-                .fill(null)
-                .map((_, index) => (
-                  <motion.div
-                    key={`skeleton-${index}`}
-                    variants={cardVariants}
-                    className="h-full"
-                  >
-                    <div className="bg-[#1A1A1A]/80 backdrop-blur-sm rounded-lg p-6 h-full">
-                      <Skeleton className="h-48 w-full bg-gray-700/50 rounded-lg mb-6" />
-                      <Skeleton className="h-4 w-24 bg-gray-700/50 mb-3" />
-                      <Skeleton className="h-6 w-full bg-gray-700/50 mb-3" />
-                      <Skeleton className="h-24 w-full bg-gray-700/50" />
-                    </div>
-                  </motion.div>
-                ))
-            : posts.map((post) => (
+                <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">
+                    <Clock className="w-4 h-4"/>
+                    <span>{post.readTime}</span>
+                    <span className="text-gray-600">•</span>
+                    <span>{post.author.name}</span>
+                    <span className="text-gray-600">•</span>
+                    <span>{new Date(post.date).toLocaleDateString()}</span>
+                </div>
+
+                <h3 className="text-xl font-semibold text-white mb-3">{post.title}</h3>
+
+                <p className="text-gray-400 text-sm mb-6 line-clamp-3">
+                    {post.description}
+                </p>
+                <Link href={post.url} target="_blank">
+                    <Button
+                        variant="ghost"
+                        className="w-full flex bg-gray-900/50 text-gray-300 "
+                    >
+                        <span className="mr-2">Read More</span>
+                        <ArrowRight className="w-4 h-4"/>
+                    </Button>
+                </Link>
+            </div>
+        </div>
+    );
+};
+const BlogSection: React.FC = () => {
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    React.useEffect(() => {
+        const loadPosts = async () => {
+            try {
+                setLoading(true);
+                setError(null);
+                const data = await fetchBlogPosts();
+                setPosts(data);
+            } catch (error) {
+                setError((error as Error).message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadPosts();
+    }, []);
+
+    const containerVariants = {
+        hidden: {opacity: 0},
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+            },
+        },
+    };
+
+    const cardVariants = {
+        hidden: {
+            opacity: 0,
+            y: 20,
+        },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.5,
+                ease: "easeOut",
+            },
+        },
+    };
+
+    return (
+        <section className="w-full min-h-screen bg-[#121212] pb-16" id='blog'>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
                 <motion.div
-                  key={post.id}
-                  variants={cardVariants}
-                  className="h-full"
+                    className="text-center max-w-3xl mx-auto mb-16"
+                    initial={{opacity: 0, y: -20}}
+                    animate={{opacity: 1, y: 0}}
+                    transition={{duration: 0.6}}
                 >
-                  <BlogCard post={post} />
+                    <h2 className="text-5xl text-center font-bold tracking-tight text-white mb-4">
+                        Latest Blog Posts
+                    </h2>
+                    <p className="text-md text-gray-400">
+                        Stay up to date with the latest news and updates from our team.
+                    </p>
                 </motion.div>
-              ))}
-        </motion.div>
-      </div>
-    </section>
-  );
+
+                {error && (
+                    <motion.div
+                        initial={{opacity: 0, y: 20}}
+                        animate={{opacity: 1, y: 0}}
+                        className="max-w-3xl mx-auto mb-12"
+                    >
+                        <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4"/>
+                            <AlertDescription>{error}</AlertDescription>
+                        </Alert>
+                    </motion.div>
+                )}
+
+                <motion.div
+                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    {loading
+                        ? Array(6)
+                            .fill(null)
+                            .map((_, index) => (
+                                <motion.div
+                                    key={`skeleton-${index}`}
+                                    variants={cardVariants}
+                                    className="h-full"
+                                >
+                                    <div className="bg-[#1A1A1A]/80 backdrop-blur-sm rounded-lg p-6 h-full">
+                                        <Skeleton className="h-48 w-full bg-gray-700/50 rounded-lg mb-6"/>
+                                        <Skeleton className="h-4 w-24 bg-gray-700/50 mb-3"/>
+                                        <Skeleton className="h-6 w-full bg-gray-700/50 mb-3"/>
+                                        <Skeleton className="h-24 w-full bg-gray-700/50"/>
+                                    </div>
+                                </motion.div>
+                            ))
+                        : posts.map((post) => (
+                            <motion.div
+                                key={post.id}
+                                variants={cardVariants}
+                                className="h-full"
+                            >
+                                <BlogCard post={post}/>
+                            </motion.div>
+                        ))}
+                </motion.div>
+            </div>
+        </section>
+    );
 };
 
 export default BlogSection;

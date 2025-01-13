@@ -1,209 +1,212 @@
 html,
 body,
 #root {
-  height: 100%;
-  margin: 0;
+    height: 100%;
+    margin: 0;
 }
 
 .overlap-container {
-  position: relative;
-  width: 100dvw;
-  height: 100dvh;
-  overflow: hidden;
-  background-color: #000; /* Dark background for the effect */
+    position: relative;
+    width: 100dvw;
+    height: 100dvh;
+    overflow: hidden;
+    background-color: #000; /* Dark background for the effect */
 }
 
 .section {
-  width: 100dvw;
-  height: 100dvh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  left: -12%;
-  top: -20%;
+    width: 100dvw;
+    height: 100dvh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    left: -12%;
+    top: -20%;
 }
 
 .content {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  box-sizing: border-box;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .title-container {
-  position: absolute;
-  left: 12%;
-  top: 20%;
-  z-index: 10;
-  pointer-events: none;
-  user-select: none;
-  @media (max-width: 768px) {
-    top: auto;
-    bottom: 15dvh;
-    left: 0;
-    width: 100%;
-    text-align: center;
-  }
+    position: absolute;
+    left: 12%;
+    top: 25%;
+    z-index: 10;
+    pointer-events: none;
+    user-select: none;
+    @media (max-width: 768px) {
+        top: auto;
+        bottom: 15dvh;
+        left: 0;
+        width: 100%;
+        text-align: center;
+    }
 }
 
 .title {
-  font-size: 4rem;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-  margin: 0;
-  white-space: nowrap;
-  @media (max-width: 768px) {
-    font-size: 2rem;
-  }
+    font-size: 4rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    margin: 0;
+    white-space: nowrap;
+    @media (max-width: 768px) {
+        font-size: 2rem;
+    }
 }
 
 .title-bottom {
-  font-size: 4rem;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-  margin: 0;
-  white-space: nowrap;
+    font-size: 5rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+    margin: 0;
+    white-space: nowrap;
 }
+
 .description {
-  font-size: 1.5rem;
-  opacity: 0.7;
-  margin-top: 12px;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-  margin: 0;
-  white-space: nowrap;
-  @media (max-width: 768px) {
-      font-size: 1.2rem;
-  }
+    font-size: 1.5rem;
+    opacity: 0.7;
+    margin-top: 12px;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    margin: 0;
+    white-space: nowrap;
+    @media (max-width: 768px) {
+        font-size: 1.2rem;
+    }
 }
+
 .bottom-title-container {
-  z-index: 2;
+    z-index: 2;
 }
 
 .bottom-title-container .title {
-  color: white;
+    color: white;
 }
 
 /* Add these styles to your styles.css file */
 
 @keyframes leftPulse {
-  0% {
-    box-shadow: 0 0 0 0px rgba(225, 225, 225, 0.25);
-  }
-  100% {
-    box-shadow: -30px 0 0 20px rgba(220, 220, 220, 0);
-  }
+    0% {
+        box-shadow: 0 0 0 0px rgba(225, 225, 225, 0.25);
+    }
+    100% {
+        box-shadow: -30px 0 0 20px rgba(220, 220, 220, 0);
+    }
 }
 
 .divider {
-  position: absolute;
-  width: 4px;
-  height: 100%;
-  background-color: #282828;
-  cursor: ew-resize;
-  transition: background-color 2s ease;
+    position: absolute;
+    width: 4px;
+    height: 100%;
+    background-color: #282828;
+    cursor: ew-resize;
+    transition: background-color 2s ease;
 }
 
 .divider-pulse {
-  animation: leftPulse 2s ease-in infinite;
-  /* Constant glow effect */
-  box-shadow: 0 0 15px rgba(128, 128, 128, 0.6);
+    animation: leftPulse 2s ease-in infinite;
+    /* Constant glow effect */
+    box-shadow: 0 0 15px rgba(128, 128, 128, 0.6);
 }
 
 /* Add hover effect for additional feedback */
 .divider-pulse:hover {
-  background-color: #888;
-  box-shadow: 0 0 20px rgba(128, 128, 128, 0.8);
+    background-color: #888;
+    box-shadow: 0 0 20px rgba(128, 128, 128, 0.8);
 }
 
 @keyframes jumbo {
-  from {
-    background-position: 50% 50%, 50% 50%;
-  }
-  to {
-    background-position: 350% 50%, 350% 50%;
-  }
+    from {
+        background-position: 50% 50%, 50% 50%;
+    }
+    to {
+        background-position: 350% 50%, 350% 50%;
+    }
 }
 
 .jumbo {
-  --stripes: repeating-linear-gradient(
-    100deg,
-    #fff 0%,
-    #fff 7%,
-    transparent 10%,
-    transparent 12%,
-    #fff 16%
-  );
-  --stripesDark: repeating-linear-gradient(
-    100deg,
-    #000 0%,
-    #000 7%,
-    transparent 10%,
-    transparent 12%,
-    #000 16%
-  );
-  --rainbow: repeating-linear-gradient(
-    100deg,
-    #60a5fa 10%,
-    #e879f9 15%,
-    #60a5fa 20%,
-    #5eead4 25%,
-    #60a5fa 30%
-  );
-  background-image: var(--stripes), var(--rainbow);
-  background-size: 300%, 200%;
-  background-position: 50% 50%, 50% 50%;
+    --stripes: repeating-linear-gradient(
+            100deg,
+            #fff 0%,
+            #fff 7%,
+            transparent 10%,
+            transparent 12%,
+            #fff 16%
+    );
+    --stripesDark: repeating-linear-gradient(
+            100deg,
+            #000 0%,
+            #000 7%,
+            transparent 10%,
+            transparent 12%,
+            #000 16%
+    );
+    --rainbow: repeating-linear-gradient(
+            100deg,
+            #60a5fa 10%,
+            #e879f9 15%,
+            #60a5fa 20%,
+            #5eead4 25%,
+            #60a5fa 30%
+    );
+    background-image: var(--stripes), var(--rainbow);
+    background-size: 300%, 200%;
+    background-position: 50% 50%, 50% 50%;
 
-  filter: invert(100%);
+    filter: invert(100%);
 
-  mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
+    mask-image: radial-gradient(ellipse at 100% 0%, black 40%, transparent 70%);
 
-  pointer-events: none;
+    pointer-events: none;
 }
 
 .jumbo::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: var(--stripes), var(--rainbow);
-  background-size: 200%, 100%;
-  animation: jumbo 60s linear infinite;
-  background-attachment: fixed;
-  mix-blend-mode: difference;
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--stripes), var(--rainbow);
+    background-size: 200%, 100%;
+    animation: jumbo 60s linear infinite;
+    background-attachment: fixed;
+    mix-blend-mode: difference;
 }
 
 .dark .jumbo {
-  background-image: var(--stripesDark), var(--rainbow);
-  filter: blur(10px) opacity(50%) saturate(200%);
+    background-image: var(--stripesDark), var(--rainbow);
+    filter: blur(10px) opacity(50%) saturate(200%);
 }
+
 .dark .jumbo::after {
-  background-image: var(--stripesDark), var(--rainbow);
+    background-image: var(--stripesDark), var(--rainbow);
 }
 
 .divider-wrap {
-  position: absolute;
-  height: 100%;
-  z-index: 10;
+    position: absolute;
+    height: 100%;
+    z-index: 10;
 }
 
 .divider-text {
-  z-index: 11;
-  pointer-events: none;
+    z-index: 11;
+    pointer-events: none;
 }
 
 /* Update hover state to affect text as well */
 .divider-wrap:hover .divider-text {
-  opacity: 1 !important;
-  background: rgba(60, 60, 60, 0.9);
+    opacity: 1 !important;
+    background: rgba(60, 60, 60, 0.9);
 }
 
 /* Hide text while dragging */
 .divider-wrap.dragging .divider-text {
-  opacity: 0;
+    opacity: 0;
 }

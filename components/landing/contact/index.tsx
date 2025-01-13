@@ -19,7 +19,7 @@ function Contact() {
                       }}
                       whileTap={{scale: 0.95}}
             >
-                <p className='font-light text-6xl my-3 cursor-pointer'>Say Hello</p>
+                <p className='font-light text-6xl my-3 cursor-pointer text-white'>Say Hello</p>
             </motion.a>
             <p className='my-4 opacity-80'>Or</p>
             <ContactForm/>

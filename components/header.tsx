@@ -92,10 +92,10 @@ const Header: React.FC = () => {
     const handleScroll = (id: string): void => {
         const element = document.getElementById(id);
         if (element) {
-            element.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+            // Using setTimeout to ensure the mobile menu closes before scrolling
+            setTimeout(() => {
+                element.scrollIntoView({behavior: "smooth"});
+            }, 100);
             setIsOpen(false);
         }
     };
@@ -169,7 +169,7 @@ const Header: React.FC = () => {
 
                     <Sheet open={isOpen} onOpenChange={setIsOpen}>
                         <SheetTrigger asChild>
-                            <Menu className="h-8 w-8"/>
+                            <Menu className="h-8 w-8 text-gray-200"/>
                         </SheetTrigger>
                         <SheetContent className="bg-black/90 backdrop-blur-lg pt-12">
                             <SheetClose

@@ -115,6 +115,13 @@ a {
 }
 
 
+/* This ensures sections account for the fixed header */
+section[id],
+div[id] {
+    scroll-margin-top: 100px; /* Adjust this value based on your header height */
+}
+
+
 @layer base {
     :root[class~="dark"] {
         --foreground: 255 255 255; /* This sets white as default text color in dark mode */

@@ -1,5 +1,4 @@
 import React, {useRef, useState} from "react";
-import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
 import {Skeleton} from "@/components/ui/skeleton";
 import {AlertCircle, ArrowRight, Clock} from "lucide-react";
@@ -14,7 +13,6 @@ interface Post {
     description: string;
     date: string;
     readTime: string;
-    category: string;
     imageUrl: string;
     url: string;
     author: IUser;
@@ -33,7 +31,6 @@ interface BlogCardProps {
     post: Post;
 }
 
-const categories = ["Technology", "Development", "Design", "Tutorial", "News"];
 const readTimes = ["3 min read", "5 min read", "7 min read", "10 min read"];
 const getRandomItem = (array: string[]): string =>
     array[Math.floor(Math.random() * array.length)];
@@ -69,7 +66,6 @@ const fetchBlogPosts = async (): Promise<Post[]> => {
             description: post.body,
             date: new Date(Date.now() - index * 86400000).toISOString(),
             readTime: getRandomItem(readTimes),
-            category: getRandomItem(categories),
             author: post.author,
             url: post.url,
             imageUrl:
@@ -149,9 +145,7 @@ const BlogCard: React.FC<BlogCardProps> = ({post}) => {
                         className={`w-full h-48 object-cover transition-transform duration-700 ease-out
                      ${isHovered ? "scale-110 rotate-1" : ""}`}
                     />
-                    <Badge className="absolute top-4 right-4 z-20 p-1 bg-gray-800 text-gray-100">
-                        {post.category}
-                    </Badge>
+
                 </div>
 
                 <div className="flex items-center gap-2 text-sm text-gray-400 mb-3">

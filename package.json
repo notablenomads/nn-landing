@@ -1,13 +1,14 @@
 {
   "name": "aws-amplify-gen2",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prepare": "husky"
+    "prepare": "husky",
+    "release": "npx standard-version"
   },
   "dependencies": {
     "@aws-amplify/ui-react": "^6.7.1",

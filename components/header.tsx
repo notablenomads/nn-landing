@@ -1,5 +1,5 @@
 "use client";
-import {motion} from "framer-motion";
+import {AnimatePresence, motion} from "framer-motion";
 import Image from "next/image";
 import React from "react";
 import {Menu, X} from "lucide-react";
@@ -17,7 +17,10 @@ interface NavItem {
     id: string;
 }
 
-// Custom SheetContent component without default close button
+interface HeaderProps {
+    isChatOpen?: boolean;
+}
+
 const SheetContent = React.forwardRef<
     React.ElementRef<typeof SheetPrimitive.Content>,
     SheetContentProps
@@ -42,7 +45,7 @@ const Sheet = SheetPrimitive.Root;
 const SheetTrigger = SheetPrimitive.Trigger;
 const SheetClose = SheetPrimitive.Close;
 
-const Header: React.FC = () => {
+const Header: React.FC<HeaderProps> = ({isChatOpen = false}) => {
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
     const navItems: NavItem[] = [
@@ -52,47 +55,58 @@ const Header: React.FC = () => {
         {title: "Contact Us", id: "contact"}
     ];
 
-    const containerVariants = {
-        hidden: {opacity: 0},
-        visible: {
+    const navItemVariants = {
+        visible: (i: number) => ({
             opacity: 1,
+            x: 0,
             transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.3
+                delay: i * 0.1,
+                duration: 0.2,
+                ease: "easeOut"
+            }
+        }),
+        hidden: {
+            opacity: 0,
+            x: -20,
+            transition: {
+                duration: 0.2,
+                ease: "easeIn"
             }
         }
-    } as const;
+    };
 
-    const itemVariants = {
-        hidden: {y: 20, opacity: 0},
-        visible: {
-            y: 0,
+    const titleVariants = {
+        initial: {
+            opacity: 0,
+            x: -20,
+            width: 0,
+            marginLeft: 0
+        },
+        animate: {
             opacity: 1,
+            x: 0,
+            width: "auto",
+            marginLeft: "1rem",
             transition: {
-                type: "ease",
-                duration: 1,
-                stiffness: 100,
-                damping: 10
+                duration: 0.3,
+                ease: "easeOut"
+            }
+        },
+        exit: {
+            opacity: 0,
+            x: -20,
+            width: 0,
+            marginLeft: 0,
+            transition: {
+                duration: 0.2,
+                ease: "easeIn"
             }
         }
-    } as const;
-
-    const mobileMenuVariants = {
-        hidden: {y: -20, opacity: 0},
-        visible: {
-            y: 0,
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.1,
-                delayChildren: 0.2
-            }
-        }
-    } as const;
+    };
 
     const handleScroll = (id: string): void => {
         const element = document.getElementById(id);
         if (element) {
-            // Using setTimeout to ensure the mobile menu closes before scrolling
             setTimeout(() => {
                 element.scrollIntoView({behavior: "smooth"});
             }, 100);
@@ -102,103 +116,143 @@ const Header: React.FC = () => {
 
     return (
         <motion.header
-            className="fixed top-0 left-0 right-0 bg-black/50 backdrop-blur-sm z-50"
+            className={cn(
+                "fixed top-0 left-0 right-0 bg-black/50 backdrop-blur-sm z-50",
+                isChatOpen && "bg-black/80"
+            )}
+            initial={false}
         >
-            <motion.div
-                className="container mx-auto px-4 py-6"
-                initial="hidden"
-                animate="visible"
-                variants={containerVariants}
-            >
+            <motion.div className="container mx-auto px-4 py-6">
                 {/* Desktop Navigation */}
-                <div className="hidden md:flex justify-between items-center">
-                    {/* First two nav items */}
-                    {navItems.slice(0, 2).map((item) => (
-                        <motion.button
-                            key={item.id}
-                            variants={itemVariants}
-                            onClick={() => handleScroll(item.id)}
-                            className="text-gray-400 text-lg cursor-pointer hover:text-gray-200 transition-colors bg-transparent"
-                        >
-                            {item.title}
-                        </motion.button>
-                    ))}
-
-                    {/* Logo */}
-                    <motion.div
-                        initial={{opacity: 0, y: 20}}
-                        animate={{opacity: 1, y: 0}}
-                        transition={{
-                            type: "spring",
-                            stiffness: 100,
-                            damping: 10,
-                            delay: 0.5
-                        }}
-                    >
-                        <Image
-                            src="/logo/new-nn-logo-dark.svg"
-                            alt="logo"
-                            width={75}
-                            height={75}
-                            priority
-                        />
+                <nav className="hidden md:flex justify-between items-center">
+                    {/* Left nav items */}
+                    <motion.div className="flex-1 flex justify-start items-center gap-8">
+                        <AnimatePresence mode="wait">
+                            {!isChatOpen && navItems.slice(0, 2).map((item, i) => (
+                                <motion.button
+                                    key={item.id}
+                                    variants={navItemVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit="hidden"
+                                    custom={i}
+                                    onClick={() => handleScroll(item.id)}
+                                    className="text-gray-400 text-lg cursor-pointer hover:text-gray-200
+                                             transition-colors bg-transparent whitespace-nowrap"
+                                >
+                                    {item.title}
+                                </motion.button>
+                            ))}
+                        </AnimatePresence>
                     </motion.div>
 
-                    {/* Last two nav items */}
-                    {navItems.slice(2, 4).map((item) => (
-                        <motion.button
-                            key={item.id}
-                            variants={itemVariants}
-                            onClick={() => handleScroll(item.id)}
-                            className="text-gray-400 text-lg cursor-pointer hover:text-gray-200 transition-colors bg-transparent"
-                        >
-                            {item.title}
-                        </motion.button>
-                    ))}
-                </div>
+                    {/* Center logo and title */}
+                    <motion.div
+                        className="flex items-center justify-center"
+                        layout
+                    >
+                        <motion.div className="flex items-center justify-center">
+                            <div className="w-[75px] h-[75px] relative">
+                                <Image
+                                    src="/logo/new-nn-logo-dark.svg"
+                                    alt="logo"
+                                    fill
+                                    className="object-contain"
+                                    priority
+                                />
+                            </div>
+                            <AnimatePresence mode="wait">
+                                {isChatOpen && (
+                                    <motion.h1
+                                        variants={titleVariants}
+                                        initial="initial"
+                                        animate="animate"
+                                        exit="exit"
+                                        className="text-gray-200 text-2xl font-semibold overflow-hidden whitespace-nowrap"
+                                    >
+                                        Notable Nomads
+                                    </motion.h1>
+                                )}
+                            </AnimatePresence>
+                        </motion.div>
+                    </motion.div>
+
+                    {/* Right nav items */}
+                    <motion.div className="flex-1 flex justify-end items-center gap-8">
+                        <AnimatePresence mode="wait">
+                            {!isChatOpen && navItems.slice(2, 4).map((item, i) => (
+                                <motion.button
+                                    key={item.id}
+                                    variants={navItemVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit="hidden"
+                                    custom={i}
+                                    onClick={() => handleScroll(item.id)}
+                                    className="text-gray-400 text-lg cursor-pointer hover:text-gray-200
+                                             transition-colors bg-transparent whitespace-nowrap"
+                                >
+                                    {item.title}
+                                </motion.button>
+                            ))}
+                        </AnimatePresence>
+                    </motion.div>
+                </nav>
 
                 {/* Mobile Navigation */}
                 <div className="md:hidden flex justify-between items-center">
-                    <Image
-                        src="/logo/new-nn-logo-dark.svg"
-                        alt="logo"
-                        width={50}
-                        height={50}
-                        priority
-                    />
+                    <motion.div
+                        className="flex items-center"
+                        layout
+                    >
+                        <div className="w-[50px] h-[50px] relative">
+                            <Image
+                                src="/logo/new-nn-logo-dark.svg"
+                                alt="logo"
+                                fill
+                                className="object-contain"
+                                priority
+                            />
+                        </div>
+                        <AnimatePresence mode="wait">
+                            {isChatOpen && (
+                                <motion.h1
+                                    variants={titleVariants}
+                                    initial="initial"
+                                    animate="animate"
+                                    exit="exit"
+                                    className="text-gray-200 text-xl font-semibold overflow-hidden whitespace-nowrap"
+                                >
+                                    Notable Nomads
+                                </motion.h1>
+                            )}
+                        </AnimatePresence>
+                    </motion.div>
 
                     <Sheet open={isOpen} onOpenChange={setIsOpen}>
                         <SheetTrigger asChild>
                             <Menu className="h-8 w-8 text-gray-200"/>
                         </SheetTrigger>
                         <SheetContent className="bg-black/90 backdrop-blur-lg pt-12">
-                            <SheetClose
-                                className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none disabled:pointer-events-none">
+                            <SheetClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background
+                                                 transition-opacity hover:opacity-100 focus:outline-none
+                                                 disabled:pointer-events-none">
                                 <X className="h-8 w-8 text-gray-200"/>
                                 <span className="sr-only">Close</span>
                             </SheetClose>
                             <motion.nav
+                                className="flex flex-col space-y-6 pt-16"
                                 initial="hidden"
                                 animate="visible"
-                                variants={mobileMenuVariants}
-                                className="flex flex-col space-y-6 pt-16"
                             >
                                 {navItems.map((item, index) => (
                                     <motion.div
                                         key={item.id}
-                                        variants={{
-                                            hidden: {x: -20, opacity: 0},
-                                            visible: {
-                                                x: 0,
-                                                opacity: 1,
-                                                transition: {
-                                                    delay: index * 0.1,
-                                                    duration: 0.5
-                                                }
-                                            }
-                                        }}
+                                        custom={index}
+                                        variants={navItemVariants}
                                         onClick={() => handleScroll(item.id)}
-                                        className="text-gray-400 text-2xl my-1.5 text-left hover:text-gray-200 transition-colors"
+                                        className="text-gray-400 text-2xl my-1.5 text-left hover:text-gray-200
+                                                 transition-colors"
                                     >
                                         {item.title}
                                     </motion.div>
@@ -211,5 +265,4 @@ const Header: React.FC = () => {
         </motion.header>
     );
 };
-
 export default Header;

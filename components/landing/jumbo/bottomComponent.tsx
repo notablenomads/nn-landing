@@ -13,7 +13,7 @@ const BottomComponent = () => {
 
       <div className="title-container bottom-title-container">
         <h1 className="title-bottom">Notable Nomads</h1>
-        <h1 className="description">Wander, Discover, Create</h1>
+        <h1 className="description">Turning Visions Into Reality</h1>
       </div>
     </div>
   );

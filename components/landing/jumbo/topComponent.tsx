@@ -1,49 +1,55 @@
-import React, {useCallback, useState, useTransition} from "react";
+import React, {useCallback, useEffect, useState, useTransition} from "react";
 import {AnimatePresence, motion} from "framer-motion";
 import Header from "../../header";
 import TechStackTower from "./tech";
 import ChatComponent from "@/components/landing/chat/page";
+import {Button} from "@/components/ui/button";
+import './styles.css';
 
 const TopComponent: React.FC = () => {
     const [isChatOpen, setIsChatOpen] = useState(false);
     const [isAnimatingOut, setIsAnimatingOut] = useState(false);
     const [effectsEnabled, setEffectsEnabled] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_isPending, startTransition] = useTransition();
+
+    // Handle window resize and detect mobile
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768); // md breakpoint
+        };
+
+        checkMobile(); // Initial check
+        window.addEventListener('resize', checkMobile);
+
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const handleChatOpen = useCallback(() => {
         setIsAnimatingOut(true);
 
-        // Step 1: Start title exit animation
         setTimeout(() => {
-            // Step 2: Start 3D model movement
             setIsChatOpen(true);
-
-            // Step 3: After model is in position, enable neon effects
             setTimeout(() => {
-                setEffectsEnabled(true);
+                // Only enable effects on desktop
+                if (!isMobile) {
+                    setEffectsEnabled(true);
+                }
                 setIsAnimatingOut(false);
-            }, 600); // Adjust timing based on model animation duration
+            }, 600);
         }, 500);
-    }, []);
-
+    }, [isMobile]);
 
     const handleChatClose = useCallback(() => {
-        // Start closing sequence
         setIsAnimatingOut(true);
-
-        // First disable effects
         startTransition(() => {
             setEffectsEnabled(false);
         });
-
-        // Give time for model to start moving before UI changes
         const timer1 = setTimeout(() => {
             startTransition(() => {
                 setIsChatOpen(false);
             });
-
-            // Reset states after everything is done
             const timer2 = setTimeout(() => {
                 setIsAnimatingOut(false);
             }, 400);
@@ -54,6 +60,7 @@ const TopComponent: React.FC = () => {
         return () => clearTimeout(timer1);
     }, []);
 
+    // Animation variants remain the same
     const titleContainerVariants = {
         initial: {
             x: 0,
@@ -127,91 +134,76 @@ const TopComponent: React.FC = () => {
         }
     };
 
-
     return (
         <>
             <Header isChatOpen={isChatOpen}/>
-            <TechStackTower withEffects={effectsEnabled} isChatOpen={isChatOpen}
+            <TechStackTower
+                withEffects={!isMobile && effectsEnabled}
+                isChatOpen={!isMobile && isChatOpen}
             />
 
-            <div className="title-container">
-                <AnimatePresence mode="wait">
-                    {!isChatOpen ? (
-                        <motion.div
-                            key="titles"
-                            variants={titleContainerVariants}
-                            initial="initial"
-                            animate="initial"
-                            exit="exit"
-                        >
-                            <motion.h1
-                                className="title"
-                                variants={titleVariants}
-                                animate={isAnimatingOut ? "exit" : "initial"}
+            {/* Main container with flex layout */}
+            <div className="w-full min-h-dvh flex items-end sm:items-center pt-[98px]">
+                {/* Content wrapper with responsive positioning */}
+                <div
+                    className="w-full flex md:justify-start justify-center md:items-center items-end md:px-24 px-0 md:pb-0">
+                    <AnimatePresence mode="wait">
+                        {!isChatOpen ? (
+                            <motion.div
+                                key="titles"
+                                variants={titleContainerVariants}
+                                initial="initial"
+                                animate="initial"
+                                exit="exit"
+                                className="text-center w-full md:max-w-lg px-4 mb-6 sm:mb-1"
                             >
-                                Notable Nomads
-                            </motion.h1>
-                            <motion.h1
-                                className="description"
-                                variants={descriptionVariants}
-                                animate={isAnimatingOut ? "exit" : "initial"}
-                            >
-                                Wander, Discover, Create
-                            </motion.h1>
-                            <motion.button
-                                className="mt-8 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full
-                          text-gray-200 hover:bg-white/20 transition-colors
-                          border border-gray-400/30"
-                                onClick={handleChatOpen}
-                                whileHover={{scale: 1.05}}
-                                whileTap={{scale: 0.95}}
-                                initial={{opacity: 0, y: 20}}
-                                animate={{opacity: 1, y: 0}}
-                            >
-                                Start Chat
-                            </motion.button>
-                        </motion.div>
-                    ) : (
-                        <motion.div
-                            key="chat"
-                            variants={chatComponentVariants}
-                            initial="initial"
-                            animate="animate"
-                            exit="exit"
-                            className="bg-black/80 backdrop-blur-md rounded-lg p-6 relative"
-                            style={{
-                                minWidth: "500px",
-                                minHeight: "400px",
-                                maxWidth: "90vw",
-                                maxHeight: "70vh"
-                            }}
-                        >
-                            <button
-                                onClick={handleChatClose}
-                                className="absolute top-4 right-4 text-gray-400 hover:text-gray-200 transition-colors"
-                            >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
+                                <motion.h1
+                                    className="title"
+                                    variants={titleVariants}
+                                    animate={isAnimatingOut ? "exit" : "initial"}
                                 >
-                                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                                </svg>
-                            </button>
-
-                            <div className="pt-8">
-                                <ChatComponent/>
-                            </div>
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                                    Notable Nomads
+                                </motion.h1>
+                                <motion.h1
+                                    className="description mb-1"
+                                    variants={descriptionVariants}
+                                    animate={isAnimatingOut ? "exit" : "initial"}
+                                >
+                                    Turning Visions Into Reality
+                                </motion.h1>
+                                <motion.div
+                                    className="mt-8 gradient-border-wrap"
+                                    onClick={handleChatOpen}
+                                    initial={{opacity: 0, y: 20}}
+                                    animate={{opacity: 1, y: 0}}
+                                >
+                                    <Button
+                                        className="relative w-full bg-gray-950 inner-shadow py-3 text-xl h-full ai-btn"
+                                    >
+                                        Nomad AI Chat Bot
+                                    </Button>
+                                </motion.div>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="chat"
+                                variants={chatComponentVariants}
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                className={`bg-black/80 backdrop-blur-md md:rounded-lg md:p-6 relative w-full 
+                                ${isMobile ? 'h-[calc(100vh-98px)] p-0' : 'md:w-auto'}`}
+                            >
+                                <div className={`${isMobile ? 'h-full pt-0' : 'pt-8'}`}>
+                                    <ChatComponent
+                                        onClose={handleChatClose}
+                                        className={isMobile ? 'h-full' : ''}
+                                    />
+                                </div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </div>
             </div>
         </>
     );

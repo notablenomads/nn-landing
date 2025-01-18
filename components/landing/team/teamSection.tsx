@@ -48,7 +48,7 @@ const defaultConfig: EffectConfig = {
 const teamMembers: TeamMember[] = [
     {
         name: "Milad Ghamati",
-        role: "Co-Founder & \nFrontend Engineer",
+        role: "Frontend Artisan & Pixel Perfectionist",
         image: "/team/milad-ghamati.png",
         linkedin: "https://www.linkedin.com/in/milad-ghamati-0517a8151/",
         github: "https://github.com/Moouren",
@@ -57,7 +57,7 @@ const teamMembers: TeamMember[] = [
     },
     {
         name: "Mahdi Rashidi",
-        role: "Co-Founder & \nBackend Engineer",
+        role: "Cloud Alchemist & Infrastructure Innovator",
         image: "/team/mahdi-rashidi.png",
         linkedin: "https://www.linkedin.com/in/mrdevx/",
         github: "https://github.com/MRdevX",
@@ -66,11 +66,12 @@ const teamMembers: TeamMember[] = [
     },
     {
         name: "Amirhossein Samiazar",
-        role: "Co-Founder & Backend Engineer",
+        role: "Tech Vision Guardian & Performance Virtuoso",
         image: "/team/amir-sami.png",
         linkedin: "https://www.linkedin.com/in/amirhosein-samiazar/",
         github: "https://github.com/ahsami",
-        description: "With over 10 years of experience in the software development\n" +
+        description:
+            "With over 10 years of experience in the software development\n" +
             "industry, delivered more than 15 complex projects, meeting tight\n" +
             "deadlines and ensuring client satisfaction.\n" +
             "also excelled in leadership roles, having led teams ranging from 2\n" +
@@ -78,16 +79,24 @@ const teamMembers: TeamMember[] = [
             "Recognizing the importance of continuous improvement, implemented\n" +
             "software architecture improvements which led to a minimum 50%\n" +
             "increased in systems performance and a minimum 25% decreased in\n" +
-            "maintenance costs."
+            "maintenance costs.",
+    },
+    {
+        name: "Ali Bakhtiyari",
+        role: "Flutter Wizard & Mobile App Maestro",
+        image: "/team/ali-bakhtiyari.png",
+        linkedin: "https://www.linkedin.com/in/alibakhtiyari/",
+        github: "https://github.com/alibt",
+        description:
+            "I'm a Flutter Developer with more than 5 years of experience.\n" +
+            "I have developed and maintained mobile app projects on\n" +
+            " clean architecture/bloc+cubit and MVVM/Provider for android and iOS.\n" +
+            "As a team member, I try to understand the priorities and come up with solutions aligned with them.",
     },
 ];
 
 // WebGL Image Effect Component
-const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
-                                                             imageUrl,
-                                                             config = defaultConfig,
-                                                             borderRadius = 10,
-                                                         }) => {
+const ImageWithEffect: React.FC<ImageWithEffectProps> = ({imageUrl, config = defaultConfig, borderRadius = 10}) => {
     const materialRef = useRef<THREE.ShaderMaterial>(null);
     const meshRef = useRef<THREE.Mesh>(null);
     const timeRef = useRef(0);
@@ -106,11 +115,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
     useEffect(() => {
         timeRef.current = 0;
         const computeSize = 128;
-        const computeRenderer = new GPUComputationRenderer(
-            computeSize,
-            computeSize,
-            gl
-        );
+        const computeRenderer = new GPUComputationRenderer(computeSize, computeSize, gl);
 
         const dataTexture = computeRenderer.createTexture();
         // Cast image.data to Uint8Array first
@@ -123,11 +128,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
             theArray[i + 3] = 255; // Full alpha
         }
 
-        const variable = computeRenderer.addVariable(
-            "uGrid",
-            computeShader,
-            dataTexture
-        );
+        const variable = computeRenderer.addVariable("uGrid", computeShader, dataTexture);
 
         computeVariable.current = variable;
 
@@ -173,9 +174,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
 
         const delta = currentMouse.current.clone().sub(prevMouse.current);
 
-        computeVariable.current.material.uniforms.uMouse.value.copy(
-            currentMouse.current
-        );
+        computeVariable.current.material.uniforms.uMouse.value.copy(currentMouse.current);
         computeVariable.current.material.uniforms.uDeltaMouse.value.copy(delta);
         computeVariable.current.material.uniforms.uMouseMove.value = 1;
     };
@@ -188,11 +187,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
     };
 
     return (
-        <mesh
-            ref={meshRef}
-            onPointerMove={handlePointerMove}
-            onPointerLeave={handlePointerLeave}
-        >
+        <mesh ref={meshRef} onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
             <planeGeometry args={[width, height, 32, 32]}/>
             <shaderMaterial
                 ref={materialRef}
@@ -203,10 +198,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
                     uTexture: {value: texture},
                     uGrid: {value: null},
                     uImageResolution: {
-                        value: new THREE.Vector2(
-                            texture.image?.width || 1,
-                            texture.image?.height || 1
-                        ),
+                        value: new THREE.Vector2(texture.image?.width || 1, texture.image?.height || 1),
                     },
                     uViewport: {
                         value: new THREE.Vector2(viewport.width, viewport.height),
@@ -241,9 +233,7 @@ const MobileTeamSection: React.FC = () => {
                                 />
                             </div>
                             <div className="text-center bg-black bg-opacity-75 p-4 w-64 rounded">
-                                <h3 className="text-lg font-semibold text-white mb-2">
-                                    {member.name}
-                                </h3>
+                                <h3 className="text-lg font-semibold text-white mb-2">{member.name}</h3>
                                 <p className="text-gray-300 mb-4">{member.role}</p>
                                 <div className="flex justify-center space-x-4">
                                     <a
@@ -252,13 +242,8 @@ const MobileTeamSection: React.FC = () => {
                                         rel="noopener noreferrer"
                                         className="transition-opacity hover:opacity-80"
                                     >
-                                        <Image
-                                            src="/social/github.png"
-                                            alt="GitHub"
-                                            width={30}
-                                            height={30}
-                                            className="rounded"
-                                        />
+                                        <Image src="/social/github.png" alt="GitHub" width={30} height={30}
+                                               className="rounded"/>
                                     </a>
                                     <a
                                         href={member.linkedin}
@@ -266,18 +251,11 @@ const MobileTeamSection: React.FC = () => {
                                         rel="noopener noreferrer"
                                         className="transition-opacity hover:opacity-80"
                                     >
-                                        <Image
-                                            src="/social/linkedin.png"
-                                            alt="LinkedIn"
-                                            width={30}
-                                            height={30}
-                                            className="rounded"
-                                        />
+                                        <Image src="/social/linkedin.png" alt="LinkedIn" width={30} height={30}
+                                               className="rounded"/>
                                     </a>
                                 </div>
-                                <PopupWrapper title={member.name}>
-                                    {member.description}
-                                </PopupWrapper>
+                                <PopupWrapper title={member.name}>{member.description}</PopupWrapper>
                             </div>
                         </div>
                     ))}
@@ -287,65 +265,54 @@ const MobileTeamSection: React.FC = () => {
     );
 };
 
-// WebGL Team Section Component
 const WebGLTeamSection: React.FC = () => {
+    const memberCount = teamMembers.length;
+    const spacing = 4; // Space between each member
+    const totalWidth = (memberCount - 1) * spacing;
+
+    // Calculate the camera position and FOV based on number of members
+    const cameraZ = Math.max(15, totalWidth * 1.2); // Increase camera distance for more members
+    const cameraFOV = Math.max(25, 20 + memberCount * 2); // Adjust FOV based on member count
+
     return (
         <div className="w-full h-[600px]">
             <Canvas
                 camera={{
-                    position: [0, 0, 15],
-                    fov: 25,
+                    position: [0, 0, cameraZ],
+                    fov: cameraFOV,
                     near: 0.1,
                     far: 1000,
                 }}
             >
-                {teamMembers.map((member, index) => (
-                    <group key={index} position={[(index - 1) * 4, 0, 0]}>
-                        <ImageWithEffect imageUrl={member.image}/>
-                        <Html position={[0, -2, 0]} center>
-                            <div className="text-center bg-black bg-opacity-75 p-4 w-72 rounded">
-                                <h3 className="text-lg font-semibold text-white">
-                                    {member.name}
-                                </h3>
-                                <p className="text-gray-300">{member.role}</p>
-                                <div className="flex justify-center space-x-4 my-2">
-                                    <a
-                                        href={member.github}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <Image
-                                            src="/social/github.png"
-                                            alt="GitHub"
-                                            width={30}
-                                            height={30}
-                                        />
-                                    </a>
-                                    <a
-                                        href={member.linkedin}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <Image
-                                            src="/social/linkedin.png"
-                                            alt="LinkedIn"
-                                            width={30}
-                                            height={30}
-                                        />
-                                    </a>
+                {teamMembers.map((member, index) => {
+                    // Center the group by offsetting by half the total width
+                    const xPosition = (index - (memberCount - 1) / 2) * spacing;
+
+                    return (
+                        <group key={index} position={[xPosition, 0, 0]}>
+                            <ImageWithEffect imageUrl={member.image}/>
+                            <Html position={[0, -2, 0]} center>
+                                <div className="text-center bg-black bg-opacity-75 p-4 w-72 rounded">
+                                    <h3 className="text-lg font-semibold text-white">{member.name}</h3>
+                                    <p className="text-gray-300">{member.role}</p>
+                                    <div className="flex justify-center space-x-4 my-2">
+                                        <a href={member.github} target="_blank" rel="noopener noreferrer">
+                                            <Image src="/social/github.png" alt="GitHub" width={30} height={30}/>
+                                        </a>
+                                        <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
+                                            <Image src="/social/linkedin.png" alt="LinkedIn" width={30} height={30}/>
+                                        </a>
+                                    </div>
+                                    <PopupWrapper title={member.name}>{member.description}</PopupWrapper>
                                 </div>
-                                <PopupWrapper title={member.name}>
-                                    {member.description}
-                                </PopupWrapper>
-                            </div>
-                        </Html>
-                    </group>
-                ))}
+                            </Html>
+                        </group>
+                    );
+                })}
             </Canvas>
         </div>
     );
 };
-
 // Main Responsive Component
 const TeamSection: React.FC = () => {
     const [isMobile, setIsMobile] = useState(false);

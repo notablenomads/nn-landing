@@ -1,0 +1,46 @@
+.gradient-border-wrap {
+    position: relative;
+    background: linear-gradient(to right, #FF8A00, #FF0080, #ff8a00, #55b85a, #FF8A00);
+    background-size: 200% 100%;
+    padding: 1px;
+    border-radius: 8px;
+    width: 300px;
+    margin: 0 auto;
+    animation: move-gradient 4s linear infinite;
+}
+
+.gradient-border-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, #FF8A00, #FF0080, #ff8a00, #55b85a, #FF8A00);
+    background-size: 200% 100%;
+    filter: blur(5px);
+    animation: move-gradient 4s linear infinite;
+    border-radius: 8px;
+}
+
+@keyframes move-gradient {
+    0% {
+        background-position: 0% 0%;
+    }
+    100% {
+        background-position: 200% 0%;
+    }
+}
+
+.ai-btn {
+    background-color: rgba(3, 7, 18, 0.9);
+    transition: all 0.3s ease;
+}
+
+.ai-btn:hover {
+    background-color: rgba(3, 7, 18, 0.7) !important;
+    transform: scale(1) !important;
+
+}
+
+.gradient-border-wrap:hover::before {
+    filter: blur(6px);
+    opacity: 0.8;
+}

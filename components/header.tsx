@@ -117,7 +117,7 @@ const Header: React.FC<HeaderProps> = ({isChatOpen = false}) => {
     return (
         <motion.header
             className={cn(
-                "fixed top-0 left-0 right-0 bg-black/50 backdrop-blur-sm z-50",
+                "absolute top-0 left-0 right-0 bg-black/50 backdrop-blur-sm z-50",
                 isChatOpen && "bg-black/80"
             )}
             initial={false}

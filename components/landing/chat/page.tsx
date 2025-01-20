@@ -27,7 +27,7 @@ interface StreamResponse {
   error?: string;
 }
 
-const SOCKET_URL = "https://api.platform.notablenomads.com/chat";
+const SOCKET_URL = "https://api.notablenomads.com/chat";
 
 interface Props {
   onClose?: () => void;

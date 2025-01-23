@@ -72,7 +72,9 @@ const ChatComponent: React.FC<Props> = ({ onClose = () => {}, className = "" }) 
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
       timeout: 10000,
-      transports: ["websocket", "polling"],
+      transports: ["websocket"],
+      upgrade: false,
+      secure: true,
     });
 
     newSocket.on("connect", () => {

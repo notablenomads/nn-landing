@@ -1,6 +1,7 @@
 # syntax=docker.io/docker/dockerfile:1
 
-FROM node:18-alpine AS base
+# Use buildplatform to ensure we get the correct base image for the build
+FROM --platform=$BUILDPLATFORM node:18-alpine AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -35,7 +36,7 @@ ENV NEXT_TELEMETRY_DISABLED=1
 RUN corepack enable && yarn build
 
 # Production image, copy all the files and run next
-FROM base AS runner
+FROM --platform=$TARGETPLATFORM node:18-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production

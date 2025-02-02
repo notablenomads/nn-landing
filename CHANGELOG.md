@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.2](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.1...v0.1.2) (2025-01-18)
+
+
+### Features
+
+* chatbot added,integrate chatbot with BE. ([6344c40](https://github.com/Notable-Nomads/nn-landing/commit/6344c4067ee4268fdcbe19a20d0e25c2ea2f7e7f))
+* chatbox Implemented. ([d7e3d85](https://github.com/Notable-Nomads/nn-landing/commit/d7e3d8544f5a0400721417b5c14c69e3b338357d))
+
+
+### Bug Fixes
+
+* update base URL in .env for staging API ([ce51e9b](https://github.com/Notable-Nomads/nn-landing/commit/ce51e9bc361259119c724fa5f702cdcbbdf96446))
+* update service worker for improved caching strategies and asset revisions ([5415948](https://github.com/Notable-Nomads/nn-landing/commit/5415948d5c3363a95b6a55d2086258637560a30f))
+
 ### 0.1.1 (2025-01-16)
 
 

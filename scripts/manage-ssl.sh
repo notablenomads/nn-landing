@@ -6,7 +6,7 @@ set -e
 # Configuration
 SERVER_IP=""
 SERVER_USER="root"
-DOMAIN="api.notablenomads.com"
+DOMAIN="landing.notablenomads.com"
 
 # Colors for output
 RED='\033[0;31m'

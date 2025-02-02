@@ -4,8 +4,8 @@
 set -e
 
 # Configuration
-DOMAIN="api.notablenomads.com"
-EMAIL="admin@notablenomads.com"
+DOMAIN="landing.notablenomads.com"
+EMAIL="contact@notablenomads.com"
 
 # Colors for output
 RED='\033[0;31m'

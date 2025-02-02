@@ -1,6 +1,6 @@
 import type {Metadata} from "next";
 import "./app.css";
-import {Toaster} from 'sonner'
+// import {Toaster} from 'sonner'
 import { RevolutionGothicFont } from "@/public/fonts/rev";
 
 
@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className={`overflow-x-hidden ${RevolutionGothicFont.className}`}>
-        <Toaster/>
+        {/* <Toaster/> */}
         <body>{children}</body>
         </html>
     );

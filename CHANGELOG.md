@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.3](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.2...v0.1.3) (2025-02-04)
+
+
+### Features
+
+* add .dockerignore, update SSL management scripts for landing domain, and enhance Dockerfile for optimized builds ([557d4df](https://github.com/Notable-Nomads/nn-landing/commit/557d4dfe98d6153e6c2dbaed1193104961640594))
+* add Docker support with Dockerfile and docker-compose, configure Nginx for SSL, and implement deployment script ([17fa854](https://github.com/Notable-Nomads/nn-landing/commit/17fa854be7caef1e812b9e7cca9351651c066222))
+* add example .yarnrc file, enhance .dockerignore, and update Dockerfile for improved dependency management ([c957889](https://github.com/Notable-Nomads/nn-landing/commit/c9578891ca0a327cacd8fb51731850b35d14985e))
+* add GitHub Actions workflow for Docker build and push, and update Dockerfile for multi-platform support ([0b31958](https://github.com/Notable-Nomads/nn-landing/commit/0b3195823b042361dbe9127002af32325a132d00))
+* add scripts for Docker image build, development setup, GitHub deployment, and SSL certificate management ([563e929](https://github.com/Notable-Nomads/nn-landing/commit/563e929d0afdab0ded1cc4275a73f06d4e759f2f))
+* add simulated message in chat box and some minor changes. ([d748b0f](https://github.com/Notable-Nomads/nn-landing/commit/d748b0ff1757bdec76ea0facbd121c9b188b91a4))
+* enhance Docker workflow with Telegram notifications for success and failure ([6e3c676](https://github.com/Notable-Nomads/nn-landing/commit/6e3c67609e6cc56bc7c961d08b4650e4830ee059))
+
+
+### Bug Fixes
+
+* marbles error ([b9d553c](https://github.com/Notable-Nomads/nn-landing/commit/b9d553cbc8801c85b0bd5f874cd9d4f0067a3482))
+* update API base URL and WebSocket URL for production environment ([5229fec](https://github.com/Notable-Nomads/nn-landing/commit/5229fec526f7dc605125d67d58284fecbdf16e6c))
+* update Dockerfile to change exposed port from 3000 to 3030 ([2fa3378](https://github.com/Notable-Nomads/nn-landing/commit/2fa3378477af50db8b4efe484b019e1030561fe2))
+* update WebSocket transport settings for improved connection security and reliability ([0d6d50e](https://github.com/Notable-Nomads/nn-landing/commit/0d6d50e5a8486912c300aa9109a98e233099bb9a))
+
 ### [0.1.2](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.1...v0.1.2) (2025-01-18)
 
 

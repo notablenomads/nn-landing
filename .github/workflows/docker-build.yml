@@ -74,7 +74,7 @@ jobs:
           MESSAGE+="📝 Commit: ${GITHUB_SHA::7}%0A"
           MESSAGE+="👤 Author: ${{ github.actor }}%0A"
           MESSAGE+="🔗 Commit URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}%0A%0A"
-          MESSAGE+="🌍 Landing Page: https://landing.notablenomads.com%0A"
+          MESSAGE+="🌍 Landing Page: https://notablenomads.com"
           MESSAGE+="📦 Docker Image: mrdevx/nn-landing:${{ env.VERSION }}-${GITHUB_SHA::7}"
 
           curl -s -X POST \

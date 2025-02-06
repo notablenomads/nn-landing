@@ -763,17 +763,33 @@ const SummarySection: React.FC<SummarySectionProps> = ({ currentData, options })
           </div>
         </div>
 
-        {/* Free Consultation */}
-        <div className="flex gap-4">
-          <SelectButton
-            selected={contactInfo.wantsConsultation}
-            onClick={() => handleInputChange('wantsConsultation', !contactInfo.wantsConsultation)}
-            className="w-full md:w-auto"
-            disabled={submitMutation.isPending}
-          >
-            <span className="font-semibold">I would like a free consultation</span>
-            <span className="text-sm opacity-70 text-left">Get expert advice on your project</span>
-          </SelectButton>
+        {/* Free Consultation Checkbox */}
+        <div className="flex items-center gap-2 p-4 bg-zinc-800/50 rounded-lg cursor-pointer hover:bg-zinc-800/70 transition-colors"
+             onClick={() => !submitMutation.isPending && handleInputChange('wantsConsultation', !contactInfo.wantsConsultation)}>
+          <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
+            contactInfo.wantsConsultation 
+              ? 'bg-secondary border-secondary' 
+              : 'border-zinc-600'
+          }`}>
+            {contactInfo.wantsConsultation && (
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                className="w-4 h-4 text-secondary-foreground"
+                strokeWidth="3"
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
+          </div>
+          <div className="flex-1">
+            <p className="font-medium text-white">I would like a free consultation</p>
+            <p className="text-sm text-zinc-400">Get expert advice on your project from our team</p>
+          </div>
         </div>
 
         {/* Additional Notes */}

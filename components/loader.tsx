@@ -28,7 +28,7 @@ export default function ProgressLogoLoader({
   }, [doneCallback]);
 
   return (
-    <div className="flex items-center justify-center w-full h-full min-h-[200px] ">
+    <div className="flex items-center justify-center w-full h-full min-h-[200px] flex-col">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: progress === 100 ? 0 : 1 }}
@@ -67,6 +67,14 @@ export default function ProgressLogoLoader({
           />
         </svg>
       </motion.div>
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: progress === 100 ? 0 : 1 }}
+        transition={{ duration: 1.5 }}
+        className="my-1"
+      >
+        Best Experience In Desktop
+      </motion.p>
     </div>
   );
 }

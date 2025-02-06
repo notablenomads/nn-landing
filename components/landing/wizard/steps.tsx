@@ -546,17 +546,20 @@ export const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, 
   const submitMutation = useMutation({
     mutationFn: async (data: unknown) => {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}leads`, data);
-      return response.data;
+      if (response.data.statusCode >= 400) {
+        throw new Error(response.data.message || 'An error occurred');
+      }
+      return response.data.data;
     },
     onSuccess: () => {
       setIsSubmitted(true);
       onComplete?.();
     },
-   onError: (error: AxiosError<{ message: string }>) => {
+    onError: (error: AxiosError<{ statusCode: number; message: string }>) => {
       if (error.response?.data?.message) {
-        toast(error.response.data.message);
+        toast.error(error.response.data.message);
       } else {
-        toast('An error occurred');
+        toast.error('An error occurred while submitting your request');
       }
     }
   });

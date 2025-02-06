@@ -47,8 +47,14 @@ interface Message {
 
 interface StreamResponse {
   success: boolean;
-  chunk?: string;
-  error?: string;
+  statusCode: number;
+  message: string;
+  data: {
+    chunk?: string;
+    error?: string;
+  };
+  timestamp: string;
+  path: string;
 }
 
 interface SimulatedMessage {
@@ -66,17 +72,12 @@ interface Props {
   className?: string;
 }
 
-const ChatComponent: React.FC<Props> = ({
-  onClose = () => {},
-  className = "",
-}) => {
+const ChatComponent: React.FC<Props> = ({ onClose = () => {}, className = "" }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<string>(
-    "Not connected"
-  );
+  const [connectionStatus, setConnectionStatus] = useState<string>("Not connected");
   const [error, setError] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [simulatedMessages, setSimulatedMessages] = useState<Message[]>([]);
@@ -90,10 +91,7 @@ const ChatComponent: React.FC<Props> = ({
     }
   }, []);
 
-  const simulateTyping = async (
-    message: SimulatedMessage,
-    charIndex: number = 0
-  ): Promise<void> => {
+  const simulateTyping = async (message: SimulatedMessage, charIndex: number = 0): Promise<void> => {
     if (charIndex === 0) {
       setSimulatedMessages((prev) => {
         // Check if message already exists to prevent duplicates
@@ -116,11 +114,7 @@ const ChatComponent: React.FC<Props> = ({
 
     if (charIndex < message.content.length) {
       const newContent = message.content.substring(0, charIndex + 1);
-      setSimulatedMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === message.id ? { ...msg, content: newContent } : msg
-        )
-      );
+      setSimulatedMessages((prev) => prev.map((msg) => (msg.id === message.id ? { ...msg, content: newContent } : msg)));
 
       await new Promise((resolve) => setTimeout(resolve, message.typingSpeed));
       await simulateTyping(message, charIndex + 1);
@@ -195,8 +189,8 @@ const ChatComponent: React.FC<Props> = ({
 
     newSocket.on("streamChunk", (data: StreamResponse) => {
       console.log("Received stream chunk:", data);
-      if (data.success && data.chunk) {
-        appendAIMessage(data.chunk);
+      if (data.statusCode === 200 && data.data.chunk) {
+        appendAIMessage(data.data.chunk);
         setIsTyping(true);
       }
     });
@@ -210,9 +204,7 @@ const ChatComponent: React.FC<Props> = ({
       // Update the last user message status to 'sent'
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages];
-        const lastUserMessageIndex = [...updatedMessages]
-          .reverse()
-          .findIndex((msg) => msg.sender === "user");
+        const lastUserMessageIndex = [...updatedMessages].reverse().findIndex((msg) => msg.sender === "user");
 
         if (lastUserMessageIndex !== -1) {
           const actualIndex = updatedMessages.length - 1 - lastUserMessageIndex;
@@ -232,16 +224,14 @@ const ChatComponent: React.FC<Props> = ({
 
     newSocket.on("streamError", (data: StreamResponse) => {
       console.error("Stream error received:", data);
-      setError(data.error || "An error occurred while processing your message");
+      setError(data.message || "An error occurred while processing your message");
       setIsProcessing(false);
       setIsTyping(false);
 
       // Update the last user message status to 'error'
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages];
-        const lastUserMessageIndex = [...updatedMessages]
-          .reverse()
-          .findIndex((msg) => msg.sender === "user");
+        const lastUserMessageIndex = [...updatedMessages].reverse().findIndex((msg) => msg.sender === "user");
 
         if (lastUserMessageIndex !== -1) {
           const actualIndex = updatedMessages.length - 1 - lastUserMessageIndex;
@@ -255,8 +245,7 @@ const ChatComponent: React.FC<Props> = ({
           ...updatedMessages,
           {
             id: Date.now(),
-            content:
-              "Sorry, I encountered an error processing your message. Please try again.",
+            content: data.message || "Sorry, I encountered an error processing your message. Please try again.",
             sender: "bot",
             timestamp: new Date().toISOString(),
             type: "text",
@@ -283,11 +272,7 @@ const ChatComponent: React.FC<Props> = ({
   const appendAIMessage = (text: string) => {
     setMessages((prevMessages) => {
       const lastMessage = prevMessages[prevMessages.length - 1];
-      if (
-        lastMessage &&
-        lastMessage.sender === "bot" &&
-        lastMessage.status !== "error"
-      ) {
+      if (lastMessage && lastMessage.sender === "bot" && lastMessage.status !== "error") {
         const updatedMessages = [...prevMessages];
         updatedMessages[updatedMessages.length - 1] = {
           ...lastMessage,
@@ -366,22 +351,13 @@ const ChatComponent: React.FC<Props> = ({
     setError("");
 
     setMessages((prevMessages) =>
-      prevMessages.map((msg) =>
-        msg.id === message.id
-          ? { ...msg, status: "sending" as MessageStatus }
-          : msg
-      )
+      prevMessages.map((msg) => (msg.id === message.id ? { ...msg, status: "sending" as MessageStatus } : msg))
     );
 
     // Remove the error message if it exists
     setMessages((prevMessages) =>
       prevMessages.filter(
-        (msg) =>
-          !(
-            msg.sender === "bot" &&
-            msg.status === "error" &&
-            msg.content.includes("Sorry, I encountered an error")
-          )
+        (msg) => !(msg.sender === "bot" && msg.status === "error" && msg.content.includes("Sorry, I encountered an error"))
       )
     );
 
@@ -399,25 +375,13 @@ const ChatComponent: React.FC<Props> = ({
     const isError = message.status === "error";
 
     return (
-      <div
-        className={`flex ${
-          message.sender === "user" ? "justify-end" : "justify-start"
-        }`}
-      >
+      <div className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
         <div
-          className={`flex gap-2 max-w-[80%] min-w-[40px] ${
-            message.sender === "user" ? "flex-row-reverse" : "flex-row"
-          }`}
+          className={`flex gap-2 max-w-[80%] min-w-[40px] ${message.sender === "user" ? "flex-row-reverse" : "flex-row"}`}
         >
           <Avatar className="h-6 w-6 md:h-8 md:w-8 flex-shrink-0">
             <AvatarFallback
-              className={`${
-                message.sender === "user"
-                  ? "bg-zinc-700"
-                  : isError
-                  ? "bg-red-700"
-                  : "bg-zinc-700"
-              } 
+              className={`${message.sender === "user" ? "bg-zinc-700" : isError ? "bg-red-700" : "bg-zinc-700"} 
                                       text-zinc-200 text-xs md:text-sm`}
             >
               {message.sender === "user" ? "U" : "B"}
@@ -434,21 +398,15 @@ const ChatComponent: React.FC<Props> = ({
           >
             <p className="text-md whitespace-pre-wrap">{message.content}</p>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-zinc-100 opacity-75">
-                {formatTime(message.timestamp)}
-              </span>
-              {message.status === "sending" && (
-                <Loader2 className="h-3 w-3 animate-spin text-zinc-300" />
-              )}
+              <span className="text-xs text-zinc-100 opacity-75">{formatTime(message.timestamp)}</span>
+              {message.status === "sending" && <Loader2 className="h-3 w-3 animate-spin text-zinc-300" />}
               {isError && message.sender === "user" && (
                 <Button
                   size="sm"
                   variant="ghost"
                   className="h-6 px-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-900/20"
                   onClick={() => handleRetry(message)}
-                  disabled={
-                    isProcessing || !socket || connectionStatus !== "Connected"
-                  }
+                  disabled={isProcessing || !socket || connectionStatus !== "Connected"}
                 >
                   Retry
                 </Button>
@@ -474,38 +432,20 @@ const ChatComponent: React.FC<Props> = ({
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-zinc-700 text-zinc-200">
-                <Image
-                  src="/logo/new-nn-logo-dark.svg"
-                  width={32}
-                  height={32}
-                  alt="nn-avatar"
-                />
+                <Image src="/logo/new-nn-logo-dark.svg" width={32} height={32} alt="nn-avatar" />
               </AvatarFallback>
             </Avatar>
             <div>
-              <h2 className="font-semibold text-zinc-100">
-                Ask us anything ...
-              </h2>
+              <h2 className="font-semibold text-zinc-100">Ask us anything ...</h2>
               <div className="flex items-center gap-2">
                 <span
-                  className={`w-2 h-2 rounded-full ${
-                    connectionStatus === "Connected"
-                      ? "bg-green-500"
-                      : "bg-red-500"
-                  }`}
+                  className={`w-2 h-2 rounded-full ${connectionStatus === "Connected" ? "bg-green-500" : "bg-red-500"}`}
                 ></span>
-                <span className="text-xs text-zinc-400">
-                  {connectionStatus}
-                </span>
+                <span className="text-xs text-zinc-400">{connectionStatus}</span>
               </div>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-zinc-400 hover:text-zinc-100"
-            onClick={onClose}
-          >
+          <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-zinc-100" onClick={onClose}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -535,10 +475,7 @@ const ChatComponent: React.FC<Props> = ({
             <div className="space-y-4 pb-4">
               {/* Render simulated messages */}
               {simulatedMessages.map((message) => (
-                <MessageBubble
-                  key={`simulated-${message.id}`}
-                  message={message}
-                />
+                <MessageBubble key={`simulated-${message.id}`} message={message} />
               ))}
 
               {/* Render real messages */}
@@ -549,16 +486,11 @@ const ChatComponent: React.FC<Props> = ({
               {isTyping && (
                 <div className="flex items-center gap-2 text-zinc-400">
                   <Avatar className="h-6 w-6 md:h-8 md:w-8">
-                    <AvatarFallback className="bg-zinc-700 text-zinc-200">
-                      B
-                    </AvatarFallback>
+                    <AvatarFallback className="bg-zinc-700 text-zinc-200">B</AvatarFallback>
                   </Avatar>
                   <div className="bg-zinc-800 rounded-lg px-4 py-2">
                     <div className="flex gap-1">
-                      <span
-                        className="w-2 h-2 bg-zinc-500 rounded-full animate-bounce"
-                        style={{ animationDelay: "0ms" }}
-                      />
+                      <span className="w-2 h-2 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                       <span
                         className="w-2 h-2 bg-zinc-500 rounded-full animate-bounce"
                         style={{ animationDelay: "150ms" }}
@@ -575,30 +507,20 @@ const ChatComponent: React.FC<Props> = ({
             </div>
           </ScrollArea>
 
-          <form
-            onSubmit={handleSendMessage}
-            className="mt-4 flex gap-2 pt-2 border-t border-zinc-800"
-          >
+          <form onSubmit={handleSendMessage} className="mt-4 flex gap-2 pt-2 border-t border-zinc-800">
             <Input
               ref={inputRef}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type your message..."
               className="flex-1 bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-400"
-              disabled={
-                isProcessing || !socket || connectionStatus !== "Connected"
-              }
+              disabled={isProcessing || !socket || connectionStatus !== "Connected"}
             />
             <Button
               type="submit"
               size="icon"
               className="bg-secondary hover:bg-secondary/90 flex-shrink-0"
-              disabled={
-                !newMessage.trim() ||
-                isProcessing ||
-                !socket ||
-                connectionStatus !== "Connected"
-              }
+              disabled={!newMessage.trim() || isProcessing || !socket || connectionStatus !== "Connected"}
             >
               <Send className="h-4 w-4" />
             </Button>

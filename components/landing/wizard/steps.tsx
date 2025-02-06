@@ -160,7 +160,7 @@ export const ServiceSelectionStep: React.FC<StepWithOptionsProps> = ({ onNext, o
   return (
     <div className="flex flex-col gap-6 text-white">
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        {options.services.map((service) => (
+        {options?.services?.map((service) => (
           <SelectButton
             key={service.value}
             selected={selectedServices.includes(service.value)}
@@ -261,7 +261,7 @@ export const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, optio
       <div>
         <p className="mb-4">Is this a new project or an existing one?</p>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {options.projectTypes.map((type) => (
+          {options?.projectTypes?.map((type) => (
             <SelectButton
               key={type.value}
               selected={projectType === type.value}
@@ -279,7 +279,7 @@ export const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, optio
           <div>
             <Label htmlFor="challenge" className="block mb-4">What's the biggest challenge?</Label>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-              {options.existingProjectChallenges.map((challenge) => (
+              {options?.existingProjectChallenges?.map((challenge) => (
                 <SelectButton
                   key={challenge.value}
                   selected={existingDetails.challenge === challenge.value}
@@ -393,7 +393,7 @@ export const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext }) => {
         <div>
           <p className="mb-4">Select the features you need:</p>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {features.map((feature) => (
+            {features?.map((feature) => (
               <SelectButton
                 key={feature.value}
                 selected={selectedFeatures.includes(feature.value)}
@@ -450,7 +450,7 @@ export const AudienceStep: React.FC<StepWithOptionsProps> = ({ onNext, options }
       <div>
         <p className="mb-4">Who is your target audience?</p>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {options.targetAudiences.map((audienceType) => (
+          {options?.targetAudiences?.map((audienceType) => (
             <SelectButton
               key={audienceType.value}
               selected={audience === audienceType.value}
@@ -466,7 +466,7 @@ export const AudienceStep: React.FC<StepWithOptionsProps> = ({ onNext, options }
       <div>
         <p className="mb-4">What industry is this project for?</p>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {options.industries.map((industryOption) => (
+          {options?.industries?.map((industryOption) => (
             <SelectButton
               key={industryOption.value}
               selected={industry === industryOption.value}
@@ -629,7 +629,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({ currentData, options })
       <div>
         <h4 className="font-medium mb-2">Selected Services:</h4>
         <ul className="list-disc list-inside opacity-70 space-y-1">
-          {currentData.services.map((service) => (
+          {currentData?.services?.map((service) => (
             <li key={service}>
               {options.services.find(s => s.value === service)?.label || service}
             </li>
@@ -653,7 +653,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({ currentData, options })
       <div>
         <h4 className="font-medium mb-2">Selected Features:</h4>
         <ul className="list-disc list-inside opacity-70 space-y-1">
-          {currentData.features.map((feature) => (
+          {currentData?.features?.map((feature) => (
             <li key={feature}>{feature}</li>
           ))}
         </ul>
@@ -746,7 +746,7 @@ const SummarySection: React.FC<SummarySectionProps> = ({ currentData, options })
         <div>
           <p className="mb-4">How would you like us to reach you?</p>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {options.contactMethods.map((method) => (
+            {options?.contactMethods?.map((method) => (
               <SelectButton
                 key={method.value}
                 selected={contactInfo.contactMethod === method.value}
@@ -871,7 +871,7 @@ export const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, option
       <div>
         <p className="mb-4">What's your preferred design style?</p>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {options.designStyles.map((style) => (
+          {options?.designStyles?.map((style) => (
             <SelectButton
               key={style.value}
               selected={preferences.designStyle === style.value}
@@ -888,7 +888,7 @@ export const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, option
       <div>
         <p className="mb-4">What's your ideal timeline?</p>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {options.timelines.map((timeline) => (
+          {options?.timelines?.map((timeline) => (
             <SelectButton
               key={timeline.value}
               selected={preferences.timeline === timeline.value}
@@ -905,7 +905,7 @@ export const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, option
       <div>
         <p className="mb-4">What's your estimated budget?</p>
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {options.budgets.map((budget) => (
+          {options?.budgets?.map((budget) => (
             <SelectButton
               key={budget.value}
               selected={preferences.budget === budget.value}

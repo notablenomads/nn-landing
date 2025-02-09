@@ -17,7 +17,7 @@ export const SelectButton = React.forwardRef<
       ref={ref}
       variant="outline"
       className={cn(
-        "w-full h-auto p-4 flex flex-col items-start gap-2 whitespace-normal break-words",
+        "w-full h-auto p-3 flex flex-col gap-0 items-start whitespace-normal break-words text-lg",
         selected
           ? "bg-secondary text-black hover:text-white/80 hover:bg-white/10"
           : "border-1/35 border-white text-white/65 bg-black hover:bg-white/10 hover:text-white",

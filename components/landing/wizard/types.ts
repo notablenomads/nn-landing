@@ -48,3 +48,43 @@ export interface WizardStep {
   description: string;
   content: React.FC<StepComponentProps>;
 }
+
+export interface WizardCurrentData {
+  services?: string[];
+  otherService?: string;
+  followUpData?: {
+    hasDatasets?: string;
+    platforms?: string;
+  };
+  projectType?: string;
+  existingDetails?: {
+    challenge: string;
+    hasCode: boolean | null;
+    codeFiles: FileList | null;
+  };
+  features?: string[];
+  projectDescription?: string;
+  userType?: "technical" | "non-technical";
+  audience?: string;
+  industry?: string;
+  hasCompetitors?: boolean;
+  competitorUrls?: string;
+}
+export interface BaseStepProps {
+  currentData?: Record<string, unknown>;
+  options: WizardOptions;
+}
+
+export interface ContactStepProps extends Omit<BaseStepProps, "currentData"> {
+  currentData: WizardCurrentData; // Make it required and specific for ContactStep
+  onComplete?: () => void;
+}
+
+export interface SummarySectionProps {
+  currentData: WizardCurrentData;
+  options: WizardOptions;
+}
+
+export interface StepWithOptionsProps extends StepComponentProps {
+  options: WizardOptions;
+}

@@ -5,22 +5,14 @@ import TechStackTower from "./tech";
 import ChatComponent from "@/components/landing/chat/page";
 import { Button } from "@/components/ui/button";
 import "./styles.css";
-import WizardComponent from "../wizard/wizardComponent";
 
 const TopComponent: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isAnimatingOut, setIsAnimatingOut] = useState(false);
   const [effectsEnabled, setEffectsEnabled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const [showWizard, setShowWizard] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_isPending, startTransition] = useTransition();
-
-  // Check URL parameters on component mount
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    setShowWizard(searchParams.get("feat") === "wizard");
-  }, []);
 
   // Handle window resize and detect mobile
   useEffect(() => {
@@ -188,7 +180,6 @@ const TopComponent: React.FC = () => {
                     Nomad AI Chat Bot
                   </Button>
                 </motion.div>
-                {showWizard && <WizardComponent />}
               </motion.div>
             ) : (
               <motion.div

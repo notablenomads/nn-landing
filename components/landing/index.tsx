@@ -7,6 +7,7 @@ import OurServices from "./ourServices";
 import Contact from "./contact";
 import BlogSection from "./blog";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Wizard from "./wizard";
 
 export const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,6 +29,7 @@ const Landing: React.FC = () => {
         <>
           <QueryClientProvider client={queryClient}>
             <Jumbo />
+            <Wizard />
             <Team />
             <OurServices />
             <BlogSection />

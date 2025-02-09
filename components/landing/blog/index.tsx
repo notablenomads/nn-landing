@@ -30,8 +30,9 @@ interface BlogCardProps {
   post: Post;
 }
 
-const readTimes = ["3 min read", "5 min read", "7 min read", "10 min read"];
-const getRandomItem = (array: string[]): string => array[Math.floor(Math.random() * array.length)];
+const readTimes = ["3 min read", "5 min read"];
+const getRandomItem = (array: string[]): string =>
+  array[Math.floor(Math.random() * array.length)];
 
 const isValidImageUrl = (url: string): boolean => {
   try {
@@ -49,6 +50,7 @@ interface ApiPost {
   userId: number;
   imageUrl: string;
   url: string;
+  publishedAt: Date;
   author: IUser;
 }
 
@@ -64,7 +66,9 @@ interface ApiResponse {
 
 const fetchBlogPosts = async (): Promise<Post[]> => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}blog/posts?page=1&limit=10`);
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}blog/posts?page=1&limit=10`
+    );
     if (!response.ok) {
       throw new Error(`Failed to fetch posts: ${response.status}`);
     }
@@ -75,15 +79,17 @@ const fetchBlogPosts = async (): Promise<Post[]> => {
       throw new Error("No posts data available");
     }
 
-    return responseData.data.posts.map((post, index) => ({
+    return responseData.data.posts.map((post) => ({
       id: post.id,
       title: post.title.charAt(0).toUpperCase() + post.title.slice(1),
       description: post.body,
-      date: new Date(Date.now() - index * 86400000).toISOString(),
+      date: new Date(post.publishedAt).toISOString(),
       readTime: getRandomItem(readTimes),
       author: post.author,
       url: post.url,
-      imageUrl: isValidImageUrl(post.imageUrl) ? post.imageUrl : "/placeholder-image.jpg",
+      imageUrl: isValidImageUrl(post.imageUrl)
+        ? post.imageUrl
+        : "/placeholder-image.jpg",
     }));
   } catch (error) {
     // More specific error handling
@@ -109,7 +115,12 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
     const y = e.clientY - bounds.top;
 
     const padding = 50;
-    if (x >= -padding && x <= bounds.width + padding && y >= -padding && y <= bounds.height + padding) {
+    if (
+      x >= -padding &&
+      x <= bounds.width + padding &&
+      y >= -padding &&
+      y <= bounds.height + padding
+    ) {
       setMousePos({ x, y });
     } else {
       setMousePos({ x: -1000, y: -1000 });
@@ -166,9 +177,14 @@ const BlogCard: React.FC<BlogCardProps> = ({ post }) => {
 
         <h3 className="text-xl font-semibold text-white mb-3">{post.title}</h3>
 
-        <p className="text-gray-400 text-sm mb-6 line-clamp-3">{post.description}</p>
+        <p className="text-gray-400 text-sm mb-6 line-clamp-3">
+          {post.description}
+        </p>
         <Link href={post.url} target="_blank">
-          <Button variant="ghost" className="w-full flex bg-gray-900/50 text-gray-300 ">
+          <Button
+            variant="ghost"
+            className="w-full flex bg-gray-900/50 text-gray-300 "
+          >
             <span className="mr-2">Read More</span>
             <ArrowRight className="w-4 h-4" />
           </Button>
@@ -233,12 +249,20 @@ const BlogSection: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <h2 className="text-5xl text-center font-bold tracking-tight text-white mb-4">Latest Blog Posts</h2>
-          <p className="text-md text-gray-400">Stay up to date with the latest news and updates from our team.</p>
+          <h2 className="text-5xl text-center font-bold tracking-tight text-white mb-4">
+            Latest Blog Posts
+          </h2>
+          <p className="text-md text-gray-400">
+            Stay up to date with the latest news and updates from our team.
+          </p>
         </motion.div>
 
         {error && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl mx-auto mb-12">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="max-w-3xl mx-auto mb-12"
+          >
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>{error}</AlertDescription>
@@ -256,7 +280,11 @@ const BlogSection: React.FC = () => {
             ? Array(6)
                 .fill(null)
                 .map((_, index) => (
-                  <motion.div key={`skeleton-${index}`} variants={cardVariants} className="h-full">
+                  <motion.div
+                    key={`skeleton-${index}`}
+                    variants={cardVariants}
+                    className="h-full"
+                  >
                     <div className="bg-[#1A1A1A]/80 backdrop-blur-sm rounded-lg p-6 h-full">
                       <Skeleton className="h-48 w-full bg-gray-700/50 rounded-lg mb-6" />
                       <Skeleton className="h-4 w-24 bg-gray-700/50 mb-3" />
@@ -266,7 +294,11 @@ const BlogSection: React.FC = () => {
                   </motion.div>
                 ))
             : posts.map((post) => (
-                <motion.div key={post.id} variants={cardVariants} className="h-full">
+                <motion.div
+                  key={post.id}
+                  variants={cardVariants}
+                  className="h-full"
+                >
                   <BlogCard post={post} />
                 </motion.div>
               ))}

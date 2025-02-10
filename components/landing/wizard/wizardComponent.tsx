@@ -1,11 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, lazy, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import SimplePopup from "@/components/simplePopup";
-import { WizardContent } from "./wizardContent";
+
+// Lazy load the components that are only needed when the popup is open
+const WizardContent = lazy(() => import("./wizardContent"));
+const Toaster = lazy(() =>
+  import("sonner").then((mod) => ({ default: mod.Toaster }))
+);
+
+// Import these outside the component since they're small and needed for types/setup
 import wizardSteps from "./steps";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "..";
-import { Toaster } from "sonner";
 
 function WizardWrapper() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,21 +23,27 @@ function WizardWrapper() {
   return (
     <>
       <Button
-        className="relative z-10 mt-2"
+        className="text-md font-bold bg-secondary"
         size="lg"
         onClick={() => setIsOpen(true)}
       >
-        Get Started
+        Request a Quote
       </Button>
       <SimplePopup isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <QueryClientProvider client={queryClient}>
-          <Toaster />
-          <WizardContent
-            steps={wizardSteps}
-            onComplete={handleComplete}
-            onStepChange={(step: number) => console.log("Current step:", step)}
-          />
-        </QueryClientProvider>
+        {isOpen && (
+          <Suspense fallback={<div className="p-4">Loading...</div>}>
+            <QueryClientProvider client={queryClient}>
+              <Toaster />
+              <WizardContent
+                steps={wizardSteps}
+                onComplete={handleComplete}
+                onStepChange={(step: number) =>
+                  console.log("Current step:", step)
+                }
+              />
+            </QueryClientProvider>
+          </Suspense>
+        )}
       </SimplePopup>
     </>
   );

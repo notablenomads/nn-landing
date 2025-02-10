@@ -54,7 +54,7 @@ const SimplePopup: React.FC<SimplePopupProps> = ({
               animate={{ opacity: 1 }}
               transition={{ delay: 1 }}
               onClick={onClose}
-              className="absolute top-10 left-10 text-white hover:text-gray-200 transition-colors bg-transparent"
+              className="absolute top-10 z-10 left-10 text-white hover:text-gray-200 transition-colors bg-transparent"
             >
               <X size={isMobile ? 32 : 68} />
             </motion.button>

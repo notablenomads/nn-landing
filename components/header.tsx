@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import WizardWrapper from "./landing/wizard/wizardComponent";
 
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> {
@@ -54,7 +55,6 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
     { title: "Blogs", id: "blog" },
     { title: "Our Services", id: "services" },
     { title: "Contact Us", id: "contact" },
-    { title: "Request a Quote", id: "quote" },
   ];
 
   const navItemVariants = {
@@ -128,12 +128,7 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex justify-between items-center">
           {/* Request a Quote Button */}
-          <Button
-            className=" text-md font-bold bg-secondary"
-            onClick={() => handleScroll("quote")}
-          >
-            Request a Quote
-          </Button>
+          <WizardWrapper />
 
           {/* Right side container for logo and nav items */}
           <motion.div className="flex items-center gap-8">

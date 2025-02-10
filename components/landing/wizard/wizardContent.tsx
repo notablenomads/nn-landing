@@ -16,8 +16,8 @@ interface StepComponentProps {
 }
 
 interface WizardStep {
-  header: string;
-  description: string;
+  header?: string;
+  description?: string;
   content: (props: StepComponentProps) => JSX.Element;
 }
 
@@ -148,64 +148,80 @@ export const WizardContent: React.FC<WizardContentProps> = ({
     });
   };
 
+  const currentStepData = steps[currentStep];
+  const shouldShowHeaderSection =
+    currentStepData.header || currentStepData.description;
+
   return (
     <div className="w-full h-[100dvh] bg-black overflow-y-auto">
       <div className="min-h-[100dvh] w-full flex items-center justify-center">
-        <div className="w-[75dvw] flex flex-col items-center justify-start">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`top-${currentStep}`}
-              initial={{ y: -50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -50, opacity: 0 }}
-              transition={{ delay: 0.5, duration: 0.6 }}
-              className="w-full p-6 flex flex-col justify-center items-center"
-            >
-              <h2 className="text-6xl font-extrabold mb-4 text-white text-center">
-                {steps[currentStep].header}
-              </h2>
-              <p className="text-2xl font-light text-white opacity-60 text-center">
-                {steps[currentStep].description}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`divider-${currentStep}`}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="relative flex items-center justify-center w-full h-4 my-1"
-            >
-              <div
-                ref={dividerRef}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-full cursor-pointer flex items-center"
-                style={{ zIndex: 20 }}
-                onMouseMove={handleMouseMove}
+        <div
+          className={`${
+            shouldShowHeaderSection ? "w-[75dvw]" : "w-[100dvw]"
+          } flex flex-col items-center justify-start h-full`}
+        >
+          {shouldShowHeaderSection && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`top-${currentStep}`}
+                initial={{ y: -50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                exit={{ y: -50, opacity: 0 }}
+                transition={{ delay: 0.5, duration: 0.6 }}
+                className="w-full p-6 flex flex-col justify-center items-center"
               >
-                <svg
-                  width="100%"
-                  height="100%"
-                  style={{ overflow: "visible", height: "2px" }}
-                  preserveAspectRatio="xMidYMid meet"
+                {currentStepData.header && (
+                  <h2 className="text-6xl font-extrabold mb-4 text-white text-center">
+                    {currentStepData.header}
+                  </h2>
+                )}
+                {currentStepData.description && (
+                  <p className="text-2xl font-light text-white opacity-60 text-center">
+                    {currentStepData.description}
+                  </p>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          )}
+
+          {shouldShowHeaderSection && (
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`divider-${currentStep}`}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+                className="relative flex items-center justify-center w-full h-4 my-1"
+              >
+                <div
+                  ref={dividerRef}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-full cursor-pointer flex items-center"
+                  style={{ zIndex: 20 }}
+                  onMouseMove={handleMouseMove}
                 >
-                  <motion.path
-                    stroke="white"
-                    strokeWidth="2"
-                    fill="none"
-                    className="opacity-40"
-                    initial={false}
-                    d={pathD}
-                    style={{ transform: "translateY(50%)" }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                </svg>
-              </div>
-            </motion.div>
-          </AnimatePresence>
+                  <svg
+                    width="100%"
+                    height="100%"
+                    style={{ overflow: "visible", height: "2px" }}
+                    preserveAspectRatio="xMidYMid meet"
+                  >
+                    <motion.path
+                      stroke="white"
+                      strokeWidth="2"
+                      fill="none"
+                      className="opacity-40"
+                      initial={false}
+                      d={pathD}
+                      style={{ transform: "translateY(50%)" }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </svg>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          )}
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -214,7 +230,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 40 }}
               transition={{ delay: 0.7, duration: 0.6 }}
-              className="w-full p-6 flex flex-col justify-center items-center"
+              className="w-full flex flex-col justify-center items-center"
             >
               {renderStepContent()}
             </motion.div>

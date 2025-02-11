@@ -99,7 +99,7 @@ const AudienceStep: React.FC<StepWithOptionsProps> = ({ onNext, options }) => {
       {hasCompetitors && (
         <div>
           <Label htmlFor="competitor-urls">
-            Enter competitor URLs or names (one per line)
+            Enter competitor URLs or names.
           </Label>
           <Textarea
             id="competitor-urls"
@@ -120,7 +120,7 @@ const AudienceStep: React.FC<StepWithOptionsProps> = ({ onNext, options }) => {
             ...(hasCompetitors && { competitorUrls }),
           })
         }
-        className="mt-4 text-lg"
+        className="mt-4 text-lg mb-3"
         disabled={!audience || !industry || hasCompetitors === undefined}
       >
         Next →

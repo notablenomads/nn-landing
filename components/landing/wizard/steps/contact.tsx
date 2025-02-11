@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectButton } from "@/components/ui/selectButton";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, ChevronDown, Loader2 } from "lucide-react";
+import { ChevronDown, Loader2 } from "lucide-react";
 import {
   ContactStepProps,
   SummarySectionProps,
@@ -35,7 +35,6 @@ const ContactStep: React.FC<ContactStepProps> = ({
   });
   const [isOpen, setIsOpen] = React.useState(false);
   const [notes, setNotes] = React.useState("");
-  const [isSubmitted, setIsSubmitted] = React.useState(false);
 
   const submitMutation = useMutation({
     mutationFn: async (data: unknown) => {
@@ -49,7 +48,6 @@ const ContactStep: React.FC<ContactStepProps> = ({
       return response.data.data;
     },
     onSuccess: () => {
-      setIsSubmitted(true);
       onComplete?.();
     },
     onError: (error: AxiosError<{ statusCode: number; message: string }>) => {
@@ -200,23 +198,6 @@ const ContactStep: React.FC<ContactStepProps> = ({
       )}
     </div>
   );
-
-  if (isSubmitted) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-6 text-white h-full">
-        <div className="flex items-center justify-center w-20 h-20 rounded-full bg-green-500">
-          <Check className="w-10 h-10 text-white" />
-        </div>
-        <h3 className="text-2xl font-semibold text-center">Thank You!</h3>
-        <p className="text-center opacity-70 max-w-md">
-          We've received your project details and will get back to you shortly
-          via {contactInfo.contactMethod.toLowerCase()}.
-          {contactInfo.wantsConsultation &&
-            " Our team will contact you to schedule your free consultation."}
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-6 text-white">

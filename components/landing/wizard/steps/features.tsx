@@ -130,7 +130,7 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext }) => {
               : { projectDescription }),
           })
         }
-        className="mt-4 text-lg"
+        className="mt-4 text-lg mb-3"
         disabled={
           !userType ||
           (userType === "technical" && selectedFeatures.length === 0) ||

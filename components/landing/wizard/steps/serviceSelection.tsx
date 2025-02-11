@@ -115,7 +115,7 @@ const ServiceSelectionStep: React.FC<StepWithOptionsProps> = ({
             followUpData,
           })
         }
-        className="mt-4 text-lg"
+        className="mt-4 text-lg mb-3"
         disabled={selectedServices.length === 0}
       >
         Next →

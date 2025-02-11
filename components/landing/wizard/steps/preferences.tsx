@@ -116,7 +116,7 @@ const PreferencesStep: React.FC<StepWithOptionsProps> = ({
 
       <Button
         onClick={() => onNext(preferences)}
-        className="mt-4 text-lg"
+        className="mt-4 text-lg mb-3"
         disabled={!isValid}
       >
         Next →

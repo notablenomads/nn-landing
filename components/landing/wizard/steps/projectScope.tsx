@@ -109,7 +109,7 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({
             ...(projectType === "EXISTING" && { existingDetails }),
           })
         }
-        className="mt-4 text-lg"
+        className="mt-4 text-lg mb-3"
         disabled={
           !projectType ||
           (projectType === "EXISTING" && !existingDetails.challenge)

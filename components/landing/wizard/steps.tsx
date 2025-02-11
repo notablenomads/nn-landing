@@ -1,7 +1,6 @@
-/* eslint-disable */
 import React, { lazy, Suspense } from 'react';
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, CheckCircle2 } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { StepComponentProps, WizardCurrentData } from './types';
 import { useWizardOptions } from '@/hooks/useWizardOptions';
@@ -49,34 +48,34 @@ const WizardStepWrapper = (props: StepComponentProps): JSX.Element => {
   };
 
   if (isLoading) return <StepSkeleton />;
-  // if (error) return <ErrorAlert message="Failed to load options" />;
-  // if (!options) return <ErrorAlert message="No options available" />;
+  if (error) return <ErrorAlert message="Failed to load options" />;
+  if (!options) return <ErrorAlert message="No options available" />;
 
   const stepProps = { ...props, options };
 
   const renderStep = () => {
     switch(props.step) {
-      // case 0:
-      //   return <WelcomeStep {...props} />;
-      // case 1:
-      //   return <ServiceSelectionStep {...stepProps} />;
-      // case 2:
-      //   return <ProjectScopeStep {...stepProps} />;
-      // case 3:
-      //   return <FeaturesStep {...stepProps} />;
-      // case 4:
-      //   return <AudienceStep {...stepProps} />;
-      // case 5:
-      //   return <PreferencesStep {...stepProps} />;
-      // case 0:
-      //   return (
-      //     <ContactStep
-      //       currentData={safeCurrentData}
-      //       options={options}
-      //       onComplete={() => props.onNext?.()}
-      //     />
-      //   );
       case 0:
+        return <WelcomeStep {...props} />;
+      case 1:
+        return <ServiceSelectionStep {...stepProps} />;
+      case 2:
+        return <ProjectScopeStep {...stepProps} />;
+      case 3:
+        return <FeaturesStep {...stepProps} />;
+      case 4:
+        return <AudienceStep {...stepProps} />;
+      case 5:
+        return <PreferencesStep {...stepProps} />;
+      case 6:
+        return (
+          <ContactStep
+            currentData={safeCurrentData}
+            options={options}
+            onComplete={() => props.onNext?.()}
+          />
+        );
+      case 7:
         return <SuccessStep />;
       default:
         return <ErrorAlert message="Invalid step" />;
@@ -92,6 +91,8 @@ const WizardStepWrapper = (props: StepComponentProps): JSX.Element => {
 
 export const wizardSteps = [
   {
+    header: "Welcome",
+    description: "Let's get started with your project",
     content: WizardStepWrapper
   },
   {
@@ -125,11 +126,8 @@ export const wizardSteps = [
     content: WizardStepWrapper
   },
   {
-    header: "Success",
-    description: "Thank you for your submission",
     content: WizardStepWrapper
   }
 ];
 
 export default wizardSteps;
-/* eslint-enable */

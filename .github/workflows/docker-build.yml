@@ -69,34 +69,146 @@ jobs:
       - name: Send Telegram notification on success
         if: success()
         run: |
-          MESSAGE="🚀 Notable Nomads Landing Workflow Successful!%0A%0A"
-          MESSAGE+="🏷 Version: ${{ env.VERSION }}%0A"
-          MESSAGE+="📝 Commit: ${GITHUB_SHA::7}%0A"
-          MESSAGE+="👤 Author: ${{ github.actor }}%0A"
-          MESSAGE+="🔗 Commit URL: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}%0A%0A"
-          MESSAGE+="🌍 Landing Page: https://notablenomads.com%0A"
-          MESSAGE+="📦 Docker Image: mrdevx/nn-landing:${{ env.VERSION }}-${GITHUB_SHA::7}"
+          # Function to escape special characters for MarkdownV2
+          escape_markdown() {
+            local text="$1"
+            # Escape each special character individually
+            text="${text//\\/\\\\}"  # Must be first
+            text="${text//\./\\.}"
+            text="${text//\-/\\\-}"
+            text="${text//\!/\\\!}"
+            text="${text//\+/\\\+}"
+            text="${text//\=/\\\=}"
+            text="${text//\|/\\\|}"
+            text="${text//\{/\\\{}"
+            text="${text//\}/\\\}}"
+            text="${text//\(/\\\(}"
+            text="${text//\)/\\\)}"
+            text="${text//\[/\\\[}"
+            text="${text//\]/\\\]}"
+            text="${text//\*/\\\*}"
+            text="${text//\_/\\\_}"
+            text="${text//\~/\\\~}"
+            text="${text//\`/\\\`}"
+            text="${text//\>/\\\>}"
+            text="${text//\#/\\\#}"
+            echo "$text"
+          }
 
+          # Calculate duration properly using workflow start time
+          START_TIME=$(date -d "${{ github.event.head_commit.timestamp }}" +%s)
+          END_TIME=$(date +%s)
+          DURATION=$((END_TIME - START_TIME))
+          DURATION_MIN=$((DURATION / 60))
+          DURATION_SEC=$((DURATION % 60))
+
+          # Get deployment info and last 5 commits with better formatting
+          COMMIT_HISTORY=$(git log -n 5 --pretty=format:"%h | %an | %s" | while IFS='|' read -r hash author msg; do
+            # Trim spaces
+            hash=$(echo "$hash" | xargs)
+            author=$(echo "$author" | xargs)
+            msg=$(echo "$msg" | xargs)
+            # Format each commit line
+            printf "\\n%s\\n" "commit: ${hash}"
+            printf "%s\\n" "by: ${author}"
+            printf "%s\\n" "→ ${msg}"
+            printf "%s\\n" "\\-\\-\\-\\-\\-\\-\\-\\-\\-\\-"
+          done)
+
+          # Format the message with minimal special characters
+          MESSAGE="✨ *Notable Nomads Landing Deployed*%0A%0A"
+
+          # Header with version and branch
+          MESSAGE+="📌 *Version:* \`$(escape_markdown "${{ env.VERSION }}")\`%0A"
+          MESSAGE+="🌿 *Branch:* \`$(escape_markdown "${GITHUB_REF#refs/heads/}")\`%0A"
+          MESSAGE+="👤 *By:* $(escape_markdown "${{ github.actor }}")%0A"
+          MESSAGE+="⏱️ *Duration:* ${DURATION_MIN}m ${DURATION_SEC}s%0A%0A"
+
+          # Status section
+          MESSAGE+="📊 *Status:*%0A"
+          MESSAGE+="✅ Build successful%0A"
+          MESSAGE+="✅ Docker image pushed%0A"
+          MESSAGE+="✅ Deployment complete%0A%0A"
+
+          # Recent changes section
+          MESSAGE+="📝 *Recent Changes:*%0A\`\`\`%0A${COMMIT_HISTORY}%0A\`\`\`%0A%0A"
+
+          # Links section
+          MESSAGE+="🔗 *Quick Access:*%0A"
+          MESSAGE+="📊 Logs: $(escape_markdown "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}")%0A"
+          MESSAGE+="🌐 Website: notablenomads\\.com%0A"
+          MESSAGE+="📦 Docker: mrdevx/nn\\-landing:$(escape_markdown "${{ env.VERSION }}")\\-${GITHUB_SHA::7}"
+
+          # Send the notification
           curl -s -X POST \
-            https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-            -d message_thread_id=${{ secrets.TELEGRAM_THREAD_ID }} \
-            -d text="$MESSAGE" \
-            -d parse_mode=HTML
+            "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d "message_thread_id=${{ secrets.TELEGRAM_THREAD_ID }}" \
+            -d "text=${MESSAGE}" \
+            -d "parse_mode=MarkdownV2"
 
       - name: Send Telegram notification on failure
         if: failure()
         run: |
-          MESSAGE="❌ Notable Nomads Landing Workflow Failed!%0A%0A"
-          MESSAGE+="🏷 Version: ${{ env.VERSION }}%0A"
-          MESSAGE+="📝 Commit: ${GITHUB_SHA::7}%0A"
-          MESSAGE+="👤 Author: ${{ github.actor }}%0A"
-          MESSAGE+="🔗 Action URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}%0A%0A"
-          MESSAGE+="Please check the GitHub Actions logs for more details."
+          # Function to escape special characters for MarkdownV2
+          escape_markdown() {
+            local text="$1"
+            # Escape each special character individually
+            text="${text//\\/\\\\}"  # Must be first
+            text="${text//\./\\.}"
+            text="${text//\-/\\\-}"
+            text="${text//\!/\\\!}"
+            text="${text//\+/\\\+}"
+            text="${text//\=/\\\=}"
+            text="${text//\|/\\\|}"
+            text="${text//\{/\\\{}"
+            text="${text//\}/\\\}}"
+            text="${text//\(/\\\(}"
+            text="${text//\)/\\\)}"
+            text="${text//\[/\\\[}"
+            text="${text//\]/\\\]}"
+            text="${text//\*/\\\*}"
+            text="${text//\_/\\\_}"
+            text="${text//\~/\\\~}"
+            text="${text//\`/\\\`}"
+            text="${text//\>/\\\>}"
+            text="${text//\#/\\\#}"
+            echo "$text"
+          }
 
+          # Get error context with better commit formatting
+          LAST_COMMIT=$(git log -n 1 --pretty=format:"%h | %an | %s")
+          IFS='|' read -r hash author msg <<< "$LAST_COMMIT"
+          # Trim spaces
+          hash=$(echo "$hash" | xargs)
+          author=$(echo "$author" | xargs)
+          msg=$(echo "$msg" | xargs)
+
+          # Format commit info
+          COMMIT_INFO=$(printf "commit: %s\\nby: %s\\n→ %s" "${hash}" "${author}" "${msg}")
+
+          MESSAGE="⚠️ *Notable Nomads Landing Failed*%0A%0A"
+
+          # Header with version and branch
+          MESSAGE+="📌 *Version:* \`$(escape_markdown "${{ env.VERSION }}")\`%0A"
+          MESSAGE+="🌿 *Branch:* \`$(escape_markdown "${GITHUB_REF#refs/heads/}")\`%0A"
+          MESSAGE+="👤 *By:* $(escape_markdown "${{ github.actor }}")%0A%0A"
+
+          # Error details
+          MESSAGE+="❌ *Failed Step:* \`$(escape_markdown "$GITHUB_JOB")\`%0A%0A"
+
+          # Last commit info with better formatting
+          MESSAGE+="📝 *Last Commit:*%0A\`\`\`%0A${COMMIT_INFO}%0A\`\`\`%0A%0A"
+
+          # Help section
+          MESSAGE+="🔍 *Debug:*%0A"
+          MESSAGE+="📊 Logs: $(escape_markdown "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}")%0A"
+          MESSAGE+="💬 Contact: @mrdevx"
+
+          # Send the notification
           curl -s -X POST \
-            https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage \
-            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
-            -d message_thread_id=${{ secrets.TELEGRAM_THREAD_ID }} \
-            -d text="$MESSAGE" \
-            -d parse_mode=HTML 
+            "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d "message_thread_id=${{ secrets.TELEGRAM_THREAD_ID }}" \
+            -d "text=${MESSAGE}" \
+            -d "parse_mode=MarkdownV2"

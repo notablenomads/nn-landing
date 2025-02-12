@@ -106,17 +106,7 @@ jobs:
           DURATION_SEC=$((DURATION % 60))
 
           # Get deployment info and last 5 commits with better formatting
-          COMMIT_HISTORY=$(git log -n 5 --pretty=format:"%h | %an | %s" | while IFS='|' read -r hash author msg; do
-            # Trim spaces
-            hash=$(echo "$hash" | xargs)
-            author=$(echo "$author" | xargs)
-            msg=$(echo "$msg" | xargs)
-            # Format each commit line
-            printf "\\n%s\\n" "commit: ${hash}"
-            printf "%s\\n" "by: ${author}"
-            printf "%s\\n" "→ ${msg}"
-            printf "%s\\n" "\\-\\-\\-\\-\\-\\-\\-\\-\\-\\-"
-          done)
+          COMMIT_HISTORY=$(git log -n 5 --pretty=format:"commit: %h%nby: %an%n→ %s%n----------%n" | sed 's/\\/\\\\/g')
 
           # Format the message with minimal special characters
           MESSAGE="✨ *Deployment Complete*%0A%0A"

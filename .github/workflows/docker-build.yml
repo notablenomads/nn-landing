@@ -2,9 +2,9 @@ name: Build and Push Docker Image
 
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -95,6 +95,9 @@ jobs:
             echo "$text"
           }
 
+          # Get branch name from GitHub context
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
+
           # Calculate duration properly using workflow start time
           START_TIME=$(date -d "${{ github.event.head_commit.timestamp }}" +%s)
           END_TIME=$(date +%s)
@@ -103,31 +106,21 @@ jobs:
           DURATION_SEC=$((DURATION % 60))
 
           # Get deployment info and last 5 commits with better formatting
-          COMMIT_HISTORY=$(git log -n 5 --pretty=format:"%h | %an | %s" | while IFS='|' read -r hash author msg; do
-            # Trim spaces
-            hash=$(echo "$hash" | xargs)
-            author=$(echo "$author" | xargs)
-            msg=$(echo "$msg" | xargs)
-            # Format each commit line
-            printf "\\n%s\\n" "commit: ${hash}"
-            printf "%s\\n" "by: ${author}"
-            printf "%s\\n" "→ ${msg}"
-            printf "%s\\n" "\\-\\-\\-\\-\\-\\-\\-\\-\\-\\-"
-          done)
+          COMMIT_HISTORY=$(git log -n 5 --pretty=format:"commit: %h%nby: %an%n→ %s%n----------%n" | sed 's/\\/\\\\/g')
 
           # Format the message with minimal special characters
-          MESSAGE="✨ *Notable Nomads Landing Deployed*%0A%0A"
+          MESSAGE="✨ *Deployment Complete*%0A%0A"
 
           # Header with version and branch
           MESSAGE+="📌 *Version:* \`$(escape_markdown "${{ env.VERSION }}")\`%0A"
-          MESSAGE+="🌿 *Branch:* \`$(escape_markdown "${GITHUB_REF#refs/heads/}")\`%0A"
+          MESSAGE+="🌿 *Branch:* \`$(escape_markdown "$BRANCH_NAME")\`%0A"
           MESSAGE+="👤 *By:* $(escape_markdown "${{ github.actor }}")%0A"
           MESSAGE+="⏱️ *Duration:* ${DURATION_MIN}m ${DURATION_SEC}s%0A%0A"
 
           # Status section
           MESSAGE+="📊 *Status:*%0A"
+          MESSAGE+="✅ Tests passed%0A"
           MESSAGE+="✅ Build successful%0A"
-          MESSAGE+="✅ Docker image pushed%0A"
           MESSAGE+="✅ Deployment complete%0A%0A"
 
           # Recent changes section
@@ -136,7 +129,7 @@ jobs:
           # Links section
           MESSAGE+="🔗 *Quick Access:*%0A"
           MESSAGE+="📊 Logs: $(escape_markdown "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}")%0A"
-          MESSAGE+="🌐 Website: notablenomads\\.com%0A"
+          MESSAGE+="🌐 Web: notablenomads\\.com%0A"
           MESSAGE+="📦 Docker: mrdevx/nn\\-landing:$(escape_markdown "${{ env.VERSION }}")\\-${GITHUB_SHA::7}"
 
           # Send the notification
@@ -176,6 +169,9 @@ jobs:
             echo "$text"
           }
 
+          # Get branch name from GitHub context
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
+
           # Get error context with better commit formatting
           LAST_COMMIT=$(git log -n 1 --pretty=format:"%h | %an | %s")
           IFS='|' read -r hash author msg <<< "$LAST_COMMIT"
@@ -187,11 +183,11 @@ jobs:
           # Format commit info
           COMMIT_INFO=$(printf "commit: %s\\nby: %s\\n→ %s" "${hash}" "${author}" "${msg}")
 
-          MESSAGE="⚠️ *Notable Nomads Landing Failed*%0A%0A"
+          MESSAGE="⚠️ *Deployment Failed*%0A%0A"
 
           # Header with version and branch
           MESSAGE+="📌 *Version:* \`$(escape_markdown "${{ env.VERSION }}")\`%0A"
-          MESSAGE+="🌿 *Branch:* \`$(escape_markdown "${GITHUB_REF#refs/heads/}")\`%0A"
+          MESSAGE+="🌿 *Branch:* \`$(escape_markdown "$BRANCH_NAME")\`%0A"
           MESSAGE+="👤 *By:* $(escape_markdown "${{ github.actor }}")%0A%0A"
 
           # Error details
@@ -203,6 +199,8 @@ jobs:
           # Help section
           MESSAGE+="🔍 *Debug:*%0A"
           MESSAGE+="📊 Logs: $(escape_markdown "${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}")%0A"
+          MESSAGE+="🌐 Web: notablenomads\\.com%0A"
+          MESSAGE+="📦 Docker: mrdevx/nn\\-landing:$(escape_markdown "${{ env.VERSION }}")\\-${GITHUB_SHA::7}%0A"
           MESSAGE+="💬 Contact: @mrdevx"
 
           # Send the notification

@@ -12,10 +12,19 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({
   const [existingDetails, setExistingDetails] = React.useState<
     ExistingProjectDetails
   >({
-    challenge: "",
+    challenges: [], // Changed from challenge (string) to challenges (string[])
     hasCode: null,
     codeFiles: null,
   });
+
+  const toggleChallenge = (challengeValue: string) => {
+    setExistingDetails((prev) => ({
+      ...prev,
+      challenges: prev.challenges.includes(challengeValue)
+        ? prev.challenges.filter((c) => c !== challengeValue)
+        : [...prev.challenges, challengeValue],
+    }));
+  };
 
   return (
     <div className="flex flex-col gap-6 text-white">
@@ -45,22 +54,16 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({
         <div className="space-y-4">
           <div>
             <Label htmlFor="challenge" className="block mb-4">
-              What's the biggest challenge?
+              What are your biggest challenges? (Select all that apply)
             </Label>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
               {options?.existingProjectChallenges?.map((challenge) => (
                 <SelectButton
                   key={challenge.value}
-                  selected={existingDetails.challenge === challenge.value}
-                  onClick={() =>
-                    setExistingDetails({
-                      ...existingDetails,
-                      challenge:
-                        existingDetails.challenge === challenge.value
-                          ? ""
-                          : challenge.value,
-                    })
-                  }
+                  selected={existingDetails.challenges.includes(
+                    challenge.value
+                  )}
+                  onClick={() => toggleChallenge(challenge.value)}
                 >
                   <span className="font-semibold text-md">
                     {challenge.label}
@@ -112,7 +115,8 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({
         className="mt-4 text-lg mb-3"
         disabled={
           !projectType ||
-          (projectType === "EXISTING" && !existingDetails.challenge)
+          (projectType === "EXISTING" &&
+            existingDetails.challenges.length === 0)
         }
       >
         Next →

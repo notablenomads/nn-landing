@@ -33,7 +33,7 @@ export interface ServiceSelectionData {
 }
 
 export interface ExistingProjectDetails {
-  challenge: string;
+  challenges: string[];
   hasCode: boolean | null;
   codeFiles: FileList | null;
 }

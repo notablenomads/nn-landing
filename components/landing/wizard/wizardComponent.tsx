@@ -31,7 +31,7 @@ function WizardWrapper() {
       </Button>
       <SimplePopup isOpen={isOpen} onClose={() => setIsOpen(false)}>
         {isOpen && (
-          <Suspense fallback={<div className="p-4">Loading...</div>}>
+          <Suspense>
             <QueryClientProvider client={queryClient}>
               <Toaster />
               <WizardContent

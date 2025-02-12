@@ -222,7 +222,7 @@ const ContactStep: React.FC<ContactStepProps> = ({
               type="email"
               value={contactInfo.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
-              className="mt-1 bg-white/10  min-h-[100px]"
+              className="mt-1 bg-white/10 text-xl"
               placeholder="your@email.com"
               disabled={submitMutation.isPending}
             />
@@ -236,7 +236,7 @@ const ContactStep: React.FC<ContactStepProps> = ({
             id="company"
             value={contactInfo.company}
             onChange={(e) => handleInputChange("company", e.target.value)}
-            className="mt-1 bg-white/10  min-h-[100px]"
+            className="mt-1 bg-white/10 text-lg"
             placeholder="Your company name"
             disabled={submitMutation.isPending}
           />

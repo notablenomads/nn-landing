@@ -3,6 +3,8 @@ import { StepComponentProps } from "../types";
 import { useMotionValue, useMotionTemplate, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { MotionValue } from "motion/react";
+import ContactForm from "../../contact/contactForm";
+import { Button } from "@/components/ui/button";
 
 interface CardPatternProps {
   mouseX: MotionValue<number>;
@@ -47,10 +49,12 @@ const EvervaultCard = ({
   text,
   className,
   onClick,
+  variant = "primary",
 }: {
   text?: string;
   className?: string;
   onClick?: () => void;
+  variant?: "primary" | "secondary";
 }) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -80,13 +84,17 @@ const EvervaultCard = ({
     <div
       className={cn(
         "p-0.5 bg-transparent flex items-center justify-center relative",
+        variant === "secondary" && "opacity-90 hover:opacity-100",
         className
       )}
     >
       <div
         onMouseMove={onMouseMove}
         onClick={handleClick}
-        className="group/card rounded-lg w-full relative overflow-hidden bg-black/10 flex items-center justify-center px-12 py-6 cursor-pointer"
+        className={cn(
+          "group/card rounded-lg w-full relative overflow-hidden bg-black/10 flex items-center justify-center px-12 py-6 cursor-pointer",
+          variant === "secondary" && "py-4"
+        )}
       >
         <CardPattern
           mouseX={mouseX}
@@ -94,25 +102,55 @@ const EvervaultCard = ({
           randomString={randomString}
         />
         <div className="relative z-10 flex items-center justify-center">
-          <span className="text-white text-2xl">{text}</span>
+          <span
+            className={cn(
+              "text-white",
+              variant === "primary" ? "text-2xl" : "text-xl"
+            )}
+          >
+            {text}
+          </span>
         </div>
       </div>
     </div>
   );
 };
 
-const WelcomeStep: React.FC<StepComponentProps> = ({ onNext }) => (
-  <div className="flex flex-col items-center gap-6 text-white">
-    <p className="text-xl text-center">
-      Let's bring your project to life! Answer a few quick questions to get a
-      free consultation & roadmap.
-    </p>
-    <p className="text-sm opacity-70">Takes ~3 minutes</p>
-    <EvervaultCard
-      text="Begin Your Project Journey →"
-      onClick={() => onNext({ started: true })}
-    />
-  </div>
-);
+const WelcomeStep: React.FC<StepComponentProps> = ({ onNext }) => {
+  const [showContactForm, setShowContactForm] = React.useState(false);
+
+  if (showContactForm) {
+    return (
+      <div className="flex flex-col items-center gap-6 text-white">
+        <ContactForm />
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-6 text-white">
+      <p className="text-xl text-center">
+        Let's bring your project to life! Answer a few quick questions to get a
+        free consultation & roadmap.
+      </p>
+      <p className="text-sm opacity-70">Takes ~3 minutes</p>
+      <div className="flex flex-col gap-4 w-full max-w-xl">
+        <EvervaultCard
+          text="Begin Your Project Journey →"
+          onClick={() => onNext({ started: true })}
+          variant="primary"
+        />
+        <p className="text-center">Or A Quicker Way</p>
+        <Button
+          onClick={() => setShowContactForm(true)}
+          variant="default"
+          size="lg"
+        >
+          Quick Contact Form →
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 export default WelcomeStep;

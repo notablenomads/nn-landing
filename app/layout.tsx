@@ -1,12 +1,11 @@
 import type {Metadata} from "next";
 import "./app.css";
-// import {Toaster} from 'sonner'
 import { RevolutionGothicFont } from "@/public/fonts/rev";
 
 
 export const metadata: Metadata = {
     title: "Notable Nomads",
-    description: "Code Without Borders",
+    description: "Notable Nomads Runs by a growing team of freelancers, all sharing the same passion for producing high-end work in their, Our expertise spans Custom Application Development, Web Development, Enterprise Software Solutions, and UI/UX Design, ensuring end-to-end technical excellence tailored to your business needs.",
      manifest: '/manifest.json',
   icons: {
     icon: [

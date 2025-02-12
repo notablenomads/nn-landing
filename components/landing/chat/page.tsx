@@ -72,20 +72,22 @@ interface Props {
   className?: string;
 }
 
-const ChatComponent: React.FC<Props> = ({
-  onClose = () => {},
-  className = "",
-}) => {
+const ChatComponent: React.FC<Props> = ({ onClose = () => {}, className = "" }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
-  const [connectionStatus, setConnectionStatus] = useState<string>(
-    "Not connected"
-  );
+  const [connectionStatus, setConnectionStatus] = useState<string>("Not connected");
   const [error, setError] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [simulatedMessages, setSimulatedMessages] = useState<Message[]>([]);
+  const [currentStreamState, setCurrentStreamState] = useState<{
+    messageId: number | null;
+    buffer: string;
+  }>({
+    messageId: null,
+    buffer: "",
+  });
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -96,10 +98,7 @@ const ChatComponent: React.FC<Props> = ({
     }
   }, []);
 
-  const simulateTyping = async (
-    message: SimulatedMessage,
-    charIndex: number = 0
-  ): Promise<void> => {
+  const simulateTyping = async (message: SimulatedMessage, charIndex: number = 0): Promise<void> => {
     if (charIndex === 0) {
       setSimulatedMessages((prev) => {
         // Check if message already exists to prevent duplicates
@@ -122,11 +121,7 @@ const ChatComponent: React.FC<Props> = ({
 
     if (charIndex < message.content.length) {
       const newContent = message.content.substring(0, charIndex + 1);
-      setSimulatedMessages((prev) =>
-        prev.map((msg) =>
-          msg.id === message.id ? { ...msg, content: newContent } : msg
-        )
-      );
+      setSimulatedMessages((prev) => prev.map((msg) => (msg.id === message.id ? { ...msg, content: newContent } : msg)));
 
       await new Promise((resolve) => setTimeout(resolve, message.typingSpeed));
       await simulateTyping(message, charIndex + 1);
@@ -170,55 +165,61 @@ const ChatComponent: React.FC<Props> = ({
       reconnection: true,
       reconnectionAttempts: 5,
       reconnectionDelay: 1000,
-      timeout: 10000,
-      transports: ["websocket"],
-      upgrade: false,
+      timeout: 20000,
+      transports: ["websocket", "polling"],
+      upgrade: true,
       secure: true,
+      forceNew: true,
+      withCredentials: true,
+      path: "/socket.io/", // Explicitly set the socket.io path
       extraHeaders: {
-        "Access-Control-Allow-Origin": "*",
+        Origin: typeof window !== "undefined" ? window.location.origin : "http://localhost:3000",
       },
-    });
-
-    newSocket.on("connect", () => {
-      console.log("Socket connected successfully");
-      setConnectionStatus("Connected");
-      setIsProcessing(false);
-      setError("");
-    });
-
-    newSocket.on("disconnect", (reason) => {
-      console.log("Socket disconnected:", reason);
-      setConnectionStatus("Disconnected");
-      setIsProcessing(true);
-    });
-
-    newSocket.on("connect_error", (error: Error) => {
-      console.error("Socket connection error:", error);
-      setConnectionStatus(`Connection error`);
-      setError(`Failed to connect: ${error.message}`);
-      setIsProcessing(true);
+      auth: {
+        origin: typeof window !== "undefined" ? window.location.origin : "http://localhost:3000",
+      },
     });
 
     newSocket.on("streamChunk", (data: StreamResponse) => {
       console.log("Received stream chunk:", data);
       if (data.statusCode === 200 && data.data.chunk) {
-        appendAIMessage(data.data.chunk);
+        setCurrentStreamState((prev) => {
+          const newBuffer = prev.buffer + data.data.chunk;
+          appendAIMessage(newBuffer);
+          return {
+            ...prev,
+            buffer: newBuffer,
+          };
+        });
         setIsTyping(true);
+      } else {
+        console.error("Invalid stream chunk received:", data);
       }
     });
 
     newSocket.on("streamComplete", () => {
-      console.log("Stream completed");
+      setCurrentStreamState((prev) => {
+        console.log("Stream completed successfully, final message:", prev.buffer);
+        return {
+          messageId: null,
+          buffer: "",
+        };
+      });
+      
       setConnectionStatus("Connected");
       setIsProcessing(false);
       setIsTyping(false);
 
+      // Keep the socket alive after stream completion
+      if (!newSocket.connected) {
+        console.warn("Socket disconnected after stream completion, attempting to reconnect");
+        newSocket.connect();
+      }
+
       // Update the last user message status to 'sent'
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages];
-        const lastUserMessageIndex = [...updatedMessages]
-          .reverse()
-          .findIndex((msg) => msg.sender === "user");
+        const lastUserMessageIndex = [...updatedMessages].reverse().findIndex((msg) => msg.sender === "user");
 
         if (lastUserMessageIndex !== -1) {
           const actualIndex = updatedMessages.length - 1 - lastUserMessageIndex;
@@ -230,26 +231,60 @@ const ChatComponent: React.FC<Props> = ({
         return updatedMessages;
       });
 
-      // Focus input after a short delay to ensure state updates are complete
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
     });
 
+    newSocket.on("startStream", (data: { messageId: number }) => {
+      console.log("Stream started for message:", data.messageId);
+      setCurrentStreamState({
+        messageId: data.messageId,
+        buffer: "",
+      });
+    });
+
+    newSocket.on("connect", () => {
+      console.log("Socket connected successfully with ID:", newSocket.id);
+      setConnectionStatus("Connected");
+      setIsProcessing(false);
+      setError("");
+    });
+
+    newSocket.on("disconnect", (reason) => {
+      console.log("Socket disconnected:", reason, "- Socket ID:", newSocket.id);
+      setConnectionStatus(`Disconnected: ${reason}`);
+      setIsProcessing(true);
+
+      // Attempt to reconnect if disconnected unexpectedly
+      if (reason === "transport close" || reason === "transport error") {
+        console.log("Attempting to reconnect...");
+        newSocket.connect();
+      }
+    });
+
+    newSocket.on("connect_error", (error: Error) => {
+      console.error("Socket connection error:", error.message, "- Socket ID:", newSocket.id);
+      setConnectionStatus(`Connection error: ${error.message}`);
+      setError(`Failed to connect: ${error.message}`);
+      setIsProcessing(true);
+    });
+
+    newSocket.on("error", (error: Error) => {
+      console.error("Socket error:", error, "- Socket ID:", newSocket.id);
+      setError(`Socket error: ${error.message}`);
+    });
+
     newSocket.on("streamError", (data: StreamResponse) => {
       console.error("Stream error received:", data);
-      setError(
-        data.message || "An error occurred while processing your message"
-      );
+      setError(data.message || "An error occurred while processing your message");
       setIsProcessing(false);
       setIsTyping(false);
 
       // Update the last user message status to 'error'
       setMessages((prevMessages) => {
         const updatedMessages = [...prevMessages];
-        const lastUserMessageIndex = [...updatedMessages]
-          .reverse()
-          .findIndex((msg) => msg.sender === "user");
+        const lastUserMessageIndex = [...updatedMessages].reverse().findIndex((msg) => msg.sender === "user");
 
         if (lastUserMessageIndex !== -1) {
           const actualIndex = updatedMessages.length - 1 - lastUserMessageIndex;
@@ -263,9 +298,7 @@ const ChatComponent: React.FC<Props> = ({
           ...updatedMessages,
           {
             id: Date.now(),
-            content:
-              data.message ||
-              "Sorry, I encountered an error processing your message. Please try again.",
+            content: data.message || "Sorry, I encountered an error processing your message. Please try again.",
             sender: "bot",
             timestamp: new Date().toISOString(),
             type: "text",
@@ -276,15 +309,42 @@ const ChatComponent: React.FC<Props> = ({
     });
 
     setSocket(newSocket);
+    return newSocket;
   };
 
   const isMobile = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
-    initializeWebSocket();
+    let currentSocket: Socket | null = null;
+    let heartbeatInterval: NodeJS.Timeout | null = null;
+
+    const connect = () => {
+      currentSocket = initializeWebSocket();
+
+      // Setup heartbeat to keep connection alive
+      if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+      }
+
+      heartbeatInterval = setInterval(() => {
+        if (currentSocket?.connected) {
+          currentSocket.emit("heartbeat");
+          console.log("Heartbeat sent");
+        }
+      }, 15000); // Send heartbeat every 15 seconds
+    };
+
+    connect();
+
     return () => {
-      if (socket) {
-        socket.disconnect();
+      if (heartbeatInterval) {
+        clearInterval(heartbeatInterval);
+      }
+      if (currentSocket) {
+        console.log("Cleaning up socket connection:", currentSocket.id);
+        currentSocket.removeAllListeners();
+        currentSocket.disconnect();
+        setSocket(null);
       }
     };
   }, []);
@@ -292,19 +352,20 @@ const ChatComponent: React.FC<Props> = ({
   const appendAIMessage = (text: string) => {
     setMessages((prevMessages) => {
       const lastMessage = prevMessages[prevMessages.length - 1];
-      if (
-        lastMessage &&
-        lastMessage.sender === "bot" &&
-        lastMessage.status !== "error"
-      ) {
+
+      // If the last message is from the bot and not an error, update it
+      if (lastMessage && lastMessage.sender === "bot" && lastMessage.status !== "error") {
+        // Create a new array to trigger re-render
         const updatedMessages = [...prevMessages];
         updatedMessages[updatedMessages.length - 1] = {
           ...lastMessage,
-          content: lastMessage.content + text,
+          content: text, // Replace content instead of appending
           status: "sent",
+          timestamp: new Date().toISOString(), // Update timestamp
         };
         return updatedMessages;
       } else {
+        // Create a new bot message
         return [
           ...prevMessages,
           {
@@ -337,6 +398,9 @@ const ChatComponent: React.FC<Props> = ({
     };
 
     try {
+      // Clear any existing error messages
+      setMessages((prev) => prev.filter((msg) => !(msg.sender === "bot" && msg.status === "error")));
+
       console.log("Sending message:", {
         message: newMessage.trim(),
         messageId,
@@ -347,6 +411,30 @@ const ChatComponent: React.FC<Props> = ({
       setIsTyping(true);
       setIsProcessing(true);
 
+      // Ensure socket is connected before sending
+      if (!socket.connected) {
+        console.log("Socket disconnected, attempting to reconnect...");
+        socket.connect();
+
+        // Wait for connection
+        await new Promise((resolve) => {
+          const timeout = setTimeout(() => {
+            resolve(false);
+          }, 5000);
+
+          socket.once("connect", () => {
+            clearTimeout(timeout);
+            resolve(true);
+          });
+        });
+      }
+
+      // Reset stream state before sending new message
+      setCurrentStreamState({
+        messageId,
+        buffer: "",
+      });
+
       socket.emit("startStream", {
         message: newMessage.trim(),
         messageId,
@@ -356,6 +444,15 @@ const ChatComponent: React.FC<Props> = ({
       setError("Failed to send message. Please try again.");
       setIsProcessing(false);
       setIsTyping(false);
+      setCurrentStreamState({
+        messageId: null,
+        buffer: "",
+      });
+
+      // Update message status to error
+      setMessages((prev) =>
+        prev.map((msg) => (msg.id === messageId ? { ...msg, status: "error" as MessageStatus } : msg))
+      );
     }
   };
 
@@ -370,49 +467,12 @@ const ChatComponent: React.FC<Props> = ({
     message: Message;
   }
 
-  const handleRetry = (message: Message) => {
-    if (!socket) return;
-    setError("");
-
-    setMessages((prevMessages) =>
-      prevMessages.map((msg) =>
-        msg.id === message.id
-          ? { ...msg, status: "sending" as MessageStatus }
-          : msg
-      )
-    );
-
-    // Remove the error message if it exists
-    setMessages((prevMessages) =>
-      prevMessages.filter(
-        (msg) =>
-          !(
-            msg.sender === "bot" &&
-            msg.status === "error" &&
-            msg.content.includes("Sorry, I encountered an error")
-          )
-      )
-    );
-
-    setIsTyping(true);
-    setIsProcessing(true);
-
-    // Resend the message
-    socket.emit("startStream", {
-      message: message.content,
-      messageId: message.id,
-    });
-  };
-
   const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
     const isError = message.status === "error";
+    const isCurrentlyStreaming = currentStreamState.messageId === message.id;
 
     return (
-      <div
-        className={`flex ${
-          message.sender === "user" ? "justify-end" : "justify-start"
-        }`}
-      >
+      <div className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}>
         <div
           className={`flex gap-2 max-w-[80%] min-w-[40px] ${
             message.sender === "user" ? "flex-row-reverse" : "flex-row"
@@ -420,14 +480,8 @@ const ChatComponent: React.FC<Props> = ({
         >
           <Avatar className="h-6 w-6 md:h-8 md:w-8 flex-shrink-0">
             <AvatarFallback
-              className={`${
-                message.sender === "user"
-                  ? "bg-zinc-700"
-                  : isError
-                  ? "bg-red-700"
-                  : "bg-zinc-700"
-              } 
-                                      text-zinc-200 text-xs md:text-sm`}
+              className={`${message.sender === "user" ? "bg-zinc-700" : isError ? "bg-red-700" : "bg-zinc-700"} 
+                text-zinc-200 text-xs md:text-sm`}
             >
               {message.sender === "user" ? "U" : "B"}
             </AvatarFallback>
@@ -443,10 +497,8 @@ const ChatComponent: React.FC<Props> = ({
           >
             <p className="text-md whitespace-pre-wrap">{message.content}</p>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs text-zinc-100 opacity-75">
-                {formatTime(message.timestamp)}
-              </span>
-              {message.status === "sending" && (
+              <span className="text-xs text-zinc-100 opacity-75">{formatTime(message.timestamp)}</span>
+              {(message.status === "sending" || isCurrentlyStreaming) && (
                 <Loader2 className="h-3 w-3 animate-spin text-zinc-300" />
               )}
               {isError && message.sender === "user" && (
@@ -455,9 +507,7 @@ const ChatComponent: React.FC<Props> = ({
                   variant="ghost"
                   className="h-6 px-2 text-xs text-red-400 hover:text-red-300 hover:bg-red-900/20"
                   onClick={() => handleRetry(message)}
-                  disabled={
-                    isProcessing || !socket || connectionStatus !== "Connected"
-                  }
+                  disabled={isProcessing || !socket || connectionStatus !== "Connected"}
                 >
                   Retry
                 </Button>
@@ -467,6 +517,31 @@ const ChatComponent: React.FC<Props> = ({
         </div>
       </div>
     );
+  };
+
+  const handleRetry = (message: Message) => {
+    if (!socket) return;
+    setError("");
+
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) => (msg.id === message.id ? { ...msg, status: "sending" as MessageStatus } : msg))
+    );
+
+    // Remove the error message if it exists
+    setMessages((prevMessages) =>
+      prevMessages.filter(
+        (msg) => !(msg.sender === "bot" && msg.status === "error" && msg.content.includes("Sorry, I encountered an error"))
+      )
+    );
+
+    setIsTyping(true);
+    setIsProcessing(true);
+
+    // Resend the message
+    socket.emit("startStream", {
+      message: message.content,
+      messageId: message.id,
+    });
   };
 
   return (
@@ -483,38 +558,20 @@ const ChatComponent: React.FC<Props> = ({
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
               <AvatarFallback className="bg-zinc-700 text-zinc-200">
-                <Image
-                  src="/logo/new-nn-logo-dark.svg"
-                  width={32}
-                  height={32}
-                  alt="nn-avatar"
-                />
+                <Image src="/logo/new-nn-logo-dark.svg" width={32} height={32} alt="nn-avatar" />
               </AvatarFallback>
             </Avatar>
             <div>
-              <h2 className="font-semibold text-zinc-100">
-                Ask us anything ...
-              </h2>
+              <h2 className="font-semibold text-zinc-100">Ask us anything ...</h2>
               <div className="flex items-center gap-2">
                 <span
-                  className={`w-2 h-2 rounded-full ${
-                    connectionStatus === "Connected"
-                      ? "bg-green-500"
-                      : "bg-red-500"
-                  }`}
+                  className={`w-2 h-2 rounded-full ${connectionStatus === "Connected" ? "bg-green-500" : "bg-red-500"}`}
                 ></span>
-                <span className="text-xs text-zinc-400">
-                  {connectionStatus}
-                </span>
+                <span className="text-xs text-zinc-400">{connectionStatus}</span>
               </div>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-zinc-400 hover:text-zinc-100"
-            onClick={onClose}
-          >
+          <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-zinc-100" onClick={onClose}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="18"
@@ -544,10 +601,7 @@ const ChatComponent: React.FC<Props> = ({
             <div className="space-y-4 pb-4">
               {/* Render simulated messages */}
               {simulatedMessages.map((message) => (
-                <MessageBubble
-                  key={`simulated-${message.id}`}
-                  message={message}
-                />
+                <MessageBubble key={`simulated-${message.id}`} message={message} />
               ))}
 
               {/* Render real messages */}
@@ -555,19 +609,14 @@ const ChatComponent: React.FC<Props> = ({
                 <MessageBubble key={`real-${message.id}`} message={message} />
               ))}
 
-              {isTyping && (
+              {isTyping && currentStreamState.messageId && (
                 <div className="flex items-center gap-2 text-zinc-400">
                   <Avatar className="h-6 w-6 md:h-8 md:w-8">
-                    <AvatarFallback className="bg-zinc-700 text-zinc-200">
-                      B
-                    </AvatarFallback>
+                    <AvatarFallback className="bg-zinc-700 text-zinc-200">B</AvatarFallback>
                   </Avatar>
                   <div className="bg-zinc-800 rounded-lg px-4 py-2">
                     <div className="flex gap-1">
-                      <span
-                        className="w-2 h-2 bg-zinc-500 rounded-full animate-bounce"
-                        style={{ animationDelay: "0ms" }}
-                      />
+                      <span className="w-2 h-2 bg-zinc-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                       <span
                         className="w-2 h-2 bg-zinc-500 rounded-full animate-bounce"
                         style={{ animationDelay: "150ms" }}
@@ -584,30 +633,20 @@ const ChatComponent: React.FC<Props> = ({
             </div>
           </ScrollArea>
 
-          <form
-            onSubmit={handleSendMessage}
-            className="mt-4 flex gap-2 pt-2 border-t border-zinc-800"
-          >
+          <form onSubmit={handleSendMessage} className="mt-4 flex gap-2 pt-2 border-t border-zinc-800">
             <Input
               ref={inputRef}
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder="Type your message..."
               className="flex-1 bg-zinc-800 border-zinc-700 text-zinc-100 placeholder:text-zinc-400"
-              disabled={
-                isProcessing || !socket || connectionStatus !== "Connected"
-              }
+              disabled={isProcessing || !socket || connectionStatus !== "Connected"}
             />
             <Button
               type="submit"
               size="icon"
               className="bg-secondary hover:bg-secondary/90 flex-shrink-0"
-              disabled={
-                !newMessage.trim() ||
-                isProcessing ||
-                !socket ||
-                connectionStatus !== "Connected"
-              }
+              disabled={!newMessage.trim() || isProcessing || !socket || connectionStatus !== "Connected"}
             >
               <Send className="h-4 w-4" />
             </Button>

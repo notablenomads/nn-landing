@@ -12,10 +12,11 @@ const Toaster = lazy(() =>
 import wizardSteps from "./steps";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "..";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 function WizardWrapper() {
   const [isOpen, setIsOpen] = useState(false);
-
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const handleComplete = (data: Record<string, unknown>) => {
     console.log("Wizard completed with data:", data);
   };
@@ -27,7 +28,7 @@ function WizardWrapper() {
         size="lg"
         onClick={() => setIsOpen(true)}
       >
-        Request a Quote
+        {isMobile ? "Quote" : "Request a Quote"}
       </Button>
       <SimplePopup isOpen={isOpen} onClose={() => setIsOpen(false)}>
         {isOpen && (

@@ -140,7 +140,7 @@ const WelcomeStep: React.FC<StepComponentProps> = ({ onNext }) => {
           onClick={() => onNext({ started: true })}
           variant="primary"
         />
-        <p className="text-center">Or A Quicker Way</p>
+        <p className="text-center">Or</p>
         <Button
           onClick={() => setShowContactForm(true)}
           variant="default"

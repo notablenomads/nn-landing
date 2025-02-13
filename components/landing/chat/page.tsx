@@ -84,7 +84,10 @@ const ChatComponent: React.FC<Props> = ({
 
   const scrollToBottom = useCallback(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+      scrollRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
     }
   }, []);
 
@@ -318,8 +321,11 @@ const ChatComponent: React.FC<Props> = ({
       setIsTyping(true);
       setIsProcessing(true);
 
+      // Add the prompt prefix here
+      const promptedMessage = `consider the Notable Nomads Data that has been shared with you then answer this question:${newMessage.trim()}`;
+
       socket.emit("startStream", {
-        message: newMessage.trim(),
+        message: promptedMessage,
         messageId,
       });
     } catch (err) {
@@ -330,6 +336,7 @@ const ChatComponent: React.FC<Props> = ({
     }
   };
 
+  // Also update the handleRetry function to include the prompt:
   const handleRetry = (message: Message) => {
     if (!socket) return;
     setError("");
@@ -356,8 +363,11 @@ const ChatComponent: React.FC<Props> = ({
     setIsTyping(true);
     setIsProcessing(true);
 
+    // Add the prompt prefix here too
+    const promptedMessage = `consider the Notable Nomads Data that has been shared with you then answer this question:\n${message.content}`;
+
     socket.emit("startStream", {
-      message: message.content,
+      message: promptedMessage,
       messageId: message.id,
     });
   };

@@ -130,7 +130,7 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
       <motion.div className="container mx-auto px-4 py-6">
         {/* Desktop Navigation */}
         <nav className="hidden md:flex justify-between items-center">
-          {/* Request a Quote Button */}
+          {/* Kickstart Your Vision Button */}
           <WizardWrapper />
 
           {/* Right side container for logo and nav items */}

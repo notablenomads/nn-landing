@@ -28,7 +28,7 @@ function WizardWrapper() {
         size="lg"
         onClick={() => setIsOpen(true)}
       >
-        {isMobile ? "Quote" : "Request a Quote"}
+        {isMobile ? "Kickstart" : "Kickstart Your Vision"}
       </Button>
       <SimplePopup isOpen={isOpen} onClose={() => setIsOpen(false)}>
         {isOpen && (

@@ -3,6 +3,7 @@ import "./app.css";
 import { RevolutionGothicFont } from "@/public/fonts/rev";
 import GoogleAnalytics from "./googleAnalytics";
 import { NavigationEvents } from "./navigatonEvent";
+import { Suspense } from "react";
 
 
 export const metadata: Metadata = {
@@ -31,7 +32,10 @@ export default function RootLayout({
         {/* <Toaster/> */}
         <body>{children}
         <GoogleAnalytics />
+        <Suspense>
         <NavigationEvents />
+
+        </Suspense>
         </body>
         </html>
     );

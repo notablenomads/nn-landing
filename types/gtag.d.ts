@@ -1,10 +1,14 @@
-declare global {
-  interface Window {
-    gtag: (
-      command: "config" | "event",
-      targetId: string,
-      config?: Record<string, any>
-    ) => void;
-    dataLayer: Record<string, any>[];
-  }
+interface Window {
+  gtag: (
+    command: "config" | "event",
+    targetId: string,
+    config?: {
+      page_path?: string;
+      page_title?: string;
+      event_category?: string;
+      event_label?: string;
+      value?: number;
+      [key: string]: any;
+    }
+  ) => void;
 }

@@ -1,25 +1,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import MatrixBackground from "@/components/matrixEffect";
 
 const SuccessStep = () => {
   return (
     <div className="relative w-full h-[100dvh] overflow-hidden">
-      {/* Background Animation */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{
-          delay: 2,
-          duration: 1.5,
-          ease: "easeInOut",
-        }}
-        className="absolute inset-0 z-0"
-      >
-        <MatrixBackground isHovered={true} className="w-full h-full" />
-      </motion.div>
-
       {/* Content Animation */}
       <div className="relative z-10 flex items-center justify-center w-full h-full">
         <motion.div

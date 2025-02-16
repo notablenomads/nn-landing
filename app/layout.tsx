@@ -1,6 +1,8 @@
 import type {Metadata} from "next";
 import "./app.css";
 import { RevolutionGothicFont } from "@/public/fonts/rev";
+import GoogleAnalytics from "./googleAnalytics";
+import { NavigationEvents } from "./navigatonEvent";
 
 
 export const metadata: Metadata = {
@@ -27,7 +29,10 @@ export default function RootLayout({
     return (
         <html lang="en" className={`overflow-x-hidden ${RevolutionGothicFont.className}`}>
         {/* <Toaster/> */}
-        <body>{children}</body>
+        <body>{children}
+        <GoogleAnalytics />
+        <NavigationEvents />
+        </body>
         </html>
     );
 }

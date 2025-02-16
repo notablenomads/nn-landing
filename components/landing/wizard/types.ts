@@ -58,7 +58,7 @@ export interface WizardCurrentData {
   };
   projectType?: string;
   existingDetails?: {
-    challenge: string;
+    challenges: string[];
     hasCode: boolean | null;
     codeFiles: FileList | null;
   };

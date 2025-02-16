@@ -85,7 +85,7 @@ const ContactStep: React.FC<ContactStepProps> = ({
       // Project type from step 2
       projectType: currentData.projectType,
       ...(currentData.projectType === "EXISTING" && {
-        existingProjectChallenge: currentData.existingDetails?.challenge,
+        existingProjectChallenge: currentData.existingDetails?.challenges,
       }),
 
       // Project description from step 3 (Technical vs Non-technical path)

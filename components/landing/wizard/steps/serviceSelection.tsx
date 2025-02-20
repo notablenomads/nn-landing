@@ -13,24 +13,21 @@ const ServiceSelectionStep: React.FC<StepWithOptionsProps> = ({
   const [followUpData, setFollowUpData] = React.useState<
     Record<string, string>
   >({});
-  const [showFollowUp, setShowFollowUp] = React.useState<string | null>(null);
   const [otherService, setOtherService] = React.useState("");
 
   const handleServiceToggle = (serviceId: string) => {
     setSelectedServices((prev) => {
       if (prev.includes(serviceId)) {
         const newServices = prev.filter((id) => id !== serviceId);
-        if (serviceId === "AI_ML" || serviceId === "MOBILE_APP") {
-          setShowFollowUp(null);
-        }
         return newServices;
       } else {
-        if (serviceId === "AI_ML") setShowFollowUp("ai");
-        if (serviceId === "MOBILE_APP") setShowFollowUp("mobile");
         return [...prev, serviceId];
       }
     });
   };
+
+  const showAIFollowUp = selectedServices.includes("AI_ML");
+  const showMobileFollowUp = selectedServices.includes("MOBILE_APP");
 
   return (
     <div className="flex flex-col gap-6 text-white">
@@ -61,7 +58,7 @@ const ServiceSelectionStep: React.FC<StepWithOptionsProps> = ({
         </div>
       )}
 
-      {showFollowUp === "ai" && (
+      {showAIFollowUp && (
         <div className="mt-4 p-4 bg-background/10 rounded-lg">
           <p className="mb-2">Do you have datasets/models?</p>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
@@ -84,7 +81,7 @@ const ServiceSelectionStep: React.FC<StepWithOptionsProps> = ({
         </div>
       )}
 
-      {showFollowUp === "mobile" && (
+      {showMobileFollowUp && (
         <div className="mt-4 p-4 bg-background/10 rounded-lg">
           <p className="mb-2">Which platforms?</p>
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
@@ -123,4 +120,5 @@ const ServiceSelectionStep: React.FC<StepWithOptionsProps> = ({
     </div>
   );
 };
+
 export default ServiceSelectionStep;

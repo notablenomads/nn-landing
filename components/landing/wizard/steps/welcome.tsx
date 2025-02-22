@@ -11,35 +11,35 @@ interface CardPatternProps {
   randomString: string;
 }
 
+const characters = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+const generateRandomString = (length: number) => {
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length)) + " ";
+  }
+  return result;
+};
+
 const CardPattern: React.FC<CardPatternProps> = ({ mouseX, mouseY, randomString }) => {
   const maskImage = React.useMemo(() => {
     return `radial-gradient(
-      300px at ${mouseX}px ${mouseY}px,
-      white,
+      400px at ${mouseX}px ${mouseY}px,
+      rgba(255, 120, 30, 0.4),
       transparent
     )`;
   }, [mouseX, mouseY]);
 
   return (
     <>
-      <div className="absolute inset-0 bg-black/10 group-hover/card:bg-orange-500/20 transition-colors duration-500" />
+      <div className="absolute inset-0 bg-black/20 group-hover/card:bg-orange-500/10 transition-colors duration-500" />
       <div className="absolute inset-0 overflow-hidden" style={{ maskImage, WebkitMaskImage: maskImage }}>
-        <div className="absolute inset-0 bg-black/10 group-hover/card:bg-orange-500/20 transition-colors duration-500" />
-        <div className="absolute inset-0 flex flex-wrap text-[8px] opacity-30 overflow-hidden select-none pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-orange-500/20 to-orange-600/20 group-hover/card:from-orange-500/30 group-hover/card:to-orange-600/30 transition-colors duration-500" />
+        <div className="absolute inset-0 flex flex-wrap text-[12px] font-mono text-orange-500/40 overflow-hidden select-none pointer-events-none leading-none tracking-wider">
           {randomString}
         </div>
       </div>
     </>
   );
-};
-
-const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-const generateRandomString = (length: number) => {
-  let result = "";
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * characters.length));
-  }
-  return result;
 };
 
 const EvervaultCard = ({
@@ -56,20 +56,25 @@ const EvervaultCard = ({
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   const [randomString, setRandomString] = React.useState("");
+  const [isHovered, setIsHovered] = React.useState(false);
 
   React.useEffect(() => {
-    const str = generateRandomString(1500);
+    const str = generateRandomString(1000);
     setRandomString(str);
-  }, []);
+
+    if (isHovered) {
+      const interval = setInterval(() => {
+        setRandomString(generateRandomString(1000));
+      }, 50);
+      return () => clearInterval(interval);
+    }
+  }, [isHovered]);
 
   function onMouseMove(e: React.MouseEvent<HTMLDivElement>) {
-    e.preventDefault();
     const { currentTarget, clientX, clientY } = e;
     const { left, top } = currentTarget.getBoundingClientRect();
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
-    const str = generateRandomString(1500);
-    setRandomString(str);
   }
 
   return (
@@ -82,9 +87,11 @@ const EvervaultCard = ({
     >
       <div
         onMouseMove={onMouseMove}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         onClick={onClick}
         className={cn(
-          "group/card rounded-lg w-full relative overflow-hidden bg-black/10 flex items-center justify-center px-12 py-6 cursor-pointer transition-all duration-500 hover:bg-orange-500/10",
+          "group/card rounded-lg w-full relative overflow-hidden bg-black/20 flex items-center justify-center px-12 py-8 cursor-pointer transition-all duration-500 hover:bg-orange-500/10 border border-orange-500/20 hover:border-orange-500/40",
           variant === "secondary" && "py-4"
         )}
       >
@@ -97,8 +104,8 @@ const EvervaultCard = ({
           <span
             className={cn(
               "text-white w-full text-center transition-all duration-500",
-              variant === "primary" ? "text-2xl" : "text-xl",
-              "group-hover/card:text-orange-50 group-hover/card:font-semibold"
+              variant === "primary" ? "text-3xl font-bold" : "text-xl",
+              "group-hover/card:text-orange-50 group-hover/card:font-bold tracking-wider"
             )}
           >
             {text}

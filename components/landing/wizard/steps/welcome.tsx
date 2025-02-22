@@ -1,7 +1,7 @@
 import React from "react";
 import { StepComponentProps } from "../types";
 import { Button } from "@/components/ui/button";
-import { useMotionValue, MotionValue } from "framer-motion";
+import { useMotionValue, MotionValue, motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import ContactForm from "@/components/landing/contact/contactForm";
 
@@ -22,9 +22,9 @@ const CardPattern: React.FC<CardPatternProps> = ({ mouseX, mouseY, randomString 
 
   return (
     <>
-      <div className="absolute inset-0 bg-black/10" />
+      <div className="absolute inset-0 bg-black/10 group-hover/card:bg-orange-500/20 transition-colors duration-500" />
       <div className="absolute inset-0 overflow-hidden" style={{ maskImage, WebkitMaskImage: maskImage }}>
-        <div className="absolute inset-0 bg-black/10" />
+        <div className="absolute inset-0 bg-black/10 group-hover/card:bg-orange-500/20 transition-colors duration-500" />
         <div className="absolute inset-0 flex flex-wrap text-[8px] opacity-30 overflow-hidden select-none pointer-events-none">
           {randomString}
         </div>
@@ -84,14 +84,26 @@ const EvervaultCard = ({
         onMouseMove={onMouseMove}
         onClick={onClick}
         className={cn(
-          "group/card rounded-lg w-full relative overflow-hidden bg-black/10 flex items-center justify-center px-12 py-6 cursor-pointer",
+          "group/card rounded-lg w-full relative overflow-hidden bg-black/10 flex items-center justify-center px-12 py-6 cursor-pointer transition-all duration-500 hover:bg-orange-500/10",
           variant === "secondary" && "py-4"
         )}
       >
         <CardPattern mouseX={mouseX} mouseY={mouseY} randomString={randomString} />
-        <div className="relative z-10 flex items-center justify-center">
-          <span className={cn("text-white", variant === "primary" ? "text-2xl" : "text-xl")}>{text}</span>
-        </div>
+        <motion.div
+          className="relative z-10 flex items-center justify-center w-full"
+          whileHover={{ scale: 1.02 }}
+          transition={{ duration: 0.2 }}
+        >
+          <span
+            className={cn(
+              "text-white w-full text-center transition-all duration-500",
+              variant === "primary" ? "text-2xl" : "text-xl",
+              "group-hover/card:text-orange-50 group-hover/card:font-semibold"
+            )}
+          >
+            {text}
+          </span>
+        </motion.div>
       </div>
     </div>
   );

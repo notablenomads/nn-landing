@@ -68,7 +68,7 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData }) =
       {/* User Type Selection */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">How would you like to describe your requirements?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <SelectButton selected={!isTechnical} onClick={() => setIsTechnical(false)}>
             <span className="font-semibold text-md">Non-Technical</span>
             <span className="text-sm opacity-70">Describe your project in plain language</span>
@@ -84,7 +84,7 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData }) =
       {isTechnical && (
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">Select Required Features</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {technicalFeatures.map((feature) => (
               <SelectButton
                 key={feature.value}

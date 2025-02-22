@@ -29,7 +29,7 @@ const AudienceStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, opt
       {/* Target Audience Selection */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">Who is your target audience?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {options.targetAudiences.map((audienceOption) => (
             <SelectButton
               key={audienceOption.value}
@@ -46,7 +46,7 @@ const AudienceStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, opt
       {/* Industry Selection */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">What industry are you in?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {options.industries.map((industryOption) => (
             <SelectButton
               key={industryOption.value}

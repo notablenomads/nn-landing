@@ -56,10 +56,13 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentD
   const [selectedFeatures, setSelectedFeatures] = React.useState<TechnicalFeature[]>(currentData?.technicalFeatures || []);
   const [projectDescription, setProjectDescription] = React.useState<string>(currentData?.nonTechnicalDescription || "");
 
+  // Calculate max features based on TechnicalFeature enum length
+  const maxFeatures = Object.keys(TechnicalFeature).length;
+
   const isValid =
     expertise &&
     (expertise === TechnicalExpertise.TECHNICAL
-      ? selectedFeatures.length > 0 && selectedFeatures.length <= 10
+      ? selectedFeatures.length > 0 && selectedFeatures.length <= maxFeatures
       : expertise === TechnicalExpertise.NON_TECHNICAL
       ? projectDescription.length >= 10 && projectDescription.length <= 1000
       : false);
@@ -83,7 +86,7 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentD
       if (prev.includes(feature)) {
         return prev.filter((f) => f !== feature);
       }
-      if (prev.length >= 10) {
+      if (prev.length >= maxFeatures) {
         return prev;
       }
       return [...prev, feature];
@@ -125,8 +128,10 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentD
         <div className="space-y-6">
           <div className="space-y-2">
             <h3 className="text-xl font-semibold text-white">Select Required Features</h3>
-            <p className="text-sm text-zinc-400">Choose up to 10 features that your project needs</p>
-            {selectedFeatures.length >= 10 && <p className="text-sm text-orange-500">Maximum feature limit (10) reached</p>}
+            <p className="text-sm text-zinc-400">Choose up to {maxFeatures} features that your project needs</p>
+            {selectedFeatures.length >= maxFeatures && (
+              <p className="text-sm text-orange-500">Maximum feature limit ({maxFeatures}) reached</p>
+            )}
           </div>
 
           {Object.entries(FEATURE_CATEGORIES).map(([category, features]) => (
@@ -138,7 +143,7 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentD
                     key={feature.value}
                     selected={selectedFeatures.includes(feature.value)}
                     onClick={() => toggleFeature(feature.value)}
-                    disabled={selectedFeatures.length >= 10 && !selectedFeatures.includes(feature.value)}
+                    disabled={selectedFeatures.length >= maxFeatures && !selectedFeatures.includes(feature.value)}
                   >
                     <div className="flex flex-col items-start gap-1 w-full">
                       <span className="font-semibold text-lg">{feature.label}</span>

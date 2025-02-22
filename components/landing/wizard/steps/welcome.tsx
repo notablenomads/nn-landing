@@ -39,9 +39,18 @@ const CardPattern: React.FC<CardPatternProps> = ({ mouseX, mouseY, randomString 
         </div>
       </div>
 
-      {/* New glow effect */}
+      {/* Enhanced glow effect */}
       <div className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500">
+        {/* Corner shadows */}
+        <div className="absolute -top-10 -left-10 w-20 h-20 bg-[#F5900D]/20 blur-2xl rounded-full" />
+        <div className="absolute -top-10 -right-10 w-20 h-20 bg-[#F5900D]/20 blur-2xl rounded-full" />
+        <div className="absolute -bottom-10 -left-10 w-20 h-20 bg-[#F5900D]/20 blur-2xl rounded-full" />
+        <div className="absolute -bottom-10 -right-10 w-20 h-20 bg-[#F5900D]/20 blur-2xl rounded-full" />
+
+        {/* Center glow */}
         <div className="absolute inset-0 bg-[#F5900D]/20 blur-xl rounded-full" />
+
+        {/* Animated border */}
         <div className="absolute inset-0 rounded-lg overflow-hidden">
           <div
             className="absolute inset-0 bg-gradient-to-r from-[#F5900D] via-[#FFA940] to-[#F5900D] opacity-30 animate-border-flow"
@@ -49,6 +58,9 @@ const CardPattern: React.FC<CardPatternProps> = ({ mouseX, mouseY, randomString 
           />
         </div>
       </div>
+
+      {/* Inner shadow for depth */}
+      <div className="absolute inset-0 rounded-lg shadow-inner opacity-50 pointer-events-none" />
     </>
   );
 };
@@ -91,7 +103,7 @@ const EvervaultCard = ({
   return (
     <div
       className={cn(
-        "p-0.5 bg-transparent flex items-center justify-center relative",
+        "p-0.5 bg-transparent flex items-center justify-center relative group",
         variant === "secondary" && "opacity-90 hover:opacity-100",
         className
       )}
@@ -102,7 +114,9 @@ const EvervaultCard = ({
         onMouseLeave={() => setIsHovered(false)}
         onClick={onClick}
         className={cn(
-          "group/card rounded-lg w-full relative overflow-hidden bg-black/20 flex items-center justify-center px-12 py-8 cursor-pointer transition-all duration-500 hover:bg-[#F5900D]/10 border border-[#F5900D]/20 hover:border-[#F5900D]/40",
+          "group/card rounded-lg w-full relative overflow-hidden bg-black/20 flex items-center justify-center px-12 py-8 cursor-pointer transition-all duration-500",
+          "hover:bg-[#F5900D]/10 border border-[#F5900D]/20 hover:border-[#F5900D]/40",
+          "shadow-[0_0_30px_-5px_rgba(245,144,13,0.3)] hover:shadow-[0_0_40px_-5px_rgba(245,144,13,0.5)]",
           variant === "secondary" && "py-4"
         )}
       >
@@ -116,7 +130,8 @@ const EvervaultCard = ({
             className={cn(
               "text-white w-full text-center transition-all duration-500",
               variant === "primary" ? "text-3xl font-bold" : "text-xl",
-              "group-hover/card:text-orange-50 group-hover/card:font-bold tracking-wider drop-shadow-lg"
+              "group-hover/card:text-orange-50 group-hover/card:font-bold tracking-wider",
+              "drop-shadow-[0_2px_10px_rgba(245,144,13,0.5)]"
             )}
           >
             {text}

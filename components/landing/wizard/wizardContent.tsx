@@ -184,9 +184,8 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
 
   return (
     <div className="w-full h-[100dvh] flex flex-col bg-black">
-      <StepProgress currentStep={currentStep} totalSteps={steps.length} />
-      <div className="flex-1 overflow-y-auto">
-        <div className="min-h-full w-full flex items-start justify-center py-20 px-4 md:px-0">
+      <div className="flex-1 overflow-y-auto pb-32">
+        <div className="min-h-full w-full flex items-start justify-center py-8 px-4 md:px-0">
           <div
             className={cn(
               "flex flex-col items-center justify-start w-full",
@@ -284,6 +283,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
           </div>
         </div>
       </div>
+      <StepProgress currentStep={currentStep} totalSteps={steps.length} />
     </div>
   );
 };

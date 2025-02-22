@@ -11,12 +11,12 @@ const StepProgress: React.FC<StepProgressProps> = ({ currentStep, totalSteps }) 
 
   return (
     <motion.div
-      className="fixed top-0 left-0 w-full z-50"
-      initial={{ opacity: 0, y: -20 }}
+      className="fixed bottom-0 left-0 w-full bg-gradient-to-t from-black/80 to-transparent pb-4 pt-8 px-4"
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 200, damping: 20 }}
     >
-      <div className="w-full px-4 py-3 md:p-4 bg-black/50 backdrop-blur-sm">
+      <div className="w-full max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row md:justify-between text-xs md:text-sm text-zinc-400 mb-2">
           <motion.div
             className="flex items-center gap-2 mb-1 md:mb-0"

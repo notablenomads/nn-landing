@@ -4,30 +4,25 @@ import SimplePopup from "@/components/simplePopup";
 
 // Lazy load the components that are only needed when the popup is open
 const WizardContent = lazy(() => import("./wizardContent"));
-const Toaster = lazy(() =>
-  import("sonner").then((mod) => ({ default: mod.Toaster }))
-);
+const Toaster = lazy(() => import("sonner").then((mod) => ({ default: mod.Toaster })));
 
 // Import these outside the component since they're small and needed for types/setup
 import wizardSteps from "./steps";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "..";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { WizardCurrentData } from "./types";
 
 function WizardWrapper() {
   const [isOpen, setIsOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
-  const handleComplete = (data: Record<string, unknown>) => {
+  const handleComplete = (data: WizardCurrentData) => {
     console.log("Wizard completed with data:", data);
   };
 
   return (
     <>
-      <Button
-        className="text-md font-bold bg-secondary"
-        size="lg"
-        onClick={() => setIsOpen(true)}
-      >
+      <Button className="text-md font-bold bg-secondary" size="lg" onClick={() => setIsOpen(true)}>
         {isMobile ? "Kickstart" : "Kickstart Your Vision"}
       </Button>
       <SimplePopup isOpen={isOpen} onClose={() => setIsOpen(false)}>
@@ -38,9 +33,7 @@ function WizardWrapper() {
               <WizardContent
                 steps={wizardSteps}
                 onComplete={handleComplete}
-                onStepChange={(step: number) =>
-                  console.log("Current step:", step)
-                }
+                onStepChange={(step: number) => console.log("Current step:", step)}
               />
             </QueryClientProvider>
           </Suspense>

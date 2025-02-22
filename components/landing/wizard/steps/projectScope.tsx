@@ -3,7 +3,7 @@ import { StepWithOptionsProps, ProjectType, ExistingProjectChallenge } from "../
 import { SelectButton } from "@/components/ui/selectButton";
 import StepNavigation from "../components/StepNavigation";
 
-const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentData, options }) => {
+const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentData, options, step, totalSteps }) => {
   const [projectType, setProjectType] = React.useState<ProjectType | undefined>(currentData?.projectType);
   const [existingProjectChallenges, setExistingProjectChallenges] = React.useState<ExistingProjectChallenge[]>(
     currentData?.existingProjectChallenges || []
@@ -74,13 +74,17 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, curr
     <div className="flex flex-col gap-8 w-full max-w-2xl mx-auto">
       {/* Project Type Selection */}
       <div className="space-y-4">
-        <h3 className="text-xl font-semibold">What type of project is this?</h3>
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold">What type of project is this?</h3>
+          <p className="text-sm text-zinc-400">Select the type that best describes your project</p>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {options.projectTypes.map((type) => (
             <SelectButton
               key={type.value}
               selected={projectType === type.value}
               onClick={() => setProjectType(type.value as ProjectType)}
+              className={!projectType ? "ring-2 ring-orange-500/50 animate-pulse" : ""}
             >
               <span className="font-semibold text-md">{type.label}</span>
               <span className="text-sm opacity-70">{type.description}</span>
@@ -92,7 +96,10 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, curr
       {/* Existing Project Challenges */}
       {projectType === ProjectType.EXISTING && (
         <div className="space-y-4">
-          <h3 className="text-xl font-semibold">What challenges are you facing?</h3>
+          <div className="space-y-2">
+            <h3 className="text-xl font-semibold">What challenges are you facing?</h3>
+            <p className="text-sm text-zinc-400">Select all that apply to your project</p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {challengeOptions.map((challenge) => (
               <SelectButton
@@ -103,16 +110,31 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, curr
                     prev.includes(challenge.value) ? prev.filter((c) => c !== challenge.value) : [...prev, challenge.value]
                   )
                 }
+                className={
+                  projectType === ProjectType.EXISTING && existingProjectChallenges.length === 0
+                    ? "ring-2 ring-orange-500/50 animate-pulse"
+                    : ""
+                }
               >
                 <span className="font-semibold text-md">{challenge.label}</span>
                 <span className="text-sm opacity-70">{challenge.description}</span>
               </SelectButton>
             ))}
           </div>
+          {projectType === ProjectType.EXISTING && existingProjectChallenges.length === 0 && (
+            <p className="text-sm text-orange-500">Please select at least one challenge</p>
+          )}
         </div>
       )}
 
-      <StepNavigation onBack={onBack} onNext={handleNext} isNextDisabled={!isValid} />
+      <StepNavigation
+        onBack={onBack}
+        onNext={handleNext}
+        isNextDisabled={!isValid}
+        currentStep={step}
+        totalSteps={totalSteps}
+        nextText={isValid ? "Continue →" : "Please complete required selections"}
+      />
     </div>
   );
 };

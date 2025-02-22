@@ -20,8 +20,9 @@ export interface StepComponentProps {
   onNext: (data?: Partial<WizardCurrentData>) => void;
   onBack?: () => void;
   currentData?: Partial<WizardCurrentData>;
-  step?: number;
-  totalSteps?: number;
+  step: number;
+  totalSteps: number;
+  options?: WizardOptions;
 }
 
 export interface ServiceSelectionData {
@@ -45,8 +46,8 @@ export interface ProjectScopeData {
 }
 
 export interface WizardStep {
-  header: string;
-  description: string;
+  header?: string;
+  description?: string;
   content: React.FC<StepComponentProps>;
 }
 

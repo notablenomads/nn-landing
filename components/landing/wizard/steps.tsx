@@ -1,10 +1,18 @@
-import React, { lazy, Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
+import React, { lazy } from "react";
+import {
+  StepComponentProps,
+  WizardCurrentData,
+  ProjectType,
+  TargetAudience,
+  Industry,
+  DesignStyle,
+  Timeline,
+  Budget,
+  ContactMethod,
+} from "./types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import type { StepComponentProps, WizardCurrentData } from "./types";
+import { AlertCircle } from "lucide-react";
 import { useWizardOptions } from "@/hooks/useWizardOptions";
-import { ProjectType, TargetAudience, Industry, DesignStyle, Timeline, Budget, ContactMethod } from "./types";
 
 const WelcomeStep = lazy(() => import("./steps/welcome"));
 const ServiceSelectionStep = lazy(() => import("./steps/serviceSelection"));
@@ -15,14 +23,6 @@ const PreferencesStep = lazy(() => import("./steps/preferences"));
 const ContactStep = lazy(() => import("./steps/contact"));
 const SuccessStep = lazy(() => import("./steps/success"));
 
-const StepSkeleton: React.FC = () => (
-  <div className="flex flex-col gap-4 w-full">
-    <Skeleton className="h-8 w-3/4" />
-    <Skeleton className="h-24 w-full" />
-    <Skeleton className="h-10 w-1/2" />
-  </div>
-);
-
 const ErrorAlert: React.FC<{ message: string }> = ({ message }) => (
   <Alert variant="destructive">
     <AlertCircle className="h-4 w-4" />
@@ -30,59 +30,70 @@ const ErrorAlert: React.FC<{ message: string }> = ({ message }) => (
   </Alert>
 );
 
-const LazyLoadingWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Suspense fallback={<StepSkeleton />}>{children}</Suspense>
+const StepSkeleton: React.FC = () => (
+  <div className="flex flex-col gap-4 animate-pulse">
+    <div className="h-8 bg-gray-200 rounded w-1/3" />
+    <div className="h-4 bg-gray-200 rounded w-2/3" />
+    <div className="h-32 bg-gray-200 rounded" />
+  </div>
 );
 
-const WizardStepWrapper = (props: StepComponentProps): JSX.Element => {
+const LazyLoadingWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <React.Suspense fallback={<StepSkeleton />}>{children}</React.Suspense>
+);
+
+export const WizardStepWrapper: React.FC<StepComponentProps> = (props) => {
   const { data: options, isLoading, error } = useWizardOptions();
-  const safeCurrentData: WizardCurrentData = {
-    services: [],
-    projectType: ProjectType.NEW,
-    targetAudience: TargetAudience.BOTH,
-    industry: Industry.OTHER,
-    hasCompetitors: false,
-    hasExistingBrand: false,
-    designStyle: DesignStyle.UNDECIDED,
-    timeline: Timeline.FLEXIBLE,
-    budget: Budget.NOT_SURE,
-    name: "",
-    email: "",
-    preferredContactMethod: ContactMethod.EMAIL,
-    wantsConsultation: false,
-    ...(props.currentData as Partial<WizardCurrentData>),
-  };
 
   if (isLoading) return <StepSkeleton />;
   if (error) return <ErrorAlert message="Failed to load options" />;
   if (!options) return <ErrorAlert message="No options available" />;
 
-  const stepProps = { ...props, options };
+  const renderStep = (stepIndex: number, props: StepComponentProps) => {
+    const currentData = props.currentData || {};
 
-  const renderStep = () => {
-    switch (props.step) {
+    switch (stepIndex) {
       case 0:
         return <WelcomeStep {...props} />;
       case 1:
-        return <ServiceSelectionStep {...stepProps} />;
+        return <ServiceSelectionStep {...props} options={options} />;
       case 2:
-        return <ProjectScopeStep {...stepProps} />;
+        return <ProjectScopeStep {...props} options={options} />;
       case 3:
-        return <FeaturesStep {...stepProps} />;
+        return <FeaturesStep {...props} options={options} />;
       case 4:
-        return <AudienceStep {...stepProps} />;
+        return <AudienceStep {...props} options={options} />;
       case 5:
-        return <PreferencesStep {...stepProps} />;
-      case 6:
+        return <PreferencesStep {...props} options={options} />;
+      case 6: {
+        const safeCurrentData: WizardCurrentData = {
+          services: [],
+          projectType: ProjectType.NEW,
+          targetAudience: TargetAudience.BOTH,
+          industry: Industry.OTHER,
+          hasCompetitors: false,
+          hasExistingBrand: false,
+          designStyle: DesignStyle.UNDECIDED,
+          timeline: Timeline.FLEXIBLE,
+          budget: Budget.NOT_SURE,
+          name: "",
+          email: "",
+          preferredContactMethod: ContactMethod.EMAIL,
+          wantsConsultation: false,
+          ...(currentData as Partial<WizardCurrentData>),
+        };
         return <ContactStep currentData={safeCurrentData} options={options} onComplete={() => props.onNext?.()} />;
+      }
       case 7:
-        return <SuccessStep />;
+        return (
+          <SuccessStep onNext={props.onNext} currentData={currentData} step={props.step} totalSteps={props.totalSteps} />
+        );
       default:
         return <ErrorAlert message="Invalid step" />;
     }
   };
 
-  return <LazyLoadingWrapper>{renderStep()}</LazyLoadingWrapper>;
+  return <LazyLoadingWrapper>{renderStep(props.step, props)}</LazyLoadingWrapper>;
 };
 
 export const wizardSteps = [
@@ -122,8 +133,10 @@ export const wizardSteps = [
     content: WizardStepWrapper,
   },
   {
+    header: "Success",
+    description: "Thank you for your submission",
     content: WizardStepWrapper,
   },
 ];
 
-export default wizardSteps;
+export default WizardStepWrapper;

@@ -1,30 +1,16 @@
 import React from "react";
 import { debounce } from "lodash";
 import { motion, useSpring, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
-import { WizardCurrentData } from "./types";
-
-interface StepComponentProps {
-  onNext: (data?: Partial<WizardCurrentData>) => void;
-  onBack?: () => void;
-  currentData?: Partial<WizardCurrentData>;
-  step?: number;
-  totalSteps?: number;
-}
-
-interface WizardStep {
-  header?: string;
-  description?: string;
-  content: (props: StepComponentProps) => JSX.Element;
-}
+import { WizardCurrentData, WizardStep } from "./types";
 
 interface WizardContentProps {
   steps: WizardStep[];
   onComplete: (data: WizardCurrentData) => void;
   onStepChange?: (stepIndex: number) => void;
+  currentStep: number;
 }
 
-export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete, onStepChange }) => {
-  const [currentStep, setCurrentStep] = React.useState(0);
+export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete, onStepChange, currentStep }) => {
   const [wizardData, setWizardData] = React.useState<Partial<WizardCurrentData>>({});
   const [width, setWidth] = React.useState(600);
   const dividerRef = React.useRef<HTMLDivElement>(null);
@@ -53,16 +39,13 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
 
     if (currentStep === steps.length - 1) {
       const finalData = stepData ? { ...wizardData, ...stepData } : wizardData;
-      // Ensure all required fields are present before completing
       if (isWizardDataComplete(finalData)) {
         onComplete(finalData as WizardCurrentData);
       } else {
         console.error("Incomplete wizard data:", finalData);
-        // Handle incomplete data (maybe show an error message)
       }
     } else {
       const nextStep = currentStep + 1;
-      setCurrentStep(nextStep);
       onStepChange?.(nextStep);
     }
   };
@@ -71,7 +54,6 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
   const handleBack = () => {
     if (currentStep > 0) {
       const prevStep = currentStep - 1;
-      setCurrentStep(prevStep);
       onStepChange?.(prevStep);
     }
   };

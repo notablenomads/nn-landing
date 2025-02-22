@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.7](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.6...v0.1.7) (2025-02-22)
+
+
+### Features
+
+* add technical expertise field and related enums to wizard component ([2fdd3a7](https://github.com/Notable-Nomads/nn-landing/commit/2fdd3a704c884a8336ee10b60ab5cf97cf4dff3e))
+
 ### [0.1.6](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.5...v0.1.6) (2025-02-22)
 
 

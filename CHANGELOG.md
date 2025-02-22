@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.9](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.8...v0.1.9) (2025-02-22)
+
+
+### Features
+
+* enhance wizard step animations and improve progress display ([78b1706](https://github.com/Notable-Nomads/nn-landing/commit/78b17060dfaae215123f38830f936034df8e633d))
+* improve step progress display and enhance layout responsiveness in wizard ([7238336](https://github.com/Notable-Nomads/nn-landing/commit/7238336c776607f26b372a0edf1486973804903c))
+* include technical expertise in contact step submission ([6579321](https://github.com/Notable-Nomads/nn-landing/commit/657932193a278dfce3ec440e4402e882c9cebb11))
+* update feature selection limits and enhance visual effects in wizard steps ([ad71ef4](https://github.com/Notable-Nomads/nn-landing/commit/ad71ef4edd975394a3f948faf4405b22f4894c99))
+
 ### [0.1.8](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.7...v0.1.8) (2025-02-22)
 
 ### [0.1.7](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.6...v0.1.7) (2025-02-22)

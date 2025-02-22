@@ -1,14 +1,17 @@
 import React from "react";
-import { StepWithOptionsProps } from "../types";
+import { StepWithOptionsProps, ServiceType } from "../types";
 import { SelectButton } from "@/components/ui/selectButton";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData }) => {
   const [isTechnical, setIsTechnical] = React.useState<boolean>(false);
-  const [selectedFeatures, setSelectedFeatures] = React.useState<string[]>(
+  const [selectedFeatures, setSelectedFeatures] = React.useState<ServiceType[]>(
     currentData?.projectDescription?.includes("Technical requirements:")
-      ? currentData.projectDescription.replace("Technical requirements: ", "").split(", ")
+      ? currentData.projectDescription
+          .replace("Technical requirements: ", "")
+          .split(", ")
+          .map((f) => f as ServiceType)
       : []
   );
   const [projectDescription, setProjectDescription] = React.useState<string>(
@@ -17,36 +20,36 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData }) =
       : ""
   );
 
-  const commonFeatures = [
+  const technicalFeatures = [
     {
-      value: "authentication",
-      label: "User Authentication",
-      description: "Login, registration, and user management",
+      value: ServiceType.WEB_APP,
+      label: "Web Application",
+      description: "Full-stack web application development",
     },
     {
-      value: "payments",
-      label: "Payment Processing",
-      description: "Secure payment integration and billing",
+      value: ServiceType.MOBILE_APP,
+      label: "Mobile Application",
+      description: "Native or cross-platform mobile apps",
     },
     {
-      value: "analytics",
-      label: "Analytics & Reporting",
-      description: "Data tracking and insights",
+      value: ServiceType.AI_ML,
+      label: "AI/ML Solutions",
+      description: "Machine learning and AI integration",
     },
     {
-      value: "api",
-      label: "API Integration",
-      description: "Third-party service integration",
+      value: ServiceType.DEVOPS,
+      label: "DevOps & Infrastructure",
+      description: "Cloud infrastructure and automation",
     },
     {
-      value: "realtime",
-      label: "Real-time Features",
-      description: "Live updates and notifications",
+      value: ServiceType.ARCHITECTURE,
+      label: "System Architecture",
+      description: "Technical architecture and system design",
     },
     {
-      value: "search",
-      label: "Search & Filtering",
-      description: "Advanced search capabilities",
+      value: ServiceType.OTHER,
+      label: "Other Features",
+      description: "Custom requirements and integrations",
     },
   ];
 
@@ -82,7 +85,7 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData }) =
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">Select Required Features</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {commonFeatures.map((feature) => (
+            {technicalFeatures.map((feature) => (
               <SelectButton
                 key={feature.value}
                 selected={selectedFeatures.includes(feature.value)}

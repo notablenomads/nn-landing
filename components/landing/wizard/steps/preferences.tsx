@@ -28,10 +28,10 @@ const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, 
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">Do you have existing brand guidelines?</h3>
         <div className="flex gap-4">
-          <Button variant={hasExistingBrand ? "default" : "outline"} onClick={() => setHasExistingBrand(true)}>
+          <Button variant={hasExistingBrand ? "secondary" : "ghost"} onClick={() => setHasExistingBrand(true)}>
             Yes
           </Button>
-          <Button variant={!hasExistingBrand ? "default" : "outline"} onClick={() => setHasExistingBrand(false)}>
+          <Button variant={!hasExistingBrand ? "secondary" : "ghost"} onClick={() => setHasExistingBrand(false)}>
             No
           </Button>
         </div>

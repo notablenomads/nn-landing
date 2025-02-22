@@ -64,11 +64,11 @@ const AudienceStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, opt
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">Do you have any competitors or inspiration?</h3>
         <div className="flex gap-4">
-          <Button variant={hasCompetitors ? "default" : "outline"} onClick={() => setHasCompetitors(true)}>
+          <Button variant={hasCompetitors ? "secondary" : "ghost"} onClick={() => setHasCompetitors(true)}>
             Yes
           </Button>
           <Button
-            variant={!hasCompetitors ? "default" : "outline"}
+            variant={!hasCompetitors ? "secondary" : "ghost"}
             onClick={() => {
               setHasCompetitors(false);
               setCompetitorUrls("");

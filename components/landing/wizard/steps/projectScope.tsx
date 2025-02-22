@@ -9,6 +9,54 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData,
     currentData?.existingProjectChallenges || []
   );
 
+  const challengeOptions = [
+    {
+      value: ExistingProjectChallenge.PERFORMANCE,
+      label: "Performance Issues",
+      description: "Slow loading times or resource-heavy operations",
+    },
+    {
+      value: ExistingProjectChallenge.SCALABILITY,
+      label: "Scalability Concerns",
+      description: "Difficulty handling increased load or growth",
+    },
+    {
+      value: ExistingProjectChallenge.BUGS,
+      label: "Critical Bugs",
+      description: "Recurring issues or system instability",
+    },
+    {
+      value: ExistingProjectChallenge.UX,
+      label: "User Experience",
+      description: "Poor usability or navigation issues",
+    },
+    {
+      value: ExistingProjectChallenge.SECURITY,
+      label: "Security Concerns",
+      description: "Vulnerabilities or compliance issues",
+    },
+    {
+      value: ExistingProjectChallenge.MAINTENANCE,
+      label: "Maintenance",
+      description: "Difficult to maintain or update",
+    },
+    {
+      value: ExistingProjectChallenge.TECHNICAL_DEBT,
+      label: "Technical Debt",
+      description: "Legacy code or outdated practices",
+    },
+    {
+      value: ExistingProjectChallenge.OUTDATED,
+      label: "Outdated Technology",
+      description: "Old frameworks or dependencies",
+    },
+    {
+      value: ExistingProjectChallenge.OTHER,
+      label: "Other Issues",
+      description: "Custom challenges not listed",
+    },
+  ];
+
   const isValid = projectType && (projectType !== ProjectType.EXISTING || existingProjectChallenges.length > 0);
 
   const handleNext = () => {
@@ -46,15 +94,14 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData,
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">What challenges are you facing?</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {options.existingProjectChallenges.map((challenge) => (
+            {challengeOptions.map((challenge) => (
               <SelectButton
                 key={challenge.value}
-                selected={existingProjectChallenges.includes(challenge.value as ExistingProjectChallenge)}
+                selected={existingProjectChallenges.includes(challenge.value)}
                 onClick={() =>
-                  setExistingProjectChallenges((prev) => {
-                    const value = challenge.value as ExistingProjectChallenge;
-                    return prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value];
-                  })
+                  setExistingProjectChallenges((prev) =>
+                    prev.includes(challenge.value) ? prev.filter((c) => c !== challenge.value) : [...prev, challenge.value]
+                  )
                 }
               >
                 <span className="font-semibold text-md">{challenge.label}</span>

@@ -24,18 +24,29 @@ const CardPattern: React.FC<CardPatternProps> = ({ mouseX, mouseY, randomString 
   const maskImage = React.useMemo(() => {
     return `radial-gradient(
       400px at ${mouseX}px ${mouseY}px,
-      rgba(255, 120, 30, 0.4),
+      rgba(245, 144, 13, 0.4),
       transparent
     )`;
   }, [mouseX, mouseY]);
 
   return (
     <>
-      <div className="absolute inset-0 bg-black/20 group-hover/card:bg-orange-500/10 transition-colors duration-500" />
+      <div className="absolute inset-0 bg-black/20 group-hover/card:bg-[#F5900D]/10 transition-colors duration-500" />
       <div className="absolute inset-0 overflow-hidden" style={{ maskImage, WebkitMaskImage: maskImage }}>
-        <div className="absolute inset-0 bg-gradient-to-b from-orange-500/20 to-orange-600/20 group-hover/card:from-orange-500/30 group-hover/card:to-orange-600/30 transition-colors duration-500" />
-        <div className="absolute inset-0 flex flex-wrap text-[12px] font-mono text-orange-500/40 overflow-hidden select-none pointer-events-none leading-none tracking-wider">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#F5900D]/20 to-[#FFA940]/20 group-hover/card:from-[#F5900D]/30 group-hover/card:to-[#FFA940]/30 transition-colors duration-500" />
+        <div className="absolute inset-0 flex flex-wrap text-[12px] font-mono text-[#F5900D]/40 overflow-hidden select-none pointer-events-none leading-none tracking-wider">
           {randomString}
+        </div>
+      </div>
+
+      {/* New glow effect */}
+      <div className="absolute inset-0 opacity-0 group-hover/card:opacity-100 transition-opacity duration-500">
+        <div className="absolute inset-0 bg-[#F5900D]/20 blur-xl rounded-full" />
+        <div className="absolute inset-0 rounded-lg overflow-hidden">
+          <div
+            className="absolute inset-0 bg-gradient-to-r from-[#F5900D] via-[#FFA940] to-[#F5900D] opacity-30 animate-border-flow"
+            style={{ backgroundSize: "200% 100%" }}
+          />
         </div>
       </div>
     </>
@@ -91,7 +102,7 @@ const EvervaultCard = ({
         onMouseLeave={() => setIsHovered(false)}
         onClick={onClick}
         className={cn(
-          "group/card rounded-lg w-full relative overflow-hidden bg-black/20 flex items-center justify-center px-12 py-8 cursor-pointer transition-all duration-500 hover:bg-orange-500/10 border border-orange-500/20 hover:border-orange-500/40",
+          "group/card rounded-lg w-full relative overflow-hidden bg-black/20 flex items-center justify-center px-12 py-8 cursor-pointer transition-all duration-500 hover:bg-[#F5900D]/10 border border-[#F5900D]/20 hover:border-[#F5900D]/40",
           variant === "secondary" && "py-4"
         )}
       >
@@ -105,7 +116,7 @@ const EvervaultCard = ({
             className={cn(
               "text-white w-full text-center transition-all duration-500",
               variant === "primary" ? "text-3xl font-bold" : "text-xl",
-              "group-hover/card:text-orange-50 group-hover/card:font-bold tracking-wider"
+              "group-hover/card:text-orange-50 group-hover/card:font-bold tracking-wider drop-shadow-lg"
             )}
           >
             {text}

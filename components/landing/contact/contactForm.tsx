@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 interface FormErrors {
   name?: string;
@@ -12,17 +13,26 @@ interface FormErrors {
   message?: string;
 }
 
+interface FormData {
+  name: string;
+  email: string;
+  message: string;
+  company?: string;
+}
+
 type SubmitStatus = "success" | "error" | null;
 
 interface ContactFormProps {
   onBack?: () => void;
+  showCompanyField?: boolean;
 }
 
-const ContactForm: React.FC<ContactFormProps> = ({ onBack }) => {
-  const [formData, setFormData] = useState({
+const ContactForm: React.FC<ContactFormProps> = ({ onBack, showCompanyField = false }) => {
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     message: "",
+    company: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
@@ -71,7 +81,8 @@ const ContactForm: React.FC<ContactFormProps> = ({ onBack }) => {
 
         if (responseData.data) {
           setSubmitStatus("success");
-          setFormData({ name: "", email: "", message: "" });
+          setFormData({ name: "", email: "", message: "", company: "" });
+          setErrors({});
           toast.success(responseData.message || "Your message has been sent successfully.");
         } else {
           setSubmitStatus("error");
@@ -85,20 +96,27 @@ const ContactForm: React.FC<ContactFormProps> = ({ onBack }) => {
         setIsSubmitting(false);
       }
     } else {
-      toast.error("Please fill in all required fields correctly.");
       setIsSubmitting(false);
     }
   };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+    // Clear error when user starts typing
+    if (errors[name as keyof FormErrors]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: undefined,
+      }));
+    }
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full max-w-2xl mx-auto">
       <form onSubmit={handleSubmit} className="space-y-6">
         {submitStatus === "success" && (
           <Alert className="bg-green-500/20 text-green-400 border-green-500">
@@ -108,85 +126,82 @@ const ContactForm: React.FC<ContactFormProps> = ({ onBack }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-white">
-              Name
-            </Label>
+            <Label htmlFor="name">Name</Label>
             <Input
               id="name"
               name="name"
-              placeholder="Enter your name"
               value={formData.name}
               onChange={handleChange}
-              className={`bg-white/5 border-white/10 focus:bg-white/10 text-white ${
-                errors.name ? "border-red-500" : "hover:border-white/20"
-              }`}
-              required
+              className={`mt-1 bg-white/10 text-xl ${errors.name ? "border-red-500" : ""}`}
+              placeholder="Your full name"
+              disabled={isSubmitting}
             />
-            {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
+            {errors.name && <p className="text-sm text-red-500">{errors.name}</p>}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-white">
-              Email
-            </Label>
+            <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               name="email"
               type="email"
-              placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              className={`bg-white/5 border-white/10 focus:bg-white/10 text-white ${
-                errors.email ? "border-red-500" : "hover:border-white/20"
-              }`}
-              required
+              className={`mt-1 bg-white/10 text-xl ${errors.email ? "border-red-500" : ""}`}
+              placeholder="your@email.com"
+              disabled={isSubmitting}
             />
-            {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+            {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
           </div>
         </div>
 
+        {showCompanyField && (
+          <div>
+            <Label htmlFor="company">Company (Optional)</Label>
+            <Input
+              id="company"
+              name="company"
+              value={formData.company}
+              onChange={handleChange}
+              className="mt-1 bg-white/10 text-lg"
+              placeholder="Your company name"
+              disabled={isSubmitting}
+            />
+          </div>
+        )}
+
         <div className="space-y-2">
-          <Label htmlFor="message" className="text-white">
-            Message
-          </Label>
+          <Label htmlFor="message">Message</Label>
           <Textarea
             id="message"
             name="message"
-            placeholder="Type your message here"
             value={formData.message}
             onChange={handleChange}
-            className={`bg-white/5 border-white/10 focus:bg-white/10 text-white min-h-[150px] ${
-              errors.message ? "border-red-500" : "hover:border-white/20"
-            }`}
-            required
+            className={`mt-1 bg-white/10 min-h-[150px] ${errors.message ? "border-red-500" : ""}`}
+            placeholder="Tell us about your project..."
+            disabled={isSubmitting}
           />
-          {errors.message && <p className="text-red-400 text-sm">{errors.message}</p>}
+          {errors.message && <p className="text-sm text-red-500">{errors.message}</p>}
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex gap-4">
           {onBack && (
             <Button
               type="button"
               variant="ghost"
-              size="lg"
-              className="text-white hover:text-white hover:bg-white/10"
               onClick={onBack}
+              className="flex-1 text-white hover:bg-white/10 hover:text-white border border-white/20"
             >
-              ← Back to Project Journey
+              ← Back
             </Button>
           )}
-          <Button
-            type="submit"
-            size="lg"
-            className="min-w-[200px] bg-[#F5900D] hover:bg-[#FFA940] text-white font-semibold"
-            disabled={isSubmitting}
-          >
+          <Button type="submit" className="flex-1" disabled={isSubmitting}>
             {isSubmitting ? (
               <div className="flex items-center gap-2">
-                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                <span>Sending...</span>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Sending...
               </div>
             ) : (
-              "Send Message"
+              "Send Message →"
             )}
           </Button>
         </div>

@@ -151,22 +151,22 @@ const WelcomeStep: React.FC<StepComponentProps> = ({ onNext }) => {
 
   if (showContactForm) {
     return (
-      <div className="flex flex-col items-center gap-8 w-full max-w-2xl mx-auto">
-        <div className="w-full bg-black/20 rounded-lg p-8 backdrop-blur-sm border border-white/10">
-          <h2 className="text-2xl font-bold mb-6 text-center">Quick Contact Form</h2>
-          <ContactForm onBack={() => setShowContactForm(false)} />
+      <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto px-4 md:px-0">
+        <div className="w-full bg-black/20 rounded-lg p-6 md:p-8 backdrop-blur-sm border border-white/10 shadow-xl">
+          <h2 className="text-2xl font-bold mb-6">Quick Contact Form</h2>
+          <ContactForm onBack={() => setShowContactForm(false)} showCompanyField={true} />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-6 text-white">
+    <div className="flex flex-col items-center gap-6 text-white px-4 md:px-0 w-full max-w-2xl mx-auto">
       <p className="text-xl text-center">
         Let's bring your project to life! Answer a few quick questions to get a free consultation & roadmap.
       </p>
       <p className="text-sm opacity-70">Takes ~3 minutes</p>
-      <div className="flex flex-col gap-4 w-full max-w-xl">
+      <div className="flex flex-col gap-4 w-full">
         <EvervaultCard text="Begin Your Project Journey →" onClick={handleNext} variant="primary" />
         <p className="text-center">Or</p>
         <Button onClick={() => setShowContactForm(true)} variant="default" size="lg">

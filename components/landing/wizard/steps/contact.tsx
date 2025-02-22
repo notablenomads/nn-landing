@@ -33,7 +33,15 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
       return response.data.data;
     },
     onSuccess: () => {
-      onComplete?.();
+      onComplete?.({
+        ...typedCurrentData,
+        name: contactInfo.name,
+        email: contactInfo.email,
+        company: contactInfo.company || undefined,
+        preferredContactMethod: contactInfo.contactMethod as ContactMethod,
+        wantsConsultation: contactInfo.wantsConsultation,
+        additionalNotes: notes || undefined,
+      });
     },
     onError: (error: AxiosError<{ statusCode: number; message: string }>) => {
       if (error.response?.data?.message) {

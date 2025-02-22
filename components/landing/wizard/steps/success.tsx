@@ -2,42 +2,24 @@ import React from "react";
 import { StepComponentProps } from "../types";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { CheckCircle, X } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
-export const SuccessStep: React.FC<StepComponentProps> = ({ onNext, currentData, step, totalSteps }) => {
+export const SuccessStep: React.FC<StepComponentProps> = ({ onNext, currentData }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="relative flex flex-col items-center justify-center p-8 text-center"
+      className="relative flex flex-col items-center justify-center p-8 text-center max-w-2xl mx-auto"
     >
-      <div className="absolute left-0 top-0 w-full p-4">
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: `${((step + 1) / totalSteps) * 100}%` }}
-            className="bg-green-500 h-2 rounded-full"
-            transition={{ duration: 0.5 }}
-          />
-        </div>
-        <div className="mt-2 text-sm text-gray-500 text-right">
-          Step {step + 1} of {totalSteps}
-        </div>
-      </div>
-
-      <Button variant="ghost" size="icon" className="absolute right-2 top-2" onClick={() => onNext({})}>
-        <X className="h-4 w-4" />
-      </Button>
-
-      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2 }}>
-        <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
+      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2 }} className="mb-8">
+        <CheckCircle className="h-20 w-20 text-green-500" />
       </motion.div>
 
       <motion.h2
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="text-2xl font-bold mb-2"
+        className="text-4xl font-bold mb-4 text-white"
       >
         Thank you for your submission!
       </motion.h2>
@@ -47,7 +29,7 @@ export const SuccessStep: React.FC<StepComponentProps> = ({ onNext, currentData,
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
-          className="text-gray-600 mb-6"
+          className="text-xl text-zinc-300 mb-8"
         >
           We'll be in touch at {currentData.email}
         </motion.p>
@@ -57,18 +39,35 @@ export const SuccessStep: React.FC<StepComponentProps> = ({ onNext, currentData,
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="text-left w-full max-w-md mb-8"
+        className="text-left w-full bg-white/5 rounded-lg p-6 mb-8"
       >
-        <h3 className="font-semibold mb-3">Next steps:</h3>
-        <ul className="space-y-2 text-gray-600">
-          <li>• Our team will review your project requirements</li>
-          <li>• We'll prepare a detailed project roadmap</li>
-          <li>• You'll receive an email to schedule a consultation</li>
+        <h3 className="text-2xl font-semibold mb-4 text-white">Next steps:</h3>
+        <ul className="space-y-4">
+          <li className="flex items-center text-zinc-300">
+            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center mr-4 text-green-500">
+              1
+            </div>
+            <span>Our team will review your project requirements</span>
+          </li>
+          <li className="flex items-center text-zinc-300">
+            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center mr-4 text-green-500">
+              2
+            </div>
+            <span>We'll prepare a detailed project roadmap</span>
+          </li>
+          <li className="flex items-center text-zinc-300">
+            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center mr-4 text-green-500">
+              3
+            </div>
+            <span>You'll receive an email to schedule a consultation</span>
+          </li>
         </ul>
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-        <Button onClick={() => onNext({})}>Close</Button>
+        <Button onClick={() => onNext({})} size="lg" className="min-w-[200px]">
+          Close
+        </Button>
       </motion.div>
     </motion.div>
   );

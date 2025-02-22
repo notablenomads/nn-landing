@@ -2,6 +2,8 @@ import React from "react";
 import { debounce } from "lodash";
 import { motion, useSpring, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
 import { WizardCurrentData, WizardStep } from "./types";
+import StepProgress from "./components/StepProgress";
+import { toast } from "sonner";
 
 interface WizardContentProps {
   steps: WizardStep[];
@@ -15,6 +17,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
   const [width, setWidth] = React.useState(600);
   const dividerRef = React.useRef<HTMLDivElement>(null);
   const lastTouchTime = React.useRef<number>(Date.now());
+  const [showValidationTip, setShowValidationTip] = React.useState(false);
 
   // Motion values for touch effect
   const touchX = useMotionValue(0);
@@ -33,16 +36,32 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
 
   // Handle next step and data collection
   const handleNext = (stepData?: Partial<WizardCurrentData>) => {
-    if (stepData) {
-      setWizardData((prev) => ({ ...prev, ...stepData }));
+    // For the success step or welcome step, we don't need data
+    if (currentStep === 0 || currentStep === steps.length - 1) {
+      const nextStep = currentStep + 1;
+      onStepChange?.(nextStep);
+      return;
     }
 
-    if (currentStep === steps.length - 1) {
-      const finalData = stepData ? { ...wizardData, ...stepData } : wizardData;
+    if (stepData) {
+      setWizardData((prev) => ({ ...prev, ...stepData }));
+      setShowValidationTip(false);
+    } else {
+      setShowValidationTip(true);
+      toast.error("Please complete all required fields before proceeding.");
+      return;
+    }
+
+    if (currentStep === steps.length - 2) {
+      // Contact step
+      const finalData = { ...wizardData, ...stepData };
       if (isWizardDataComplete(finalData)) {
         onComplete(finalData as WizardCurrentData);
+        const nextStep = currentStep + 1;
+        onStepChange?.(nextStep);
       } else {
         console.error("Incomplete wizard data:", finalData);
+        toast.error("Please complete all required fields before submitting.");
       }
     } else {
       const nextStep = currentStep + 1;
@@ -53,6 +72,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
   // Handle going back to previous step
   const handleBack = () => {
     if (currentStep > 0) {
+      setShowValidationTip(false);
       const prevStep = currentStep - 1;
       onStepChange?.(prevStep);
     }
@@ -154,6 +174,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
       currentData: wizardData,
       step: currentStep,
       totalSteps: steps.length,
+      showValidationTip,
     });
   };
 
@@ -162,7 +183,8 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
 
   return (
     <div className="w-full h-[100dvh] bg-black overflow-y-auto">
-      <div className="min-h-[100dvh] w-full flex items-center justify-center">
+      <StepProgress currentStep={currentStep} totalSteps={steps.length} />
+      <div className="min-h-[100dvh] w-full flex items-center justify-center pt-16">
         <div
           className={`${
             shouldShowHeaderSection ? "w-[75dvw]" : "w-[100dvw]"

@@ -23,6 +23,7 @@ export interface StepComponentProps {
   step: number;
   totalSteps: number;
   options?: WizardOptions;
+  showValidationTip?: boolean;
 }
 
 export interface ServiceSelectionData {
@@ -81,7 +82,8 @@ export interface BaseStepProps {
 
 export interface ContactStepProps extends Omit<BaseStepProps, "currentData"> {
   currentData: WizardCurrentData; // Make it required and specific for ContactStep
-  onComplete?: () => void;
+  options: WizardOptions;
+  onComplete?: (data: WizardCurrentData) => void;
 }
 
 export interface SummarySectionProps {

@@ -82,7 +82,7 @@ export const WizardStepWrapper: React.FC<StepComponentProps> = (props) => {
           wantsConsultation: false,
           ...(currentData as Partial<WizardCurrentData>),
         };
-        return <ContactStep currentData={safeCurrentData} options={options} onComplete={() => props.onNext?.()} />;
+        return <ContactStep currentData={safeCurrentData} options={options} onComplete={(data) => props.onNext?.(data)} />;
       }
       case 7:
         return (

@@ -16,28 +16,33 @@ const StepProgress: React.FC<StepProgressProps> = ({ currentStep, totalSteps }) 
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: "spring", stiffness: 200, damping: 20 }}
     >
-      <div className="w-full p-4 bg-black/50 backdrop-blur-sm">
-        <div className="flex justify-between text-sm text-zinc-400 mb-2">
-          <motion.span
+      <div className="w-full px-4 py-3 md:p-4 bg-black/50 backdrop-blur-sm">
+        <div className="flex flex-col md:flex-row md:justify-between text-xs md:text-sm text-zinc-400 mb-2">
+          <motion.div
+            className="flex items-center gap-2 mb-1 md:mb-0"
             key={currentStep}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
           >
-            Step {currentStep + 1} of {totalSteps}
-          </motion.span>
+            <div className="flex items-center justify-center w-5 h-5 rounded-full bg-[#F5900D]/20 text-[#F5900D]">
+              {currentStep + 1}
+            </div>
+            <span>of {totalSteps} Steps</span>
+          </motion.div>
           <motion.span
             key={progress}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
+            className="text-right"
           >
             {Math.round(progress)}% Complete
           </motion.span>
         </div>
-        <div className="w-full bg-zinc-800/50 rounded-full h-1.5 overflow-hidden">
+        <div className="w-full bg-zinc-800/50 rounded-full h-1 md:h-1.5 overflow-hidden">
           <motion.div
-            className="h-full bg-gradient-to-r from-[#F5900D] to-[#FFA940] rounded-full"
+            className="h-full bg-gradient-to-r from-[#F5900D] to-[#FFA940] rounded-full relative"
             initial={{ width: 0 }}
             animate={{
               width: `${progress}%`,

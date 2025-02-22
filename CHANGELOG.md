@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.11](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.10...v0.1.11) (2025-02-22)
+
+
+### Features
+
+* add sharp library for image processing ([3bd1b39](https://github.com/Notable-Nomads/nn-landing/commit/3bd1b3948aaef6eadd2d20af3bdb184950758fe2))
+
 ### [0.1.10](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.9...v0.1.10) (2025-02-22)
 
 

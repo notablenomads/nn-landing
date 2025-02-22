@@ -190,25 +190,23 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
             shouldShowHeaderSection ? "w-[75dvw]" : "w-[100dvw]"
           } flex flex-col items-center justify-start h-full`}
         >
-          {shouldShowHeaderSection && (
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`top-${currentStep}`}
-                initial={{ y: -50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -50, opacity: 0 }}
-                transition={{ delay: 0.5, duration: 0.6 }}
-                className="w-full p-6 flex flex-col justify-center items-center"
-              >
-                {currentStepData.header && (
-                  <h2 className="text-6xl font-extrabold mb-4 text-white text-center">{currentStepData.header}</h2>
-                )}
-                {currentStepData.description && (
-                  <p className="text-2xl font-light text-white opacity-60 text-center">{currentStepData.description}</p>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          )}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`top-${currentStep}`}
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 50, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 100, damping: 15, mass: 1 }}
+              className="w-full p-6 flex flex-col justify-center items-center"
+            >
+              {currentStepData.header && (
+                <h2 className="text-6xl font-extrabold mb-4 text-white text-center">{currentStepData.header}</h2>
+              )}
+              {currentStepData.description && (
+                <p className="text-2xl font-light text-white opacity-60 text-center">{currentStepData.description}</p>
+              )}
+            </motion.div>
+          </AnimatePresence>
 
           {shouldShowHeaderSection && (
             <AnimatePresence mode="wait">
@@ -217,7 +215,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
+                transition={{ type: "spring", stiffness: 200, damping: 20 }}
                 className="relative flex items-center justify-center w-full h-4 my-1"
               >
                 <div
@@ -252,10 +250,16 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
           <AnimatePresence mode="wait">
             <motion.div
               key={`bottom-${currentStep}`}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 40 }}
-              transition={{ delay: 0.7, duration: 0.6 }}
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -40, scale: 0.95 }}
+              transition={{
+                type: "spring",
+                stiffness: 100,
+                damping: 15,
+                mass: 1,
+                delay: 0.2,
+              }}
               className="w-full flex flex-col justify-center items-center"
             >
               {renderStepContent()}

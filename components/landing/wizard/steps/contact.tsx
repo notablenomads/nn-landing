@@ -5,7 +5,15 @@ import { Label } from "@/components/ui/label";
 import { SelectButton } from "@/components/ui/selectButton";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, Loader2 } from "lucide-react";
-import { ContactStepProps, SummarySectionProps, WizardCurrentData, ContactMethod, ProjectType, ServiceType } from "../types";
+import {
+  ContactStepProps,
+  SummarySectionProps,
+  WizardCurrentData,
+  ContactMethod,
+  ProjectType,
+  ServiceType,
+  TechnicalExpertise,
+} from "../types";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import React from "react";
@@ -79,6 +87,7 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
       email: contactInfo.email,
       preferredContactMethod: contactInfo.contactMethod as ContactMethod,
       wantsConsultation: contactInfo.wantsConsultation,
+      technicalExpertise: typedCurrentData.technicalExpertise,
 
       // Optional fields
       ...(typedCurrentData.projectType === ProjectType.EXISTING && {
@@ -104,6 +113,14 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
       ...(typedCurrentData.services.includes(ServiceType.AI_ML) &&
         typedCurrentData.aimlDatasetStatus && {
           aimlDatasetStatus: typedCurrentData.aimlDatasetStatus,
+        }),
+      ...(typedCurrentData.technicalExpertise === TechnicalExpertise.TECHNICAL &&
+        typedCurrentData.technicalFeatures && {
+          technicalFeatures: typedCurrentData.technicalFeatures,
+        }),
+      ...(typedCurrentData.technicalExpertise === TechnicalExpertise.NON_TECHNICAL &&
+        typedCurrentData.nonTechnicalDescription && {
+          nonTechnicalDescription: typedCurrentData.nonTechnicalDescription,
         }),
     };
 

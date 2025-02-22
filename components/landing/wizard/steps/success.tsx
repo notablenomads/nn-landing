@@ -5,6 +5,13 @@ import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 
 export const SuccessStep: React.FC<StepComponentProps> = ({ onNext, currentData }) => {
+  // Get the close function from the parent component
+  const handleClose = () => {
+    // Instead of trying to go to next step, we'll just pass empty data
+    // which signals to the parent to close the wizard
+    onNext();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -65,7 +72,7 @@ export const SuccessStep: React.FC<StepComponentProps> = ({ onNext, currentData 
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
-        <Button onClick={() => onNext({})} size="lg" className="min-w-[200px]">
+        <Button onClick={handleClose} size="lg" className="min-w-[200px]">
           Close
         </Button>
       </motion.div>

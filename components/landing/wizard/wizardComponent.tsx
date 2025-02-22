@@ -67,6 +67,12 @@ function WizardWrapper() {
   };
 
   const handleStepChange = (step: number) => {
+    if (step >= wizardSteps.length) {
+      // If we try to go beyond the last step, close the wizard
+      setIsOpen(false);
+      setCurrentStep(0); // Reset to first step for next time
+      return;
+    }
     setCurrentStep(step);
     console.log("Current step:", step);
   };
@@ -74,7 +80,13 @@ function WizardWrapper() {
   return (
     <>
       <KickstartButton onClick={() => setIsOpen(true)} isMobile={isMobile} />
-      <SimplePopup isOpen={isOpen} onClose={() => setIsOpen(false)}>
+      <SimplePopup
+        isOpen={isOpen}
+        onClose={() => {
+          setIsOpen(false);
+          setCurrentStep(0); // Reset to first step when closing
+        }}
+      >
         {isOpen && (
           <Suspense>
             <QueryClientProvider client={queryClient}>

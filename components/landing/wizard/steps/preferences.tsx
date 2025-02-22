@@ -2,8 +2,9 @@ import React from "react";
 import { StepWithOptionsProps, DesignStyle, Timeline, Budget } from "../types";
 import { SelectButton } from "@/components/ui/selectButton";
 import { Button } from "@/components/ui/button";
+import StepNavigation from "../components/StepNavigation";
 
-const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, options }) => {
+const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentData, options }) => {
   const [hasExistingBrand, setHasExistingBrand] = React.useState<boolean>(currentData?.hasExistingBrand ?? false);
   const [designStyle, setDesignStyle] = React.useState<DesignStyle | undefined>(currentData?.designStyle);
   const [timeline, setTimeline] = React.useState<Timeline | undefined>(currentData?.timeline);
@@ -40,7 +41,7 @@ const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, 
       {/* Design Style */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">What design style are you looking for?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {options.designStyles.map((style) => (
             <SelectButton
               key={style.value}
@@ -57,7 +58,7 @@ const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, 
       {/* Timeline */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">What's your project timeline?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {options.timelines.map((timelineOption) => (
             <SelectButton
               key={timelineOption.value}
@@ -74,7 +75,7 @@ const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, 
       {/* Budget */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">What's your budget range?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {options.budgets.map((budgetOption) => (
             <SelectButton
               key={budgetOption.value}
@@ -88,9 +89,7 @@ const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, 
         </div>
       </div>
 
-      <Button onClick={handleNext} disabled={!isValid} className="mt-4">
-        Continue →
-      </Button>
+      <StepNavigation onBack={onBack} onNext={handleNext} isNextDisabled={!isValid} />
     </div>
   );
 };

@@ -5,6 +5,7 @@ import { WizardCurrentData } from "./types";
 
 interface StepComponentProps {
   onNext: (data?: Partial<WizardCurrentData>) => void;
+  onBack?: () => void;
   currentData?: Partial<WizardCurrentData>;
   step?: number;
   totalSteps?: number;
@@ -63,6 +64,15 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       onStepChange?.(nextStep);
+    }
+  };
+
+  // Handle going back to previous step
+  const handleBack = () => {
+    if (currentStep > 0) {
+      const prevStep = currentStep - 1;
+      setCurrentStep(prevStep);
+      onStepChange?.(prevStep);
     }
   };
 
@@ -158,6 +168,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
     const currentStepData = steps[currentStep];
     return currentStepData.content({
       onNext: handleNext,
+      onBack: currentStep > 0 ? handleBack : undefined,
       currentData: wizardData,
       step: currentStep,
       totalSteps: steps.length,

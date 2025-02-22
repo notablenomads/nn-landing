@@ -112,6 +112,10 @@ const EvervaultCard = ({
 const WelcomeStep: React.FC<StepComponentProps> = ({ onNext }) => {
   const [showContactForm, setShowContactForm] = React.useState(false);
 
+  const handleNext = () => {
+    onNext({});
+  };
+
   if (showContactForm) {
     return (
       <div className="flex flex-col items-center gap-6 text-white">
@@ -127,7 +131,7 @@ const WelcomeStep: React.FC<StepComponentProps> = ({ onNext }) => {
       </p>
       <p className="text-sm opacity-70">Takes ~3 minutes</p>
       <div className="flex flex-col gap-4 w-full max-w-xl">
-        <EvervaultCard text="Begin Your Project Journey →" onClick={() => onNext({})} variant="primary" />
+        <EvervaultCard text="Begin Your Project Journey →" onClick={handleNext} variant="primary" />
         <p className="text-center">Or</p>
         <Button onClick={() => setShowContactForm(true)} variant="default" size="lg">
           Quick Contact Form →

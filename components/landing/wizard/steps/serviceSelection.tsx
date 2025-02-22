@@ -59,7 +59,7 @@ const ServiceSelectionStep: React.FC<StepWithOptionsProps> = ({ onNext, currentD
       {selectedServices.includes(ServiceType.MOBILE_APP) && (
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">Which platform(s) are you targeting?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { value: MobileAppPlatform.IOS, label: "iOS", description: "Apple devices" },
               { value: MobileAppPlatform.ANDROID, label: "Android", description: "Android devices" },
@@ -82,7 +82,7 @@ const ServiceSelectionStep: React.FC<StepWithOptionsProps> = ({ onNext, currentD
       {selectedServices.includes(ServiceType.AI_ML) && (
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">Do you have existing datasets or models?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               { value: AIMLDatasetStatus.YES, label: "Yes", description: "We have data/models ready" },
               { value: AIMLDatasetStatus.NO, label: "No", description: "We need to collect data" },

@@ -1,9 +1,9 @@
 import React from "react";
 import { StepWithOptionsProps, ProjectType, ExistingProjectChallenge } from "../types";
 import { SelectButton } from "@/components/ui/selectButton";
-import { Button } from "@/components/ui/button";
+import StepNavigation from "../components/StepNavigation";
 
-const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, options }) => {
+const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentData, options }) => {
   const [projectType, setProjectType] = React.useState<ProjectType | undefined>(currentData?.projectType);
   const [existingProjectChallenges, setExistingProjectChallenges] = React.useState<ExistingProjectChallenge[]>(
     currentData?.existingProjectChallenges || []
@@ -75,7 +75,7 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData,
       {/* Project Type Selection */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">What type of project is this?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {options.projectTypes.map((type) => (
             <SelectButton
               key={type.value}
@@ -93,7 +93,7 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData,
       {projectType === ProjectType.EXISTING && (
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">What challenges are you facing?</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {challengeOptions.map((challenge) => (
               <SelectButton
                 key={challenge.value}
@@ -112,9 +112,7 @@ const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData,
         </div>
       )}
 
-      <Button onClick={handleNext} disabled={!isValid} className="mt-4">
-        Continue →
-      </Button>
+      <StepNavigation onBack={onBack} onNext={handleNext} isNextDisabled={!isValid} />
     </div>
   );
 };

@@ -18,6 +18,7 @@ export interface WizardOptions {
 
 export interface StepComponentProps {
   onNext: (data?: Partial<WizardCurrentData>) => void;
+  onBack?: () => void;
   currentData?: Partial<WizardCurrentData>;
   step?: number;
   totalSteps?: number;

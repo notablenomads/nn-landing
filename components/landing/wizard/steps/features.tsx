@@ -2,9 +2,9 @@ import React from "react";
 import { StepWithOptionsProps, ServiceType } from "../types";
 import { SelectButton } from "@/components/ui/selectButton";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import StepNavigation from "../components/StepNavigation";
 
-const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData }) => {
+const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentData }) => {
   const [isTechnical, setIsTechnical] = React.useState<boolean>(false);
   const [selectedFeatures, setSelectedFeatures] = React.useState<ServiceType[]>(
     currentData?.projectDescription?.includes("Technical requirements:")
@@ -116,9 +116,7 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData }) =
         </div>
       )}
 
-      <Button onClick={handleNext} disabled={!isValid} className="mt-4">
-        Continue →
-      </Button>
+      <StepNavigation onBack={onBack} onNext={handleNext} isNextDisabled={!isValid} />
     </div>
   );
 };

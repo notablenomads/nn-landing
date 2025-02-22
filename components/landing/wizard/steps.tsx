@@ -9,6 +9,7 @@ import {
   Timeline,
   Budget,
   ContactMethod,
+  TechnicalExpertise,
 } from "./types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
@@ -80,6 +81,7 @@ export const WizardStepWrapper: React.FC<StepComponentProps> = (props) => {
           email: "",
           preferredContactMethod: ContactMethod.EMAIL,
           wantsConsultation: false,
+          technicalExpertise: TechnicalExpertise.NON_TECHNICAL,
           ...(currentData as Partial<WizardCurrentData>),
         };
         return <ContactStep currentData={safeCurrentData} options={options} onComplete={(data) => props.onNext?.(data)} />;

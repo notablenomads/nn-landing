@@ -73,6 +73,9 @@ export interface WizardCurrentData {
   additionalNotes?: string;
   mobileAppPlatform?: MobileAppPlatform;
   aimlDatasetStatus?: AIMLDatasetStatus;
+  technicalExpertise: TechnicalExpertise;
+  technicalFeatures?: TechnicalFeature[];
+  nonTechnicalDescription?: string;
 }
 
 export interface BaseStepProps {
@@ -175,4 +178,46 @@ export enum AIMLDatasetStatus {
   YES = "YES",
   NO = "NO",
   NOT_SURE = "NOT_SURE",
+}
+
+export enum TechnicalExpertise {
+  TECHNICAL = "TECHNICAL",
+  NON_TECHNICAL = "NON_TECHNICAL",
+}
+
+export enum TechnicalFeature {
+  // User & Security
+  AUTHENTICATION = "AUTHENTICATION",
+  USER_MANAGEMENT = "USER_MANAGEMENT",
+  SOCIAL_LOGIN = "SOCIAL_LOGIN",
+
+  // Core Features
+  FILE_HANDLING = "FILE_HANDLING",
+  SEARCH_FILTER = "SEARCH_FILTER",
+  NOTIFICATIONS = "NOTIFICATIONS",
+  ADMIN_PANEL = "ADMIN_PANEL",
+
+  // Business Features
+  PAYMENTS = "PAYMENTS",
+  ANALYTICS = "ANALYTICS",
+  MESSAGING = "MESSAGING",
+  CALENDAR = "CALENDAR",
+
+  // Growth Features
+  SEO_OPTIMIZATION = "SEO_OPTIMIZATION",
+  SOCIAL_SHARING = "SOCIAL_SHARING",
+  REFERRAL_SYSTEM = "REFERRAL_SYSTEM",
+  MARKETING_TOOLS = "MARKETING_TOOLS",
+
+  // E-commerce
+  SHOPPING_CART = "SHOPPING_CART",
+  INVENTORY = "INVENTORY",
+  ORDER_MANAGEMENT = "ORDER_MANAGEMENT",
+  PRODUCT_MANAGEMENT = "PRODUCT_MANAGEMENT",
+
+  // Integration & Performance
+  API_INTEGRATION = "API_INTEGRATION",
+  MOBILE_SYNC = "MOBILE_SYNC",
+  ANALYTICS_TRACKING = "ANALYTICS_TRACKING",
+  OFFLINE_MODE = "OFFLINE_MODE",
 }

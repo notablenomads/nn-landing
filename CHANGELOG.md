@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.10](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.9...v0.1.10) (2025-02-22)
+
+
+### Features
+
+* enhance contact form with optional company field and improve layout responsiveness ([c9e4ec3](https://github.com/Notable-Nomads/nn-landing/commit/c9e4ec3bbcd7059e17c1470b0fac74d6d9f5c909))
+* update StepProgress component layout and improve positioning in wizard ([63e2fed](https://github.com/Notable-Nomads/nn-landing/commit/63e2fed1a862bf0932618f19f6e385a477930ad4))
+
 ### [0.1.9](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.8...v0.1.9) (2025-02-22)
 
 

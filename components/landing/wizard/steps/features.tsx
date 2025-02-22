@@ -68,14 +68,18 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentD
       {/* User Type Selection */}
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">How would you like to describe your requirements?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <SelectButton selected={!isTechnical} onClick={() => setIsTechnical(false)}>
-            <span className="font-semibold text-md">Non-Technical</span>
-            <span className="text-sm opacity-70">Describe your project in plain language</span>
+            <div className="flex flex-col items-start gap-1 w-full">
+              <span className="font-semibold text-lg">Non-Technical</span>
+              <span className="text-sm opacity-70 text-left">Describe your project in plain language</span>
+            </div>
           </SelectButton>
           <SelectButton selected={isTechnical} onClick={() => setIsTechnical(true)}>
-            <span className="font-semibold text-md">Technical</span>
-            <span className="text-sm opacity-70">Select specific technical features</span>
+            <div className="flex flex-col items-start gap-1 w-full">
+              <span className="font-semibold text-lg">Technical</span>
+              <span className="text-sm opacity-70 text-left">Select specific technical features</span>
+            </div>
           </SelectButton>
         </div>
       </div>
@@ -84,7 +88,7 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentD
       {isTechnical && (
         <div className="space-y-4">
           <h3 className="text-xl font-semibold">Select Required Features</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {technicalFeatures.map((feature) => (
               <SelectButton
                 key={feature.value}
@@ -95,8 +99,10 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentD
                   )
                 }
               >
-                <span className="font-semibold text-md">{feature.label}</span>
-                <span className="text-sm opacity-70">{feature.description}</span>
+                <div className="flex flex-col items-start gap-1 w-full">
+                  <span className="font-semibold text-lg">{feature.label}</span>
+                  <span className="text-sm opacity-70 text-left">{feature.description}</span>
+                </div>
               </SelectButton>
             ))}
           </div>
@@ -110,7 +116,7 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentD
           <Textarea
             value={projectDescription}
             onChange={(e) => setProjectDescription(e.target.value)}
-            className="min-h-[200px]"
+            className="min-h-[200px] bg-white/5 focus:bg-white/10"
             placeholder="Please describe what you want to build. Include any specific features or functionality you need..."
           />
         </div>

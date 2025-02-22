@@ -136,8 +136,11 @@ const WelcomeStep: React.FC<StepComponentProps> = ({ onNext }) => {
 
   if (showContactForm) {
     return (
-      <div className="flex flex-col items-center gap-6 text-white">
-        <ContactForm />
+      <div className="flex flex-col items-center gap-8 w-full max-w-2xl mx-auto">
+        <div className="w-full bg-black/20 rounded-lg p-8 backdrop-blur-sm border border-white/10">
+          <h2 className="text-2xl font-bold mb-6 text-center">Quick Contact Form</h2>
+          <ContactForm onBack={() => setShowContactForm(false)} />
+        </div>
       </div>
     );
   }

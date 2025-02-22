@@ -14,7 +14,11 @@ interface FormErrors {
 
 type SubmitStatus = "success" | "error" | null;
 
-const ContactForm: React.FC = () => {
+interface ContactFormProps {
+  onBack?: () => void;
+}
+
+const ContactForm: React.FC<ContactFormProps> = ({ onBack }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -94,83 +98,99 @@ const ContactForm: React.FC = () => {
   };
 
   return (
-    <div className="container bg-zinc-950 flex flex-col p-4 md:p-8">
-      <main className="flex-1 flex items-center justify-center mx-auto w-full">
-        <div className="w-full space-y-8">
+    <div className="w-full">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {submitStatus === "success" && (
+          <Alert className="bg-green-500/20 text-green-400 border-green-500">
+            <AlertDescription>Thank you! Your message has been sent successfully.</AlertDescription>
+          </Alert>
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <p className="text-zinc-400 text-lg">Send us a message and we'll get back to you soon.</p>
+            <Label htmlFor="name" className="text-white">
+              Name
+            </Label>
+            <Input
+              id="name"
+              name="name"
+              placeholder="Enter your name"
+              value={formData.name}
+              onChange={handleChange}
+              className={`bg-white/5 border-white/10 focus:bg-white/10 text-white ${
+                errors.name ? "border-red-500" : "hover:border-white/20"
+              }`}
+              required
+            />
+            {errors.name && <p className="text-red-400 text-sm">{errors.name}</p>}
           </div>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {submitStatus === "success" && (
-              <Alert className="bg-green-500/20 text-green-400 border-green-500">
-                <AlertDescription>Thank you! Your message has been sent successfully.</AlertDescription>
-              </Alert>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="text-left w-full">
-                <Label htmlFor="name" className="text-white text-md">
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  name="name"
-                  placeholder="Enter your name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className={`bg-zinc-800 border-zinc-700 text-white mt-2 p-2 rounded w-full ${
-                    errors.name ? "border-red-500" : ""
-                  }`}
-                  required
-                />
-                {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
-              </div>
-              <div className="text-left w-full">
-                <Label htmlFor="email" className="text-white text-md text-left">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={`bg-zinc-800 border-zinc-700 text-white mt-2 p-2 rounded w-full ${
-                    errors.email ? "border-red-500" : ""
-                  }`}
-                  required
-                />
-                {errors.email && <p className="text-red-400 text-sm mt-1">{errors.email}</p>}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4">
-              <div className="text-left w-full">
-                <Label htmlFor="message" className="text-white text-md">
-                  Message
-                </Label>
-                <Textarea
-                  id="message"
-                  name="message"
-                  placeholder="Type your message here"
-                  value={formData.message}
-                  onChange={handleChange}
-                  className={`bg-zinc-800 border-zinc-700 text-white min-h-32 mt-2 p-2 rounded resize-none w-full ${
-                    errors.message ? "border-red-500" : ""
-                  }`}
-                  required
-                />
-                {errors.message && <p className="text-red-400 text-sm mt-1">{errors.message}</p>}
-              </div>
-            </div>
-            <Button type="submit" className="w-full md:w-auto text-white py-6 text-md px-10" disabled={isSubmitting}>
-              {isSubmitting ? "Sending..." : "Send Message"}
-            </Button>
-          </form>
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-white">
+              Email
+            </Label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="Enter your email"
+              value={formData.email}
+              onChange={handleChange}
+              className={`bg-white/5 border-white/10 focus:bg-white/10 text-white ${
+                errors.email ? "border-red-500" : "hover:border-white/20"
+              }`}
+              required
+            />
+            {errors.email && <p className="text-red-400 text-sm">{errors.email}</p>}
+          </div>
         </div>
-      </main>
+
+        <div className="space-y-2">
+          <Label htmlFor="message" className="text-white">
+            Message
+          </Label>
+          <Textarea
+            id="message"
+            name="message"
+            placeholder="Type your message here"
+            value={formData.message}
+            onChange={handleChange}
+            className={`bg-white/5 border-white/10 focus:bg-white/10 text-white min-h-[150px] ${
+              errors.message ? "border-red-500" : "hover:border-white/20"
+            }`}
+            required
+          />
+          {errors.message && <p className="text-red-400 text-sm">{errors.message}</p>}
+        </div>
+
+        <div className="flex justify-between items-center">
+          {onBack && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="lg"
+              className="text-white hover:text-white hover:bg-white/10"
+              onClick={onBack}
+            >
+              ← Back to Project Journey
+            </Button>
+          )}
+          <Button
+            type="submit"
+            size="lg"
+            className="min-w-[200px] bg-[#F5900D] hover:bg-[#FFA940] text-white font-semibold"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                <span>Sending...</span>
+              </div>
+            ) : (
+              "Send Message"
+            )}
+          </Button>
+        </div>
+      </form>
     </div>
   );
 };

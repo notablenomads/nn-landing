@@ -2,6 +2,37 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.5](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.4...v0.1.5) (2025-02-22)
+
+
+### Features
+
+* add @types/lodash to devDependencies ([0f47e1b](https://github.com/Notable-Nomads/nn-landing/commit/0f47e1b5459855e916281097cd3f173728219bad))
+* add back navigation support and refactor step navigation in wizard component ([c85e4b8](https://github.com/Notable-Nomads/nn-landing/commit/c85e4b86420bb6fede454ba20a6d329ddbcb123c))
+* add global styles and enhance wizard component with animated button and glow effects ([4b46015](https://github.com/Notable-Nomads/nn-landing/commit/4b4601550266a24f24459c4c57007da542b23a94))
+* add gtag and mouseflow, some minor changes. ([c420489](https://github.com/Notable-Nomads/nn-landing/commit/c4204895255fffd4c99015775da59b1a2d6b4295))
+* add request a quote section. ([dd97428](https://github.com/Notable-Nomads/nn-landing/commit/dd97428408f752ca84cd7e8680daee172b3bfbc6))
+* enhance consultation options yes/no in summary section ([0ad1eff](https://github.com/Notable-Nomads/nn-landing/commit/0ad1effef85e6317aa425bf3d7a863c8f0d8b786))
+* enhance contact form and features step layout with improved styling and back navigation support ([be67229](https://github.com/Notable-Nomads/nn-landing/commit/be67229da9a04eaaf0453a8457dcb61c4f68bcf3))
+* enhance random string generation and improve hover effects in EvervaultCard component ([817587a](https://github.com/Notable-Nomads/nn-landing/commit/817587a748e536c17b7db58fda3d0c10c0597195))
+* enhance wizard component with improved data handling and validation ([289036f](https://github.com/Notable-Nomads/nn-landing/commit/289036feef912efb373e8159e90b70abb476302b))
+* enhance wizard component with step tracking and progress indication ([db4839d](https://github.com/Notable-Nomads/nn-landing/commit/db4839dfae2b947e576ff3c79b16d2b2eba86209))
+* enhance wizard steps layout with additional column support for better audience and industry selection ([582d742](https://github.com/Notable-Nomads/nn-landing/commit/582d74266ddce1dcdf4e4bafa85d886af3b193c6))
+* implement step progress indicator and enhance data handling in wizard component ([d1304e9](https://github.com/Notable-Nomads/nn-landing/commit/d1304e95f29f23afed638c16a8c9f5e26793891e))
+* made telegram notification include 5 last commit messages ([862264b](https://github.com/Notable-Nomads/nn-landing/commit/862264bd4956985442ae04a4ead1f4725b5640f2))
+* update telegram notification format ([0d06b9e](https://github.com/Notable-Nomads/nn-landing/commit/0d06b9e0ae83e92a27be1ea0738779548f974d63))
+* update wizard steps with improved button variants and add challenge options ([367ef9e](https://github.com/Notable-Nomads/nn-landing/commit/367ef9e8ecc417215fdd5dc3f16daba36204b663))
+
+
+### Bug Fixes
+
+* add suspense for navigation events. ([94a0ffc](https://github.com/Notable-Nomads/nn-landing/commit/94a0ffc3dd61a84ab4b3a04d222fa02ef39d5e70))
+* chatbot stream issue fixed. ([3b608c3](https://github.com/Notable-Nomads/nn-landing/commit/3b608c38fb4e79bccaeba8731498e2b797a2e261))
+* default hsl color for p tags, and some minor changes. ([0062711](https://github.com/Notable-Nomads/nn-landing/commit/0062711bc63c9d92a1428d85cfaed8e9f3a919b3))
+* followUp question issue for ML and Mobile App fixed. ([72d818c](https://github.com/Notable-Nomads/nn-landing/commit/72d818c63394042c1396e649e6ed9d0c762cad6c))
+* gtag type issue fixed. ([9475850](https://github.com/Notable-Nomads/nn-landing/commit/94758506a070f62d82b42441f08cdcbdfa76c0e9))
+* workflow ([6231e30](https://github.com/Notable-Nomads/nn-landing/commit/6231e30c32c434141ad4873a3f17c62d4a5b3547))
+
 ### [0.1.4](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.2...v0.1.4) (2025-02-06)
 
 

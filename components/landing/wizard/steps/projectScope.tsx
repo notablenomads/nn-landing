@@ -1,125 +1,72 @@
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { SelectButton } from "@/components/ui/selectButton";
-import { ExistingProjectDetails, StepWithOptionsProps } from "../types";
 import React from "react";
+import { StepWithOptionsProps, ProjectType, ExistingProjectChallenge } from "../types";
+import { SelectButton } from "@/components/ui/selectButton";
+import { Button } from "@/components/ui/button";
 
-const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({
-  onNext,
-  options,
-}) => {
-  const [projectType, setProjectType] = React.useState<string>();
-  const [existingDetails, setExistingDetails] = React.useState<
-    ExistingProjectDetails
-  >({
-    challenges: [], // Changed from challenge (string) to challenges (string[])
-    hasCode: null,
-    codeFiles: null,
-  });
+const ProjectScopeStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, options }) => {
+  const [projectType, setProjectType] = React.useState<ProjectType | undefined>(currentData?.projectType);
+  const [existingProjectChallenges, setExistingProjectChallenges] = React.useState<ExistingProjectChallenge[]>(
+    currentData?.existingProjectChallenges || []
+  );
 
-  const toggleChallenge = (challengeValue: string) => {
-    setExistingDetails((prev) => ({
-      ...prev,
-      challenges: prev.challenges.includes(challengeValue)
-        ? prev.challenges.filter((c) => c !== challengeValue)
-        : [...prev.challenges, challengeValue],
-    }));
+  const isValid = projectType && (projectType !== ProjectType.EXISTING || existingProjectChallenges.length > 0);
+
+  const handleNext = () => {
+    if (!isValid) return;
+
+    onNext({
+      projectType,
+      ...(projectType === ProjectType.EXISTING && {
+        existingProjectChallenges,
+      }),
+    });
   };
 
   return (
-    <div className="flex flex-col gap-6 text-white">
-      <div>
-        <p className="mb-4">Is this a new project or an existing one?</p>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {options?.projectTypes?.map((type) => (
+    <div className="flex flex-col gap-8 w-full max-w-2xl mx-auto">
+      {/* Project Type Selection */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-semibold">What type of project is this?</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {options.projectTypes.map((type) => (
             <SelectButton
               key={type.value}
               selected={projectType === type.value}
-              onClick={() =>
-                setProjectType((prev) =>
-                  prev === type.value ? undefined : type.value
-                )
-              }
+              onClick={() => setProjectType(type.value as ProjectType)}
             >
               <span className="font-semibold text-md">{type.label}</span>
-              <span className="text-md opacity-70 text-left">
-                {type.description}
-              </span>
+              <span className="text-sm opacity-70">{type.description}</span>
             </SelectButton>
           ))}
         </div>
       </div>
 
-      {projectType === "EXISTING" && (
+      {/* Existing Project Challenges */}
+      {projectType === ProjectType.EXISTING && (
         <div className="space-y-4">
-          <div>
-            <Label htmlFor="challenge" className="block mb-4">
-              What are your biggest challenges? (Select all that apply)
-            </Label>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-              {options?.existingProjectChallenges?.map((challenge) => (
-                <SelectButton
-                  key={challenge.value}
-                  selected={existingDetails.challenges.includes(
-                    challenge.value
-                  )}
-                  onClick={() => toggleChallenge(challenge.value)}
-                >
-                  <span className="font-semibold text-md">
-                    {challenge.label}
-                  </span>
-                  <span className="text-md opacity-70 text-left">
-                    {challenge.description}
-                  </span>
-                </SelectButton>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="mb-4">Do you have existing code/designs?</p>
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-              {[
-                { value: true, label: "Yes" },
-                { value: false, label: "No" },
-              ].map((option) => (
-                <SelectButton
-                  key={option.label}
-                  selected={existingDetails.hasCode === option.value}
-                  onClick={() =>
-                    setExistingDetails({
-                      ...existingDetails,
-                      hasCode:
-                        existingDetails.hasCode === option.value
-                          ? null
-                          : option.value,
-                    })
-                  }
-                  className="items-center justify-center"
-                >
-                  {option.label}
-                </SelectButton>
-              ))}
-            </div>
+          <h3 className="text-xl font-semibold">What challenges are you facing?</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {options.existingProjectChallenges.map((challenge) => (
+              <SelectButton
+                key={challenge.value}
+                selected={existingProjectChallenges.includes(challenge.value as ExistingProjectChallenge)}
+                onClick={() =>
+                  setExistingProjectChallenges((prev) => {
+                    const value = challenge.value as ExistingProjectChallenge;
+                    return prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value];
+                  })
+                }
+              >
+                <span className="font-semibold text-md">{challenge.label}</span>
+                <span className="text-sm opacity-70">{challenge.description}</span>
+              </SelectButton>
+            ))}
           </div>
         </div>
       )}
 
-      <Button
-        onClick={() =>
-          onNext({
-            projectType,
-            ...(projectType === "EXISTING" && { existingDetails }),
-          })
-        }
-        className="mt-4 text-lg mb-3"
-        disabled={
-          !projectType ||
-          (projectType === "EXISTING" &&
-            existingDetails.challenges.length === 0)
-        }
-      >
-        Next →
+      <Button onClick={handleNext} disabled={!isValid} className="mt-4">
+        Continue →
       </Button>
     </div>
   );

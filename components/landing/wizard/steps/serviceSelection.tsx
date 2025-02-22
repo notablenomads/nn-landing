@@ -1,121 +1,108 @@
 import React from "react";
-import { StepWithOptionsProps } from "../types";
+import { StepWithOptionsProps, ServiceType, MobileAppPlatform, AIMLDatasetStatus } from "../types";
 import { SelectButton } from "@/components/ui/selectButton";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const ServiceSelectionStep: React.FC<StepWithOptionsProps> = ({
-  onNext,
-  options,
-}) => {
-  const [selectedServices, setSelectedServices] = React.useState<string[]>([]);
-  const [followUpData, setFollowUpData] = React.useState<
-    Record<string, string>
-  >({});
-  const [otherService, setOtherService] = React.useState("");
+const ServiceSelectionStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData, options }) => {
+  const [selectedServices, setSelectedServices] = React.useState<ServiceType[]>(currentData?.services || []);
+  const [mobileAppPlatform, setMobileAppPlatform] = React.useState<MobileAppPlatform | undefined>(
+    currentData?.mobileAppPlatform
+  );
+  const [aimlDatasetStatus, setAimlDatasetStatus] = React.useState<AIMLDatasetStatus | undefined>(
+    currentData?.aimlDatasetStatus
+  );
 
-  const handleServiceToggle = (serviceId: string) => {
-    setSelectedServices((prev) => {
-      if (prev.includes(serviceId)) {
-        const newServices = prev.filter((id) => id !== serviceId);
-        return newServices;
-      } else {
-        return [...prev, serviceId];
-      }
+  const isValid =
+    selectedServices.length > 0 &&
+    (!selectedServices.includes(ServiceType.MOBILE_APP) || mobileAppPlatform) &&
+    (!selectedServices.includes(ServiceType.AI_ML) || aimlDatasetStatus);
+
+  const handleNext = () => {
+    if (!isValid) return;
+
+    onNext({
+      services: selectedServices,
+      ...(selectedServices.includes(ServiceType.MOBILE_APP) && {
+        mobileAppPlatform,
+      }),
+      ...(selectedServices.includes(ServiceType.AI_ML) && {
+        aimlDatasetStatus,
+      }),
     });
   };
 
-  const showAIFollowUp = selectedServices.includes("AI_ML");
-  const showMobileFollowUp = selectedServices.includes("MOBILE_APP");
-
   return (
-    <div className="flex flex-col gap-6 text-white">
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        {options?.services?.map((service) => (
-          <SelectButton
-            key={service.value}
-            selected={selectedServices.includes(service.value)}
-            onClick={() => handleServiceToggle(service.value)}
-          >
-            <span className="font-semibold text-md">{service.label}</span>
-            <span className="text-md opacity-70 text-left">
-              {service.description}
-            </span>
-          </SelectButton>
-        ))}
+    <div className="flex flex-col gap-8 w-full max-w-2xl mx-auto">
+      {/* Service Selection */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-semibold">What services do you need?</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {options.services.map((service) => (
+            <SelectButton
+              key={service.value}
+              selected={selectedServices.includes(service.value as ServiceType)}
+              onClick={() => {
+                const serviceType = service.value as ServiceType;
+                setSelectedServices((prev) =>
+                  prev.includes(serviceType) ? prev.filter((s) => s !== serviceType) : [...prev, serviceType]
+                );
+              }}
+            >
+              <span className="font-semibold text-md">{service.label}</span>
+              <span className="text-sm opacity-70">{service.description}</span>
+            </SelectButton>
+          ))}
+        </div>
       </div>
 
-      {selectedServices.includes("OTHER") && (
-        <div className="mt-4">
-          <Label htmlFor="other">Please specify</Label>
-          <Input
-            id="other"
-            value={otherService}
-            onChange={(e) => setOtherService(e.target.value)}
-            className="mt-1"
-          />
-        </div>
-      )}
-
-      {showAIFollowUp && (
-        <div className="mt-4 p-4 bg-background/10 rounded-lg">
-          <p className="mb-2">Do you have datasets/models?</p>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {["Yes", "No", "Not Sure"].map((option) => (
+      {/* Mobile App Platform Selection */}
+      {selectedServices.includes(ServiceType.MOBILE_APP) && (
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Which platform(s) are you targeting?</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { value: MobileAppPlatform.IOS, label: "iOS", description: "Apple devices" },
+              { value: MobileAppPlatform.ANDROID, label: "Android", description: "Android devices" },
+              { value: MobileAppPlatform.BOTH, label: "Both", description: "Cross-platform" },
+            ].map((platform) => (
               <SelectButton
-                key={option}
-                selected={followUpData.hasDatasets === option.toLowerCase()}
-                onClick={() =>
-                  setFollowUpData({
-                    ...followUpData,
-                    hasDatasets: option.toLowerCase(),
-                  })
-                }
-                className="items-center justify-center"
+                key={platform.value}
+                selected={mobileAppPlatform === platform.value}
+                onClick={() => setMobileAppPlatform(platform.value)}
               >
-                {option}
+                <span className="font-semibold text-md">{platform.label}</span>
+                <span className="text-sm opacity-70">{platform.description}</span>
               </SelectButton>
             ))}
           </div>
         </div>
       )}
 
-      {showMobileFollowUp && (
-        <div className="mt-4 p-4 bg-background/10 rounded-lg">
-          <p className="mb-2">Which platforms?</p>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {["iOS", "Android", "Both"].map((platform) => (
+      {/* AI/ML Dataset Status */}
+      {selectedServices.includes(ServiceType.AI_ML) && (
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Do you have existing datasets or models?</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { value: AIMLDatasetStatus.YES, label: "Yes", description: "We have data/models ready" },
+              { value: AIMLDatasetStatus.NO, label: "No", description: "We need to collect data" },
+              { value: AIMLDatasetStatus.NOT_SURE, label: "Not Sure", description: "Need consultation" },
+            ].map((status) => (
               <SelectButton
-                key={platform}
-                selected={followUpData.platforms === platform.toLowerCase()}
-                onClick={() =>
-                  setFollowUpData({
-                    ...followUpData,
-                    platforms: platform.toLowerCase(),
-                  })
-                }
-                className="items-center justify-center"
+                key={status.value}
+                selected={aimlDatasetStatus === status.value}
+                onClick={() => setAimlDatasetStatus(status.value)}
               >
-                {platform}
+                <span className="font-semibold text-md">{status.label}</span>
+                <span className="text-sm opacity-70">{status.description}</span>
               </SelectButton>
             ))}
           </div>
         </div>
       )}
 
-      <Button
-        onClick={() =>
-          onNext({
-            services: selectedServices,
-            otherService,
-            followUpData,
-          })
-        }
-        className="mt-4 text-lg mb-3"
-        disabled={selectedServices.length === 0}
-      >
-        Next →
+      <Button onClick={handleNext} disabled={!isValid} className="mt-4">
+        Continue →
       </Button>
     </div>
   );

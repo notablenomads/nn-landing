@@ -1,19 +1,19 @@
-import React, { lazy, Suspense } from 'react';
+import React, { lazy, Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import type { StepComponentProps, WizardCurrentData } from './types';
-import { useWizardOptions } from '@/hooks/useWizardOptions';
+import type { StepComponentProps, WizardCurrentData } from "./types";
+import { useWizardOptions } from "@/hooks/useWizardOptions";
+import { ProjectType, TargetAudience, Industry, DesignStyle, Timeline, Budget, ContactMethod } from "./types";
 
-const WelcomeStep = lazy(() => import('./steps/welcome'));
-const ServiceSelectionStep = lazy(() => import('./steps/serviceSelection'));
-const ProjectScopeStep = lazy(() => import('./steps/projectScope'));
-const FeaturesStep = lazy(() => import('./steps/features'));
-const AudienceStep = lazy(() => import('./steps/audience'));
-const PreferencesStep = lazy(() => import('./steps/preferences'));
-const ContactStep = lazy(() => import('./steps/contact'));
-const SuccessStep = lazy(() => import('./steps/success'));
-
+const WelcomeStep = lazy(() => import("./steps/welcome"));
+const ServiceSelectionStep = lazy(() => import("./steps/serviceSelection"));
+const ProjectScopeStep = lazy(() => import("./steps/projectScope"));
+const FeaturesStep = lazy(() => import("./steps/features"));
+const AudienceStep = lazy(() => import("./steps/audience"));
+const PreferencesStep = lazy(() => import("./steps/preferences"));
+const ContactStep = lazy(() => import("./steps/contact"));
+const SuccessStep = lazy(() => import("./steps/success"));
 
 const StepSkeleton: React.FC = () => (
   <div className="flex flex-col gap-4 w-full">
@@ -31,20 +31,26 @@ const ErrorAlert: React.FC<{ message: string }> = ({ message }) => (
 );
 
 const LazyLoadingWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Suspense fallback={<StepSkeleton />}>
-    {children}
-  </Suspense>
+  <Suspense fallback={<StepSkeleton />}>{children}</Suspense>
 );
 
 const WizardStepWrapper = (props: StepComponentProps): JSX.Element => {
   const { data: options, isLoading, error } = useWizardOptions();
-  const safeCurrentData: WizardCurrentData = props.currentData as WizardCurrentData || {
+  const safeCurrentData: WizardCurrentData = {
     services: [],
-    existingDetails: {
-      challenge: '',
-      hasCode: null,
-      codeFiles: null
-    }
+    projectType: ProjectType.NEW,
+    targetAudience: TargetAudience.BOTH,
+    industry: Industry.OTHER,
+    hasCompetitors: false,
+    hasExistingBrand: false,
+    designStyle: DesignStyle.UNDECIDED,
+    timeline: Timeline.FLEXIBLE,
+    budget: Budget.NOT_SURE,
+    name: "",
+    email: "",
+    preferredContactMethod: ContactMethod.EMAIL,
+    wantsConsultation: false,
+    ...(props.currentData as Partial<WizardCurrentData>),
   };
 
   if (isLoading) return <StepSkeleton />;
@@ -54,7 +60,7 @@ const WizardStepWrapper = (props: StepComponentProps): JSX.Element => {
   const stepProps = { ...props, options };
 
   const renderStep = () => {
-    switch(props.step) {
+    switch (props.step) {
       case 0:
         return <WelcomeStep {...props} />;
       case 1:
@@ -68,13 +74,7 @@ const WizardStepWrapper = (props: StepComponentProps): JSX.Element => {
       case 5:
         return <PreferencesStep {...stepProps} />;
       case 6:
-        return (
-          <ContactStep
-            currentData={safeCurrentData}
-            options={options}
-            onComplete={() => props.onNext?.()}
-          />
-        );
+        return <ContactStep currentData={safeCurrentData} options={options} onComplete={() => props.onNext?.()} />;
       case 7:
         return <SuccessStep />;
       default:
@@ -82,52 +82,48 @@ const WizardStepWrapper = (props: StepComponentProps): JSX.Element => {
     }
   };
 
-  return (
-    <LazyLoadingWrapper>
-      {renderStep()}
-    </LazyLoadingWrapper>
-  );
+  return <LazyLoadingWrapper>{renderStep()}</LazyLoadingWrapper>;
 };
 
 export const wizardSteps = [
   {
     header: "Welcome",
     description: "Let's get started with your project",
-    content: WizardStepWrapper
+    content: WizardStepWrapper,
   },
   {
     header: "Services",
     description: "What kind of project are you working on?",
-    content: WizardStepWrapper
+    content: WizardStepWrapper,
   },
   {
     header: "Project Scope",
     description: "Tell us about your project status",
-    content: WizardStepWrapper
+    content: WizardStepWrapper,
   },
   {
     header: "Features",
     description: "Tell us what functionality you need",
-    content: WizardStepWrapper
+    content: WizardStepWrapper,
   },
   {
     header: "Target Audience",
     description: "Help us understand your market",
-    content: WizardStepWrapper
+    content: WizardStepWrapper,
   },
   {
     header: "Preferences",
     description: "Design, timeline, and budget preferences",
-    content: WizardStepWrapper
+    content: WizardStepWrapper,
   },
   {
     header: "Contact Info",
     description: "Let's get in touch",
-    content: WizardStepWrapper
+    content: WizardStepWrapper,
   },
   {
-    content: WizardStepWrapper
-  }
+    content: WizardStepWrapper,
+  },
 ];
 
 export default wizardSteps;

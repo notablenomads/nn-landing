@@ -1,143 +1,120 @@
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { SelectButton } from "@/components/ui/selectButton";
-import { Textarea } from "@/components/ui/textarea";
 import React from "react";
 import { StepWithOptionsProps } from "../types";
+import { SelectButton } from "@/components/ui/selectButton";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
 
-const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext }) => {
-  const [userType, setUserType] = React.useState<
-    "technical" | "non-technical"
-  >();
-  const [selectedFeatures, setSelectedFeatures] = React.useState<string[]>([]);
-  const [projectDescription, setProjectDescription] = React.useState("");
+const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, currentData }) => {
+  const [isTechnical, setIsTechnical] = React.useState<boolean>(false);
+  const [selectedFeatures, setSelectedFeatures] = React.useState<string[]>(
+    currentData?.projectDescription?.includes("Technical requirements:")
+      ? currentData.projectDescription.replace("Technical requirements: ", "").split(", ")
+      : []
+  );
+  const [projectDescription, setProjectDescription] = React.useState<string>(
+    currentData?.projectDescription && !currentData.projectDescription.includes("Technical requirements:")
+      ? currentData.projectDescription
+      : ""
+  );
 
-  const features = [
+  const commonFeatures = [
     {
-      value: "auth",
-      label: "Authentication",
-      description: "Login/Signup system",
+      value: "authentication",
+      label: "User Authentication",
+      description: "Login, registration, and user management",
     },
     {
-      value: "payment",
-      label: "Payment Gateway",
-      description: "Process payments and transactions",
+      value: "payments",
+      label: "Payment Processing",
+      description: "Secure payment integration and billing",
     },
     {
-      value: "chat",
-      label: "Real-time Chat",
-      description: "Instant messaging and communication",
-    },
-    {
-      value: "dashboard",
-      label: "Dashboard & Analytics",
-      description: "Data visualization and reporting",
-    },
-    {
-      value: "notifications",
-      label: "Push Notifications",
-      description: "Real-time alerts and updates",
+      value: "analytics",
+      label: "Analytics & Reporting",
+      description: "Data tracking and insights",
     },
     {
       value: "api",
-      label: "Third-party API Integration",
-      description: "Connect with external services",
+      label: "API Integration",
+      description: "Third-party service integration",
+    },
+    {
+      value: "realtime",
+      label: "Real-time Features",
+      description: "Live updates and notifications",
+    },
+    {
+      value: "search",
+      label: "Search & Filtering",
+      description: "Advanced search capabilities",
     },
   ];
 
-  const handleFeatureToggle = (featureId: string) => {
-    setSelectedFeatures((prev) =>
-      prev.includes(featureId)
-        ? prev.filter((id) => id !== featureId)
-        : [...prev, featureId]
-    );
+  const isValid = isTechnical ? selectedFeatures.length > 0 : projectDescription.trim().length > 0;
+
+  const handleNext = () => {
+    if (!isValid) return;
+
+    onNext({
+      projectDescription: isTechnical ? `Technical requirements: ${selectedFeatures.join(", ")}` : projectDescription,
+    });
   };
 
   return (
-    <div className="flex flex-col gap-6 text-white">
-      <div>
-        <p className="mb-4">Are you a technical user?</p>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            {
-              value: "technical",
-              label: "Technical User",
-              description: "I have development experience",
-            },
-            {
-              value: "non-technical",
-              label: "Non-Technical",
-              description: "I need guidance on technical decisions",
-            },
-          ].map((type) => (
-            <SelectButton
-              key={type.value}
-              selected={userType === type.value}
-              onClick={() =>
-                setUserType(type.value as "technical" | "non-technical")
-              }
-            >
-              <span className="font-semibold">{type.label}</span>
-              <span className="text-sm opacity-70 text-left">
-                {type.description}
-              </span>
-            </SelectButton>
-          ))}
+    <div className="flex flex-col gap-8 w-full max-w-2xl mx-auto">
+      {/* User Type Selection */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-semibold">How would you like to describe your requirements?</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <SelectButton selected={!isTechnical} onClick={() => setIsTechnical(false)}>
+            <span className="font-semibold text-md">Non-Technical</span>
+            <span className="text-sm opacity-70">Describe your project in plain language</span>
+          </SelectButton>
+          <SelectButton selected={isTechnical} onClick={() => setIsTechnical(true)}>
+            <span className="font-semibold text-md">Technical</span>
+            <span className="text-sm opacity-70">Select specific technical features</span>
+          </SelectButton>
         </div>
       </div>
 
-      {userType === "technical" ? (
-        <div>
-          <p className="mb-4">Select the features you need:</p>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {features?.map((feature) => (
+      {/* Technical Features Selection */}
+      {isTechnical && (
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Select Required Features</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {commonFeatures.map((feature) => (
               <SelectButton
                 key={feature.value}
                 selected={selectedFeatures.includes(feature.value)}
-                onClick={() => handleFeatureToggle(feature.value)}
+                onClick={() =>
+                  setSelectedFeatures((prev) =>
+                    prev.includes(feature.value) ? prev.filter((f) => f !== feature.value) : [...prev, feature.value]
+                  )
+                }
               >
                 <span className="font-semibold text-md">{feature.label}</span>
-                <span className="text-md opacity-70 text-left">
-                  {feature.description}
-                </span>
+                <span className="text-sm opacity-70">{feature.description}</span>
               </SelectButton>
             ))}
           </div>
         </div>
-      ) : (
-        userType === "non-technical" && (
-          <div>
-            <Label htmlFor="description">
-              Describe your project in 1–2 sentences
-            </Label>
-            <Textarea
-              id="description"
-              placeholder="Example: I want to build a mobile app that helps users track their daily expenses and share bills with roommates..."
-              value={projectDescription}
-              onChange={(e) => setProjectDescription(e.target.value)}
-              className="mt-1 bg-white/10  min-h-[100px]"
-            />
-          </div>
-        )
       )}
 
-      <Button
-        onClick={() =>
-          onNext({
-            userType,
-            ...(userType === "technical"
-              ? { features: selectedFeatures }
-              : { projectDescription }),
-          })
-        }
-        className="mt-4 text-lg mb-3"
-        disabled={
-          !userType ||
-          (userType === "technical" && selectedFeatures.length === 0) ||
-          (userType === "non-technical" && !projectDescription.trim())
-        }
-      >
-        Next →
+      {/* Non-Technical Description */}
+      {!isTechnical && (
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Describe Your Project</h3>
+          <Textarea
+            value={projectDescription}
+            onChange={(e) => setProjectDescription(e.target.value)}
+            className="min-h-[200px]"
+            placeholder="Please describe what you want to build. Include any specific features or functionality you need..."
+          />
+        </div>
+      )}
+
+      <Button onClick={handleNext} disabled={!isValid} className="mt-4">
+        Continue →
       </Button>
     </div>
   );

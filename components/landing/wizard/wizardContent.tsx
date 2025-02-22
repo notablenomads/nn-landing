@@ -1,16 +1,11 @@
 import React from "react";
 import { debounce } from "lodash";
-import {
-  motion,
-  useSpring,
-  useMotionValue,
-  useTransform,
-  AnimatePresence,
-} from "framer-motion";
+import { motion, useSpring, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
+import { WizardCurrentData } from "./types";
 
 interface StepComponentProps {
-  onNext: (data?: Record<string, unknown>) => void;
-  currentData?: Record<string, unknown>;
+  onNext: (data?: Partial<WizardCurrentData>) => void;
+  currentData?: Partial<WizardCurrentData>;
   step?: number;
   totalSteps?: number;
 }
@@ -23,19 +18,13 @@ interface WizardStep {
 
 interface WizardContentProps {
   steps: WizardStep[];
-  onComplete: (data: Record<string, unknown>) => void;
+  onComplete: (data: WizardCurrentData) => void;
   onStepChange?: (stepIndex: number) => void;
 }
 
-export const WizardContent: React.FC<WizardContentProps> = ({
-  steps,
-  onComplete,
-  onStepChange,
-}) => {
+export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete, onStepChange }) => {
   const [currentStep, setCurrentStep] = React.useState(0);
-  const [wizardData, setWizardData] = React.useState<Record<string, unknown>>(
-    {}
-  );
+  const [wizardData, setWizardData] = React.useState<Partial<WizardCurrentData>>({});
   const [width, setWidth] = React.useState(600);
   const dividerRef = React.useRef<HTMLDivElement>(null);
   const lastTouchTime = React.useRef<number>(Date.now());
@@ -56,19 +45,46 @@ export const WizardContent: React.FC<WizardContentProps> = ({
   });
 
   // Handle next step and data collection
-  const handleNext = (stepData?: Record<string, unknown>) => {
+  const handleNext = (stepData?: Partial<WizardCurrentData>) => {
     if (stepData) {
       setWizardData((prev) => ({ ...prev, ...stepData }));
     }
 
     if (currentStep === steps.length - 1) {
       const finalData = stepData ? { ...wizardData, ...stepData } : wizardData;
-      onComplete(finalData);
+      // Ensure all required fields are present before completing
+      if (isWizardDataComplete(finalData)) {
+        onComplete(finalData as WizardCurrentData);
+      } else {
+        console.error("Incomplete wizard data:", finalData);
+        // Handle incomplete data (maybe show an error message)
+      }
     } else {
       const nextStep = currentStep + 1;
       setCurrentStep(nextStep);
       onStepChange?.(nextStep);
     }
+  };
+
+  // Helper function to check if all required fields are present
+  const isWizardDataComplete = (data: Partial<WizardCurrentData>): data is WizardCurrentData => {
+    const requiredFields: (keyof WizardCurrentData)[] = [
+      "services",
+      "projectType",
+      "targetAudience",
+      "industry",
+      "hasCompetitors",
+      "hasExistingBrand",
+      "designStyle",
+      "timeline",
+      "budget",
+      "name",
+      "email",
+      "preferredContactMethod",
+      "wantsConsultation",
+    ];
+
+    return requiredFields.every((field) => field in data);
   };
 
   // Update width on mount and window resize
@@ -149,8 +165,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({
   };
 
   const currentStepData = steps[currentStep];
-  const shouldShowHeaderSection =
-    currentStepData.header || currentStepData.description;
+  const shouldShowHeaderSection = currentStepData.header || currentStepData.description;
 
   return (
     <div className="w-full h-[100dvh] bg-black overflow-y-auto">
@@ -171,14 +186,10 @@ export const WizardContent: React.FC<WizardContentProps> = ({
                 className="w-full p-6 flex flex-col justify-center items-center"
               >
                 {currentStepData.header && (
-                  <h2 className="text-6xl font-extrabold mb-4 text-white text-center">
-                    {currentStepData.header}
-                  </h2>
+                  <h2 className="text-6xl font-extrabold mb-4 text-white text-center">{currentStepData.header}</h2>
                 )}
                 {currentStepData.description && (
-                  <p className="text-2xl font-light text-white opacity-60 text-center">
-                    {currentStepData.description}
-                  </p>
+                  <p className="text-2xl font-light text-white opacity-60 text-center">{currentStepData.description}</p>
                 )}
               </motion.div>
             </AnimatePresence>

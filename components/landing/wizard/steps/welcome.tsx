@@ -154,7 +154,7 @@ const WelcomeStep: React.FC<StepComponentProps> = ({ onNext }) => {
       <div className="flex flex-col items-center justify-center w-full max-w-2xl mx-auto px-4 md:px-0">
         <div className="w-full bg-black/20 rounded-lg p-6 md:p-8 backdrop-blur-sm border border-white/10 shadow-xl">
           <h2 className="text-2xl font-bold mb-6">Quick Contact Form</h2>
-          <ContactForm onBack={() => setShowContactForm(false)} showCompanyField={true} />
+          <ContactForm onBack={() => setShowContactForm(false)} />
         </div>
       </div>
     );
@@ -169,7 +169,12 @@ const WelcomeStep: React.FC<StepComponentProps> = ({ onNext }) => {
       <div className="flex flex-col gap-4 w-full">
         <EvervaultCard text="Begin Your Project Journey →" onClick={handleNext} variant="primary" />
         <p className="text-center">Or</p>
-        <Button onClick={() => setShowContactForm(true)} variant="default" size="lg">
+        <Button
+          onClick={() => setShowContactForm(true)}
+          variant="default"
+          size="lg"
+          className="bg-gradient-to-br from-[#F5900D] to-[#F5900D]/80 hover:from-[#FFA940] hover:to-[#F5900D] text-black font-medium shadow-[0_0_15px_rgba(245,144,13,0.3)] hover:shadow-[0_0_20px_rgba(245,144,13,0.5)] transition-all duration-300"
+        >
           Quick Contact Form →
         </Button>
       </div>

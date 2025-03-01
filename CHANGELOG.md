@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.12](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.11...v0.1.12) (2025-03-01)
+
+
+### Features
+
+* simplify contact form by removing optional company field and enhance layout ([cf5371d](https://github.com/Notable-Nomads/nn-landing/commit/cf5371dfff5404deaf289b84b9330971cc1ef6f9))
+
 ### [0.1.11](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.10...v0.1.11) (2025-02-22)
 
 

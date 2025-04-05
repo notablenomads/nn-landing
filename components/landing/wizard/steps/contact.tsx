@@ -38,6 +38,7 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
         ...typedCurrentData,
         name: contactInfo.name,
         email: contactInfo.email,
+        phone: contactInfo.phone,
         company: contactInfo.company || undefined,
         preferredContactMethod: contactInfo.contactMethod as ContactMethod,
         wantsConsultation: contactInfo.wantsConsultation,
@@ -62,7 +63,8 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
   };
 
   const validatePhone = (phone: string) => {
-    return phone.match(/^\+?[0-9\s-()]+$/);
+    // More permissive regex that accepts plain numbers
+    return phone.match(/^\+?[0-9\s-()]+$/) || phone.match(/^[0-9]+$/);
   };
 
   const isValid =
@@ -75,6 +77,10 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
 
   // Inside ContactStep component
   const handleSubmit = () => {
+    console.log("Contact info:", contactInfo);
+    console.log("Is valid:", isValid);
+    console.log("Phone validation:", validatePhone(contactInfo.phone));
+
     const submissionData = {
       // Required fields
       services: typedCurrentData.services,
@@ -91,6 +97,7 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
       preferredContactMethod: contactInfo.contactMethod as ContactMethod,
       wantsConsultation: contactInfo.wantsConsultation,
       technicalExpertise: typedCurrentData.technicalExpertise,
+      phone: contactInfo.phone, // Always include phone in the submission data
 
       // Optional fields
       ...(typedCurrentData.existingProjectChallenges && {
@@ -119,11 +126,9 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
         typedCurrentData.projectDescription && {
           projectDescription: typedCurrentData.projectDescription,
         }),
-      ...((contactInfo.contactMethod === ContactMethod.PHONE || contactInfo.contactMethod === ContactMethod.WHATSAPP) && {
-        phone: contactInfo.phone,
-      }),
     };
 
+    console.log("Submission data:", submissionData);
     submitMutation.mutate(submissionData);
   };
 

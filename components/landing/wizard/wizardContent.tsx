@@ -100,21 +100,33 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
 
     // Check if all required fields are present
     const hasRequiredFields = requiredFields.every((field) => field in data);
+    console.log("Has required fields:", hasRequiredFields);
 
     // Additional validation for phone number when contact method is phone or whatsapp
     const needsPhone =
       data.preferredContactMethod === ContactMethod.PHONE || data.preferredContactMethod === ContactMethod.WHATSAPP;
     const hasPhone = needsPhone ? !!data.phone && data.phone.trim() !== "" : true;
+    console.log("Needs phone:", needsPhone);
+    console.log("Has phone:", hasPhone);
+    console.log("Phone value:", data.phone);
 
     // Additional validation for project description when non-technical
     const needsProjectDescription = data.technicalExpertise === TechnicalExpertise.NON_TECHNICAL;
     const hasProjectDescription = needsProjectDescription ? !!data.projectDescription : true;
+    console.log("Needs project description:", needsProjectDescription);
+    console.log("Has project description:", hasProjectDescription);
 
     // Additional validation for technical features when technical
     const needsTechnicalFeatures = data.technicalExpertise === TechnicalExpertise.TECHNICAL;
     const hasTechnicalFeatures = needsTechnicalFeatures ? !!data.technicalFeatures : true;
+    console.log("Needs technical features:", needsTechnicalFeatures);
+    console.log("Has technical features:", hasTechnicalFeatures);
+    console.log("Technical features value:", data.technicalFeatures);
 
-    return hasRequiredFields && hasPhone && hasProjectDescription && hasTechnicalFeatures;
+    const result = hasRequiredFields && hasPhone && hasProjectDescription && hasTechnicalFeatures;
+    console.log("Final validation result:", result);
+
+    return result;
   };
 
   // Update width on mount and window resize

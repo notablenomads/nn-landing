@@ -1,7 +1,7 @@
 import React from "react";
 import { debounce } from "lodash";
 import { motion, useSpring, useMotionValue, useTransform, AnimatePresence } from "framer-motion";
-import { WizardCurrentData, WizardStep } from "./types";
+import { WizardCurrentData, WizardStep, ContactMethod, TechnicalExpertise } from "./types";
 import StepProgress from "./components/StepProgress";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";

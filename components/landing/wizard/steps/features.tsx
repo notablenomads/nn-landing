@@ -54,7 +54,7 @@ const FEATURE_CATEGORIES = {
 const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentData }) => {
   const [expertise, setExpertise] = React.useState<TechnicalExpertise | undefined>(currentData?.technicalExpertise);
   const [selectedFeatures, setSelectedFeatures] = React.useState<TechnicalFeature[]>(currentData?.technicalFeatures || []);
-  const [projectDescription, setProjectDescription] = React.useState<string>(currentData?.nonTechnicalDescription || "");
+  const [projectDescription, setProjectDescription] = React.useState<string>(currentData?.projectDescription || "");
 
   // Calculate max features based on TechnicalFeature enum length
   const maxFeatures = Object.keys(TechnicalFeature).length;
@@ -76,7 +76,7 @@ const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentD
         technicalFeatures: selectedFeatures,
       }),
       ...(expertise === TechnicalExpertise.NON_TECHNICAL && {
-        nonTechnicalDescription: projectDescription,
+        projectDescription,
       }),
     });
   };

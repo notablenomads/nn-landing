@@ -5,15 +5,7 @@ import { Label } from "@/components/ui/label";
 import { SelectButton } from "@/components/ui/selectButton";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, Loader2 } from "lucide-react";
-import {
-  ContactStepProps,
-  SummarySectionProps,
-  WizardCurrentData,
-  ContactMethod,
-  ProjectType,
-  ServiceType,
-  TechnicalExpertise,
-} from "../types";
+import { ContactStepProps, SummarySectionProps, WizardCurrentData, ContactMethod, TechnicalExpertise } from "../types";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import React from "react";

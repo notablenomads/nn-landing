@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.13](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.12...v0.1.13) (2025-04-05)
+
+
+### Features
+
+* add optional phone field to contact form and enhance validation logic ([8029439](https://github.com/Notable-Nomads/nn-landing/commit/8029439916b36f073bf03b1980603663c744186f))
+* enhance validation logic in wizard components and include detailed logging for debugging ([7219603](https://github.com/Notable-Nomads/nn-landing/commit/72196038a90f087f730dc51db48728587152c7d0))
+* improve phone number validation and update contact method requirements in wizard components ([190d5e5](https://github.com/Notable-Nomads/nn-landing/commit/190d5e5a5180d32a2b3f89b634e6791777ee0de7))
+* update wizard components to include new types and improve state management for project description ([336fb93](https://github.com/Notable-Nomads/nn-landing/commit/336fb93f3fe4f371840c17ff9ec7d7e899cba0d5))
+
 ### [0.1.12](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.11...v0.1.12) (2025-03-01)
 
 

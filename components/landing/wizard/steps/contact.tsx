@@ -70,7 +70,7 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
     validateEmail(contactInfo.email) &&
     contactInfo.contactMethod !== "" &&
     (contactInfo.contactMethod === ContactMethod.PHONE || contactInfo.contactMethod === ContactMethod.WHATSAPP
-      ? validatePhone(contactInfo.phone)
+      ? contactInfo.phone.trim() !== "" && validatePhone(contactInfo.phone)
       : true);
 
   // Inside ContactStep component
@@ -201,7 +201,12 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
 
         {/* Phone (Optional) */}
         <div>
-          <Label htmlFor="phone">Phone (Optional)</Label>
+          <Label htmlFor="phone">
+            Phone{" "}
+            {contactInfo.contactMethod === ContactMethod.PHONE || contactInfo.contactMethod === ContactMethod.WHATSAPP
+              ? "(Required)"
+              : "(Optional)"}
+          </Label>
           <Input
             id="phone"
             value={contactInfo.phone}
@@ -210,6 +215,11 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
             placeholder="+1 (555) 555-5555"
             disabled={submitMutation.isPending}
           />
+          {contactInfo.contactMethod === ContactMethod.PHONE || contactInfo.contactMethod === ContactMethod.WHATSAPP ? (
+            <p className="text-sm text-zinc-400 mt-1">
+              Required for {contactInfo.contactMethod === ContactMethod.PHONE ? "Phone" : "WhatsApp"} contact
+            </p>
+          ) : null}
         </div>
 
         {/* Company (Optional) */}

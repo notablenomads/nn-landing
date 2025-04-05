@@ -104,7 +104,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
     // Additional validation for phone number when contact method is phone or whatsapp
     const needsPhone =
       data.preferredContactMethod === ContactMethod.PHONE || data.preferredContactMethod === ContactMethod.WHATSAPP;
-    const hasPhone = needsPhone ? !!data.phone : true;
+    const hasPhone = needsPhone ? !!data.phone && data.phone.trim() !== "" : true;
 
     // Additional validation for project description when non-technical
     const needsProjectDescription = data.technicalExpertise === TechnicalExpertise.NON_TECHNICAL;

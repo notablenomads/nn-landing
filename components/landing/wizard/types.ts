@@ -67,6 +67,7 @@ export interface WizardCurrentData {
   budget: Budget;
   name: string;
   email: string;
+  phone?: string;
   company?: string;
   preferredContactMethod: ContactMethod;
   wantsConsultation: boolean;
@@ -75,7 +76,6 @@ export interface WizardCurrentData {
   aimlDatasetStatus?: AIMLDatasetStatus;
   technicalExpertise: TechnicalExpertise;
   technicalFeatures?: TechnicalFeature[];
-  nonTechnicalDescription?: string;
 }
 
 export interface BaseStepProps {

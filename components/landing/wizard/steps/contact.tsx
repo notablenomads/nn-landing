@@ -25,6 +25,7 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
   const [contactInfo, setContactInfo] = React.useState({
     name: "",
     email: "",
+    phone: "",
     company: "",
     contactMethod: "",
     wantsConsultation: false,
@@ -68,7 +69,17 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
     return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   };
 
-  const isValid = contactInfo.name.trim() !== "" && validateEmail(contactInfo.email) && contactInfo.contactMethod !== "";
+  const validatePhone = (phone: string) => {
+    return phone.match(/^\+?[0-9\s-()]+$/);
+  };
+
+  const isValid =
+    contactInfo.name.trim() !== "" &&
+    validateEmail(contactInfo.email) &&
+    contactInfo.contactMethod !== "" &&
+    (contactInfo.contactMethod === ContactMethod.PHONE || contactInfo.contactMethod === ContactMethod.WHATSAPP
+      ? validatePhone(contactInfo.phone)
+      : true);
 
   // Inside ContactStep component
   const handleSubmit = () => {
@@ -90,38 +101,35 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
       technicalExpertise: typedCurrentData.technicalExpertise,
 
       // Optional fields
-      ...(typedCurrentData.projectType === ProjectType.EXISTING && {
+      ...(typedCurrentData.existingProjectChallenges && {
         existingProjectChallenges: typedCurrentData.existingProjectChallenges,
       }),
-      ...(typedCurrentData.projectDescription && {
-        projectDescription: typedCurrentData.projectDescription,
+      ...(typedCurrentData.competitorUrls && {
+        competitorUrls: typedCurrentData.competitorUrls,
       }),
-      ...(typedCurrentData.hasCompetitors &&
-        typedCurrentData.competitorUrls && {
-          competitorUrls: typedCurrentData.competitorUrls,
-        }),
-      ...(contactInfo.company && {
-        company: contactInfo.company,
+      ...(typedCurrentData.company && {
+        company: typedCurrentData.company,
       }),
-      ...(notes && {
-        additionalNotes: notes,
+      ...(typedCurrentData.additionalNotes && {
+        additionalNotes: typedCurrentData.additionalNotes,
       }),
-      ...(typedCurrentData.services.includes(ServiceType.MOBILE_APP) &&
-        typedCurrentData.mobileAppPlatform && {
-          mobileAppPlatform: typedCurrentData.mobileAppPlatform,
-        }),
-      ...(typedCurrentData.services.includes(ServiceType.AI_ML) &&
-        typedCurrentData.aimlDatasetStatus && {
-          aimlDatasetStatus: typedCurrentData.aimlDatasetStatus,
-        }),
+      ...(typedCurrentData.mobileAppPlatform && {
+        mobileAppPlatform: typedCurrentData.mobileAppPlatform,
+      }),
+      ...(typedCurrentData.aimlDatasetStatus && {
+        aimlDatasetStatus: typedCurrentData.aimlDatasetStatus,
+      }),
       ...(typedCurrentData.technicalExpertise === TechnicalExpertise.TECHNICAL &&
         typedCurrentData.technicalFeatures && {
           technicalFeatures: typedCurrentData.technicalFeatures,
         }),
       ...(typedCurrentData.technicalExpertise === TechnicalExpertise.NON_TECHNICAL &&
-        typedCurrentData.nonTechnicalDescription && {
-          nonTechnicalDescription: typedCurrentData.nonTechnicalDescription,
+        typedCurrentData.projectDescription && {
+          projectDescription: typedCurrentData.projectDescription,
         }),
+      ...((contactInfo.contactMethod === ContactMethod.PHONE || contactInfo.contactMethod === ContactMethod.WHATSAPP) && {
+        phone: contactInfo.phone,
+      }),
     };
 
     submitMutation.mutate(submissionData);
@@ -197,6 +205,19 @@ const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onCompl
               disabled={submitMutation.isPending}
             />
           </div>
+        </div>
+
+        {/* Phone (Optional) */}
+        <div>
+          <Label htmlFor="phone">Phone (Optional)</Label>
+          <Input
+            id="phone"
+            value={contactInfo.phone}
+            onChange={(e) => handleInputChange("phone", e.target.value)}
+            className="mt-1 bg-white/10 text-lg"
+            placeholder="+1 (555) 555-5555"
+            disabled={submitMutation.isPending}
+          />
         </div>
 
         {/* Company (Optional) */}

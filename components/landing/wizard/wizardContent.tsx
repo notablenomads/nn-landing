@@ -95,9 +95,26 @@ export const WizardContent: React.FC<WizardContentProps> = ({ steps, onComplete,
       "email",
       "preferredContactMethod",
       "wantsConsultation",
+      "technicalExpertise",
     ];
 
-    return requiredFields.every((field) => field in data);
+    // Check if all required fields are present
+    const hasRequiredFields = requiredFields.every((field) => field in data);
+
+    // Additional validation for phone number when contact method is phone or whatsapp
+    const needsPhone =
+      data.preferredContactMethod === ContactMethod.PHONE || data.preferredContactMethod === ContactMethod.WHATSAPP;
+    const hasPhone = needsPhone ? !!data.phone : true;
+
+    // Additional validation for project description when non-technical
+    const needsProjectDescription = data.technicalExpertise === TechnicalExpertise.NON_TECHNICAL;
+    const hasProjectDescription = needsProjectDescription ? !!data.projectDescription : true;
+
+    // Additional validation for technical features when technical
+    const needsTechnicalFeatures = data.technicalExpertise === TechnicalExpertise.TECHNICAL;
+    const hasTechnicalFeatures = needsTechnicalFeatures ? !!data.technicalFeatures : true;
+
+    return hasRequiredFields && hasPhone && hasProjectDescription && hasTechnicalFeatures;
   };
 
   // Update width on mount and window resize

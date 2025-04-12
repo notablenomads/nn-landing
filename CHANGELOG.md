@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.14](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.13...v0.1.14) (2025-04-12)
+
+
+### Bug Fixes
+
+* update service worker script to improve module registration and caching strategies ([f3894de](https://github.com/Notable-Nomads/nn-landing/commit/f3894de812c4f7147e3c688fe0ef8fc6052caad1))
+
 ### [0.1.13](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.12...v0.1.13) (2025-04-05)
 
 

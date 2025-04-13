@@ -57,7 +57,7 @@ const teamMembers: TeamMember[] = [
   },
   {
     name: "Mahdi Rashidi",
-    role: "Cloud Alchemist & Infrastructure Innovator",
+    role: "Logic Weaver & Cloudsmith",
     image: "/team/mahdi-rashidi.png",
     linkedin: "https://www.linkedin.com/in/mrdevx/",
     github: "https://github.com/MRdevX",

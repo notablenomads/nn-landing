@@ -76,4 +76,4 @@ USER nextjs
 EXPOSE 3030
 
 # Set the command
-CMD ["yarn", "start", "-p", "3030"] 
+CMD ["yarn", "start"] 

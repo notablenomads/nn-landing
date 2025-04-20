@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.1.15](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.14...v0.1.15) (2025-04-20)
+
+
+### Bug Fixes
+
+* update team member role for Mahdi Rashidi ([d3dc0ae](https://github.com/Notable-Nomads/nn-landing/commit/d3dc0ae834fe2be96a12e03ae9edefc109c06c9c))
+
 ### [0.1.14](https://github.com/Notable-Nomads/nn-landing/compare/v0.1.13...v0.1.14) (2025-04-12)
 
 

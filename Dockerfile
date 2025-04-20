@@ -73,7 +73,7 @@ RUN chown -R nextjs:nodejs /app
 USER nextjs
 
 # Expose port
-EXPOSE 3000
+EXPOSE 3030
 
 # Set the command
-CMD ["yarn", "start"] 
+CMD ["yarn", "start", "-p", "3030"] 

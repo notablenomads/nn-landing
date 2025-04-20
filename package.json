@@ -68,5 +68,5 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": "eslint --fix"
   },
-  "packageManager": "yarn@4.6.0"
+  "packageManager": "yarn@4.9.1"
 }

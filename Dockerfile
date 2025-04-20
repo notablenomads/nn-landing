@@ -2,14 +2,15 @@
 FROM node:20-alpine AS deps
 WORKDIR /app
 
+# Copy yarn configuration first
+COPY .yarn .yarn
+COPY .yarnrc.yml ./
+
 # Enable and configure Corepack for Yarn Berry
 RUN corepack enable && corepack prepare yarn@stable --activate
 
 # Copy package files
-COPY package.json yarn.lock .yarnrc.yml ./
-
-# Create .yarn directory if it doesn't exist
-RUN mkdir -p .yarn
+COPY package.json yarn.lock ./
 
 # Install dependencies
 RUN yarn install --immutable
@@ -56,7 +57,7 @@ RUN addgroup --system --gid 1001 nodejs \
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/next.config.ts ./next.config.ts
+COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/.yarn ./.yarn
 COPY --from=builder /app/.yarnrc.yml ./.yarnrc.yml
 COPY --from=builder /app/node_modules ./node_modules

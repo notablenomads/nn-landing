@@ -29,6 +29,8 @@ COPY . .
 # Set environment variables
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV NODE_ENV production
+ENV NEXT_PUBLIC_BASE_URL https://api.notablenomads.com/v1/
+ENV NEXT_PUBLIC_GA_ID GTM-KLT6DHJF
 
 # Build the application
 RUN yarn build
@@ -43,6 +45,8 @@ RUN corepack enable && corepack prepare yarn@stable --activate
 # Set environment variables
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_PUBLIC_BASE_URL https://api.notablenomads.com/v1/
+ENV NEXT_PUBLIC_GA_ID GTM-KLT6DHJF
 
 # Create a non-root user
 RUN addgroup --system --gid 1001 nodejs \

@@ -1,65 +1,74 @@
-# syntax=docker.io/docker/dockerfile:1
-
-# Use buildplatform to ensure we get the correct base image for the build
-FROM --platform=$BUILDPLATFORM node:18-alpine AS base
-
-# Install dependencies only when needed
-FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
+# Stage 1: Dependencies
+FROM node:20-alpine AS deps
 WORKDIR /app
 
-# Enable corepack for Yarn
-RUN corepack enable
+# Enable and configure Corepack for Yarn Berry
+RUN corepack enable && corepack prepare yarn@stable --activate
 
-# Install dependencies based on the preferred package manager
+# Copy package files
 COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
+
+# Create .yarn directory if it doesn't exist
+RUN mkdir -p .yarn
 
 # Install dependencies
 RUN yarn install --immutable
 
-# Rebuild the source code only when needed
-FROM base AS builder
+# Stage 2: Builder
+FROM node:20-alpine AS builder
 WORKDIR /app
+
+# Enable and configure Corepack for Yarn Berry
+RUN corepack enable && corepack prepare yarn@stable --activate
+
+# Copy dependencies from deps stage
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/.yarn ./.yarn
-COPY --from=deps /app/.yarnrc.yml ./
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
-ENV NEXT_TELEMETRY_DISABLED=1
+# Set environment variables
+ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV production
 
-# Build application
-RUN corepack enable && yarn build
+# Build the application
+RUN yarn build
 
-# Production image, copy all the files and run next
-FROM --platform=$TARGETPLATFORM node:18-alpine AS runner
+# Stage 3: Runner
+FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV=production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-ENV NEXT_TELEMETRY_DISABLED=1
+# Enable and configure Corepack for Yarn Berry
+RUN corepack enable && corepack prepare yarn@stable --activate
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Set environment variables
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
 
+# Create a non-root user
+RUN addgroup --system --gid 1001 nodejs \
+    && adduser --system --uid 1001 nextjs
+
+# Copy necessary files from builder
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/next.config.ts ./next.config.ts
+COPY --from=builder /app/.yarn ./.yarn
+COPY --from=builder /app/.yarnrc.yml ./.yarnrc.yml
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/yarn.lock ./yarn.lock
 
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Create cache directory if it doesn't exist
+RUN mkdir -p .yarn/cache
 
+# Set correct permissions
+RUN chown -R nextjs:nodejs /app
+
+# Switch to non-root user
 USER nextjs
 
-EXPOSE 3030
+# Expose port
+EXPOSE 3000
 
-ENV PORT=3030
-ENV HOSTNAME="0.0.0.0"
-
-# server.js is created by next build from the standalone output
-# https://nextjs.org/docs/pages/api-reference/next-config-js/output
-CMD ["node", "server.js"] 
+# Set the command
+CMD ["yarn", "start"] 

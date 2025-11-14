@@ -66,20 +66,17 @@ const teamMembers: TeamMember[] = [
   },
   {
     name: "Amirhossein Samiazar",
-    role: "Tech Vision Guardian & Performance Virtuoso",
+    role: "AI Wizard & Machine Learning Maestro",
     image: "/team/amir-sami.png",
     linkedin: "https://www.linkedin.com/in/amirhosein-samiazar/",
     github: "https://github.com/ahsami",
     description:
-      "With over 10 years of experience in the software development\n" +
-      "industry, delivered more than 15 complex projects, meeting tight\n" +
-      "deadlines and ensuring client satisfaction.\n" +
-      "also excelled in leadership roles, having led teams ranging from 2\n" +
-      "to 8 developers and guiding and mentoring over 10 junior developers.\n" +
-      "Recognizing the importance of continuous improvement, implemented\n" +
-      "software architecture improvements which led to a minimum 50%\n" +
-      "increased in systems performance and a minimum 25% decreased in\n" +
-      "maintenance costs.",
+      "With over 10 years of experience in software development and AI engineering, " +
+      "I specialize in building intelligent systems and machine learning solutions. " +
+      "My expertise spans natural language processing, computer vision, and deep learning, " +
+      "with hands-on experience in deploying AI models at scale. I've led teams in developing " +
+      "AI-powered applications, from recommendation systems to automated decision-making tools, " +
+      "while maintaining a focus on ethical AI practices and performance optimization.",
   },
   {
     name: "Ali Bakhtiyari",

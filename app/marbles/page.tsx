@@ -1,8 +1,8 @@
-// // app/page.tsx
-// import ClientPage from "@/components/marbles/wrapper";
+// app/page.tsx
+import ClientPage from "@/components/marbles/wrapper";
 
-// export default ClientPage;
+export default ClientPage;
 
-export default function Marbles() {
-  return <div></div>;
-}
+// export default function Marbles() {
+//   return <div></div>;
+// }

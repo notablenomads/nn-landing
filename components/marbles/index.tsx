@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
-import { PerspectiveCamera } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
 import { gsap } from "gsap";
 import { useControls } from "leva";
@@ -23,7 +23,12 @@ interface MovingLightProps {
   index: number;
 }
 
-const Tube: React.FC<TubeProps> = ({ position, radius = 6, thickness = 2, amount = 15 }) => {
+const Tube: React.FC<TubeProps> = ({
+  position,
+  radius = 6,
+  thickness = 2,
+  amount = 15,
+}) => {
   const materialProps = useControls("Tube Material", {
     roughness: { value: 1.0, min: 0, max: 1 },
     metalness: { value: 0.0, min: 0, max: 1 },
@@ -45,7 +50,14 @@ const Tube: React.FC<TubeProps> = ({ position, radius = 6, thickness = 2, amount
     const shape = new THREE.Shape();
     shape.absarc(0, 0, tubeProps.radius, 0, Math.PI * 2, false);
     const hole = new THREE.Path();
-    hole.absarc(0, 0, tubeProps.radius - tubeProps.thickness, 0, Math.PI * 2, true);
+    hole.absarc(
+      0,
+      0,
+      tubeProps.radius - tubeProps.thickness,
+      0,
+      Math.PI * 2,
+      true
+    );
     shape.holes.push(hole);
 
     const geo = new THREE.ExtrudeGeometry(shape, {
@@ -187,11 +199,16 @@ const Scene: React.FC = () => {
       <PerspectiveCamera
         ref={cameraRef}
         makeDefault
-        position={[cameraProps.position.x, cameraProps.position.y, cameraProps.position.z]}
+        position={[
+          cameraProps.position.x,
+          cameraProps.position.y,
+          cameraProps.position.z,
+        ]}
         fov={cameraProps.fov}
         near={1}
         far={1000}
       />
+      <OrbitControls />
       <color attach="background" args={["#000000"]} />
       <ambientLight intensity={0.03} />
       <spotLight
@@ -208,7 +225,11 @@ const Scene: React.FC = () => {
         <directionalLight
           color={outerLightProps.color}
           intensity={outerLightProps.intensity}
-          position={[outerLightProps.positionX, outerLightProps.positionY, outerLightProps.positionZ]}
+          position={[
+            outerLightProps.positionX,
+            outerLightProps.positionY,
+            outerLightProps.positionZ,
+          ]}
           castShadow
         />
       )}
@@ -227,7 +248,8 @@ const TubesAnimation: React.FC = () => {
       <div
         className="absolute inset-0 pointer-events-none z-10"
         style={{
-          background: "radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0.8) 100%)",
+          background:
+            "radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.5) 40%, rgba(0, 0, 0, 0.8) 100%)",
           mixBlendMode: "multiply",
         }}
       />

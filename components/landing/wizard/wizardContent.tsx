@@ -161,7 +161,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({
           } flex flex-col items-center justify-start h-full`}
         >
           {shouldShowHeaderSection && (
-            <AnimatePresence mode="wait">
+            <AnimatePresence initial={false}>
               <motion.div
                 key={`top-${currentStep}`}
                 initial={{ y: -50, opacity: 0 }}
@@ -185,7 +185,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({
           )}
 
           {shouldShowHeaderSection && (
-            <AnimatePresence mode="wait">
+            <AnimatePresence initial={false}>
               <motion.div
                 key={`divider-${currentStep}`}
                 initial={{ opacity: 0, scale: 0.8 }}
@@ -223,7 +223,7 @@ export const WizardContent: React.FC<WizardContentProps> = ({
             </AnimatePresence>
           )}
 
-          <AnimatePresence mode="wait">
+          <AnimatePresence initial={false}>
             <motion.div
               key={`bottom-${currentStep}`}
               initial={{ opacity: 0, y: 40 }}

@@ -136,7 +136,7 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
           {/* Right side container for logo and nav items */}
           <motion.div className="flex items-center gap-8">
             {/* Navigation Items */}
-            <AnimatePresence mode="wait">
+            <AnimatePresence initial={false}>
               {!isChatOpen &&
                 navItems.map((item, i) => (
                   <motion.button
@@ -165,9 +165,10 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
                   priority
                 />
               </div>
-              <AnimatePresence mode="wait">
+              <AnimatePresence initial={false}>
                 {isChatOpen && (
                   <motion.h1
+                    key="desktop-title"
                     variants={titleVariants}
                     initial="initial"
                     animate="animate"
@@ -200,9 +201,10 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
                 priority
               />
             </div>
-            <AnimatePresence mode="wait">
+            <AnimatePresence initial={false}>
               {isChatOpen && (
                 <motion.h1
+                  key="mobile-title"
                   variants={titleVariants}
                   initial="initial"
                   animate="animate"

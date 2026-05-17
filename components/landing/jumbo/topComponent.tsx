@@ -146,7 +146,7 @@ const TopComponent: React.FC = () => {
       <div className="w-full min-h-dvh flex items-end sm:items-center pt-[98px]">
         {/* Content wrapper with responsive positioning */}
         <div className="w-full flex md:justify-start justify-center md:items-center items-end md:px-24 px-0 md:pb-0">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             {!isChatOpen ? (
               <motion.div
                 key="titles"

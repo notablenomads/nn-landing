@@ -1,5 +1,6 @@
 import React, {useEffect, useRef} from "react";
 import {Canvas, useFrame, useThree} from "@react-three/fiber";
+import { configureCanvasRenderer } from "@/lib/three/configureRenderer";
 import {Environment} from "@react-three/drei";
 import * as THREE from "three";
 import {Leva, useControls} from "leva";
@@ -268,7 +269,7 @@ const TechStackTower: React.FC<TechStackTowerProps> = ({
             <Leva collapsed={false} oneLineLabels flat hidden={false}/>
             <BackTechBackground activeNeon={withEffects}/>
             <div className="absolute inset-0">
-                <Canvas shadows gl={{antialias: true}}>
+                <Canvas gl={{ antialias: true }} onCreated={configureCanvasRenderer}>
                     <AnimatedScene withEffects={withEffects}/>
                     <Environment preset="city"/>
                     {withEffects && <Effects/>}

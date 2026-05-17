@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
+import { configureCanvasRenderer } from "@/lib/three/configureRenderer";
 import { gsap } from "gsap";
 import { useControls } from "leva";
 
@@ -232,13 +233,13 @@ const TubesAnimation: React.FC = () => {
         }}
       />
       <Canvas
-        shadows
         gl={{
           antialias: true,
           logarithmicDepthBuffer: true,
           toneMapping: THREE.ACESFilmicToneMapping,
           toneMappingExposure: 1,
         }}
+        onCreated={configureCanvasRenderer}
       >
         <Scene />
       </Canvas>

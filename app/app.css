@@ -101,6 +101,47 @@ a {
   }
 }
 
+@layer components {
+  .nav-link {
+    @apply relative bg-transparent text-gray-400 transition-all duration-200;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    color: hsl(var(--secondary));
+    text-shadow:
+      0 0 12px hsl(var(--secondary) / 0.55),
+      0 0 24px hsl(var(--secondary) / 0.25);
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--secondary)),
+      transparent
+    );
+    transform: scaleX(0);
+    opacity: 0;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
 @keyframes border-flow {
   0% {
     background-position: 200% 0;

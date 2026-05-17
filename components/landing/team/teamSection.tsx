@@ -45,6 +45,7 @@ const defaultConfig: EffectConfig = {
   decaySpeed: 0.85,
   flowStrength: 0.15,
 };
+
 const teamMembers: TeamMember[] = [
   {
     name: "Milad Ghamati",
@@ -110,7 +111,8 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
   const currentMouse = useRef<THREE.Vector2>(new THREE.Vector2(0.5, 0.5));
 
   const image = texture.image as HTMLImageElement | undefined;
-  const aspect = image?.width && image?.height ? image.width / image.height : 1;
+  const aspect =
+    image?.width && image?.height ? image.width / image.height : 1;
   const width = 3;
   const height = width / aspect;
 
@@ -238,12 +240,12 @@ const MobileTeamSection: React.FC = () => {
         <div className="space-y-8">
           {teamMembers.map((member, index) => (
             <div key={index} className="flex flex-col items-center">
-              <div className="relative w-64 h-64 mb-4 overflow-hidden rounded-lg">
+              <div className="relative mb-4 h-64 w-64 overflow-hidden rounded-lg">
                 <Image
                   src={member.image}
                   alt={member.name}
                   fill
-                  className="object-cover filter grayscale hover:grayscale-0 transition-all duration-300"
+                  className="object-cover filter grayscale transition-all duration-300 hover:grayscale-0"
                   sizes="100vw"
                   priority={index < 2}
                 />

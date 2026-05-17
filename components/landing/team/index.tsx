@@ -16,7 +16,7 @@ const SecondSection = () => {
         </motion.h2>
         <motion.p
           className="text-center mt-4 text-md text-gray-200 mb-4 px-2"
-          transition={{ ease: "easeInOut", delay: 0.5, duration: 2 }}
+          transition={{ ease: "easeInOut" as const, delay: 0.5, duration: 2 }}
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -29,7 +29,7 @@ const SecondSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ ease: "easeIn", duration: 1 }}
+          transition={{ ease: "easeIn" as const, duration: 1 }}
         >
           <TeamSection />
         </motion.div>

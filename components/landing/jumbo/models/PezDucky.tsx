@@ -26,10 +26,10 @@ type GLTFResult = GLTF & {
   };
 };
 
-export default function PezDuckModel(props: JSX.IntrinsicElements["group"]) {
+export default function PezDuckModel(props: React.JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
     "/models/ducky-pez-transformed.glb"
-  ) as GLTFResult;
+  ) as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
       <mesh

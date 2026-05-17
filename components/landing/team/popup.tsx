@@ -72,11 +72,10 @@ const SlidingPopup: React.FC<SlidingPopupProps> = ({
                         <motion.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
+                            exit={{ opacity: 0, transition: { duration: 3 } }}
                             transition={{
                                 delay: 0.4,
                                 duration: 0.3,
-                                exit: { duration: 3000 }
                             }}
                             className="relative z-10 w-2/3 mx-auto h-full p-6 text-white flex flex-col justify-center"
                         >

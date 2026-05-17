@@ -1,144 +1,187 @@
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
+import React from "react";
+import { StepWithOptionsProps, TechnicalExpertise, TechnicalFeature } from "../types";
 import { SelectButton } from "@/components/ui/selectButton";
 import { Textarea } from "@/components/ui/textarea";
-import React from "react";
-import { StepWithOptionsProps } from "../types";
+import StepNavigation from "../components/StepNavigation";
 
-const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext }) => {
-  const [userType, setUserType] = React.useState<
-    "technical" | "non-technical"
-  >();
-  const [selectedFeatures, setSelectedFeatures] = React.useState<string[]>([]);
-  const [projectDescription, setProjectDescription] = React.useState("");
+// Technical features categorized for better UX
+const FEATURE_CATEGORIES = {
+  "User & Security": [
+    { value: TechnicalFeature.AUTHENTICATION, label: "Authentication", description: "Login, signup, password reset" },
+    { value: TechnicalFeature.USER_MANAGEMENT, label: "User Management", description: "User roles, profiles, permissions" },
+    { value: TechnicalFeature.SOCIAL_LOGIN, label: "Social Login", description: "OAuth with Google, Facebook, etc." },
+  ],
+  "Core Features": [
+    { value: TechnicalFeature.FILE_HANDLING, label: "File Handling", description: "File upload, storage, processing" },
+    { value: TechnicalFeature.SEARCH_FILTER, label: "Search & Filter", description: "Search, filtering, sorting" },
+    { value: TechnicalFeature.NOTIFICATIONS, label: "Notifications", description: "Email, push, in-app notifications" },
+    { value: TechnicalFeature.ADMIN_PANEL, label: "Admin Panel", description: "Administrative dashboard and controls" },
+  ],
+  "Business Features": [
+    { value: TechnicalFeature.PAYMENTS, label: "Payments", description: "Payment processing and subscriptions" },
+    { value: TechnicalFeature.ANALYTICS, label: "Analytics", description: "Reporting and data visualization" },
+    { value: TechnicalFeature.MESSAGING, label: "Messaging", description: "Chat and communication features" },
+    { value: TechnicalFeature.CALENDAR, label: "Calendar", description: "Scheduling and calendar management" },
+  ],
+  "Growth Features": [
+    {
+      value: TechnicalFeature.SEO_OPTIMIZATION,
+      label: "SEO Optimization",
+      description: "Search engine optimization features",
+    },
+    { value: TechnicalFeature.SOCIAL_SHARING, label: "Social Sharing", description: "Social media integration" },
+    { value: TechnicalFeature.REFERRAL_SYSTEM, label: "Referral System", description: "User referral and rewards" },
+    {
+      value: TechnicalFeature.MARKETING_TOOLS,
+      label: "Marketing Tools",
+      description: "Email marketing, campaigns, automation",
+    },
+  ],
+  "E-commerce": [
+    { value: TechnicalFeature.SHOPPING_CART, label: "Shopping Cart", description: "Cart and checkout process" },
+    { value: TechnicalFeature.INVENTORY, label: "Inventory", description: "Stock and inventory management" },
+    { value: TechnicalFeature.ORDER_MANAGEMENT, label: "Order Management", description: "Order processing and tracking" },
+    { value: TechnicalFeature.PRODUCT_MANAGEMENT, label: "Product Management", description: "Product catalog and variants" },
+  ],
+  "Integration & Performance": [
+    { value: TechnicalFeature.API_INTEGRATION, label: "API Integration", description: "Third-party API connections" },
+    { value: TechnicalFeature.MOBILE_SYNC, label: "Mobile Sync", description: "Mobile app synchronization" },
+    { value: TechnicalFeature.ANALYTICS_TRACKING, label: "Analytics Tracking", description: "Google Analytics, etc." },
+    { value: TechnicalFeature.OFFLINE_MODE, label: "Offline Mode", description: "Offline functionality and sync" },
+  ],
+};
 
-  const features = [
-    {
-      value: "auth",
-      label: "Authentication",
-      description: "Login/Signup system",
-    },
-    {
-      value: "payment",
-      label: "Payment Gateway",
-      description: "Process payments and transactions",
-    },
-    {
-      value: "chat",
-      label: "Real-time Chat",
-      description: "Instant messaging and communication",
-    },
-    {
-      value: "dashboard",
-      label: "Dashboard & Analytics",
-      description: "Data visualization and reporting",
-    },
-    {
-      value: "notifications",
-      label: "Push Notifications",
-      description: "Real-time alerts and updates",
-    },
-    {
-      value: "api",
-      label: "Third-party API Integration",
-      description: "Connect with external services",
-    },
-  ];
+const FeaturesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentData }) => {
+  const [expertise, setExpertise] = React.useState<TechnicalExpertise | undefined>(currentData?.technicalExpertise);
+  const [selectedFeatures, setSelectedFeatures] = React.useState<TechnicalFeature[]>(currentData?.technicalFeatures || []);
+  const [projectDescription, setProjectDescription] = React.useState<string>(currentData?.projectDescription || "");
 
-  const handleFeatureToggle = (featureId: string) => {
-    setSelectedFeatures((prev) =>
-      prev.includes(featureId)
-        ? prev.filter((id) => id !== featureId)
-        : [...prev, featureId]
-    );
+  // Calculate max features based on TechnicalFeature enum length
+  const maxFeatures = Object.keys(TechnicalFeature).length;
+
+  const isValid =
+    expertise &&
+    (expertise === TechnicalExpertise.TECHNICAL
+      ? selectedFeatures.length > 0 && selectedFeatures.length <= maxFeatures
+      : expertise === TechnicalExpertise.NON_TECHNICAL
+      ? projectDescription.length >= 10 && projectDescription.length <= 1000
+      : false);
+
+  const handleNext = () => {
+    if (!isValid) return;
+
+    onNext({
+      technicalExpertise: expertise,
+      ...(expertise === TechnicalExpertise.TECHNICAL && {
+        technicalFeatures: selectedFeatures,
+      }),
+      ...(expertise === TechnicalExpertise.NON_TECHNICAL && {
+        projectDescription,
+      }),
+    });
+  };
+
+  const toggleFeature = (feature: TechnicalFeature) => {
+    setSelectedFeatures((prev) => {
+      if (prev.includes(feature)) {
+        return prev.filter((f) => f !== feature);
+      }
+      if (prev.length >= maxFeatures) {
+        return prev;
+      }
+      return [...prev, feature];
+    });
   };
 
   return (
-    <div className="flex flex-col gap-6 text-white">
-      <div>
-        <p className="mb-4">Are you a technical user?</p>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            {
-              value: "technical",
-              label: "Technical User",
-              description: "I have development experience",
-            },
-            {
-              value: "non-technical",
-              label: "Non-Technical",
-              description: "I need guidance on technical decisions",
-            },
-          ].map((type) => (
-            <SelectButton
-              key={type.value}
-              selected={userType === type.value}
-              onClick={() =>
-                setUserType(type.value as "technical" | "non-technical")
-              }
-            >
-              <span className="font-semibold">{type.label}</span>
-              <span className="text-sm opacity-70 text-left">
-                {type.description}
-              </span>
-            </SelectButton>
-          ))}
+    <div className="w-full max-w-4xl mx-auto space-y-8 p-6">
+      {/* Technical Expertise Selection */}
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <h3 className="text-xl font-semibold text-white">What's your technical background?</h3>
+          <p className="text-sm text-zinc-400">This helps us provide the most relevant options for your project</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <SelectButton
+            selected={expertise === TechnicalExpertise.TECHNICAL}
+            onClick={() => setExpertise(TechnicalExpertise.TECHNICAL)}
+          >
+            <div className="flex flex-col items-start gap-1">
+              <span className="font-semibold text-lg">Technical</span>
+              <span className="text-sm opacity-70">I understand technical requirements and specifications</span>
+            </div>
+          </SelectButton>
+          <SelectButton
+            selected={expertise === TechnicalExpertise.NON_TECHNICAL}
+            onClick={() => setExpertise(TechnicalExpertise.NON_TECHNICAL)}
+          >
+            <div className="flex flex-col items-start gap-1">
+              <span className="font-semibold text-lg">Non-Technical</span>
+              <span className="text-sm opacity-70">I prefer to describe my needs in plain language</span>
+            </div>
+          </SelectButton>
         </div>
       </div>
 
-      {userType === "technical" ? (
-        <div>
-          <p className="mb-4">Select the features you need:</p>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-            {features?.map((feature) => (
-              <SelectButton
-                key={feature.value}
-                selected={selectedFeatures.includes(feature.value)}
-                onClick={() => handleFeatureToggle(feature.value)}
-              >
-                <span className="font-semibold text-md">{feature.label}</span>
-                <span className="text-md opacity-70 text-left">
-                  {feature.description}
-                </span>
-              </SelectButton>
-            ))}
+      {/* Technical Features Selection */}
+      {expertise === TechnicalExpertise.TECHNICAL && (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <h3 className="text-xl font-semibold text-white">Select Required Features</h3>
+            <p className="text-sm text-zinc-400">Choose up to {maxFeatures} features that your project needs</p>
+            {selectedFeatures.length >= maxFeatures && (
+              <p className="text-sm text-orange-500">Maximum feature limit ({maxFeatures}) reached</p>
+            )}
           </div>
+
+          {Object.entries(FEATURE_CATEGORIES).map(([category, features]) => (
+            <div key={category} className="space-y-4">
+              <h4 className="text-lg font-medium text-white/80">{category}</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {features.map((feature) => (
+                  <SelectButton
+                    key={feature.value}
+                    selected={selectedFeatures.includes(feature.value)}
+                    onClick={() => toggleFeature(feature.value)}
+                    disabled={selectedFeatures.length >= maxFeatures && !selectedFeatures.includes(feature.value)}
+                  >
+                    <div className="flex flex-col items-start gap-1 w-full">
+                      <span className="font-semibold text-lg">{feature.label}</span>
+                      <span className="text-sm opacity-70 text-left">{feature.description}</span>
+                    </div>
+                  </SelectButton>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
-      ) : (
-        userType === "non-technical" && (
-          <div>
-            <Label htmlFor="description">
-              Describe your project in 1–2 sentences
-            </Label>
-            <Textarea
-              id="description"
-              placeholder="Example: I want to build a mobile app that helps users track their daily expenses and share bills with roommates..."
-              value={projectDescription}
-              onChange={(e) => setProjectDescription(e.target.value)}
-              className="mt-1 bg-white/10  min-h-[100px]"
-            />
-          </div>
-        )
       )}
 
-      <Button
-        onClick={() =>
-          onNext({
-            userType,
-            ...(userType === "technical"
-              ? { features: selectedFeatures }
-              : { projectDescription }),
-          })
-        }
-        className="mt-4 text-lg"
-        disabled={
-          !userType ||
-          (userType === "technical" && selectedFeatures.length === 0) ||
-          (userType === "non-technical" && !projectDescription.trim())
-        }
-      >
-        Next →
-      </Button>
+      {/* Non-Technical Description */}
+      {expertise === TechnicalExpertise.NON_TECHNICAL && (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <h3 className="text-xl font-semibold text-white">Describe Your Project</h3>
+            <p className="text-sm text-zinc-400">Tell us what you want to build in your own words (10-1000 characters)</p>
+          </div>
+          <Textarea
+            value={projectDescription}
+            onChange={(e) => setProjectDescription(e.target.value)}
+            className="min-h-[200px] bg-white/5 focus:bg-white/10"
+            placeholder="Please describe what you want to build. Include any specific features or functionality you need..."
+          />
+          <div className="flex justify-end">
+            <span className="text-sm text-zinc-400">{projectDescription.length}/1000 characters</span>
+          </div>
+        </div>
+      )}
+
+      <StepNavigation
+        onBack={onBack}
+        onNext={handleNext}
+        isNextDisabled={!isValid}
+        nextText={isValid ? "Continue →" : "Please complete required selections"}
+      />
     </div>
   );
 };

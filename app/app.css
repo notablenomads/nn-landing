@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.mjs";
 body {
   margin: 0;
   background: #000;
@@ -41,15 +40,15 @@ a {
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 255 255 255;
+    --foreground: 0 0% 100%; /* Fixed from 255 255 255 to proper HSL */
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 36, 91%, 55%;
-    --third: #1a2954;
+    --secondary: 36 91% 55%; /* Removed comma */
+    --third: 220 40% 22%; /* Converted hex to HSL */
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
@@ -70,14 +69,14 @@ a {
 
   .dark {
     --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --foreground: 0 0% 100%; /* Fixed from 0 0% 98% for consistency */
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
-    --secondary: 36, 91%, 55%;
+    --secondary: 36 91% 55%; /* Removed comma */
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
@@ -96,6 +95,62 @@ a {
   }
 }
 
+@layer utilities {
+  .animate-border-flow {
+    animation: border-flow 3s linear infinite;
+  }
+}
+
+@layer components {
+  .nav-link {
+    @apply relative bg-transparent text-gray-400 transition-all duration-200;
+  }
+
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    color: hsl(var(--secondary));
+    text-shadow:
+      0 0 12px hsl(var(--secondary) / 0.55),
+      0 0 24px hsl(var(--secondary) / 0.25);
+  }
+
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -2px;
+    height: 2px;
+    border-radius: 9999px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      hsl(var(--secondary)),
+      transparent
+    );
+    transform: scaleX(0);
+    opacity: 0;
+    transition:
+      transform 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .nav-link:hover::after,
+  .nav-link:focus-visible::after {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+@keyframes border-flow {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -105,8 +160,9 @@ a {
     @apply bg-background text-foreground;
   }
 
-  button {
-    @apply hover:bg-secondary hover:scale-105 hover:shadow-lg transition-all duration-200;
+  /* Default CTA hover — exclude nav links and branded header buttons */
+  button:not(.nav-link):not(.cta-button) {
+    @apply transition-all duration-200 hover:scale-105 hover:bg-secondary hover:shadow-lg;
   }
 }
 

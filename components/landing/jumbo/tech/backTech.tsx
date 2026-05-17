@@ -1,5 +1,5 @@
 import React, { memo, useDeferredValue, useMemo } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import allIcons, { IconData } from "@/components/landing/jumbo/tech/icons";
 
@@ -67,7 +67,7 @@ const IconComponent = memo(({ icon, isNeon, opacity, delay }: IconProps) => {
       transition: {
         duration: 0.3,
         delay: delay,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
     normal: {
@@ -77,7 +77,7 @@ const IconComponent = memo(({ icon, isNeon, opacity, delay }: IconProps) => {
       transition: {
         duration: 0.3,
         delay: delay,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
   };
@@ -182,11 +182,9 @@ const TechIconsBackground: React.FC<TechIconsBackgroundProps> = memo(
         animate={deferredNeon ? "neon" : "normal"}
       >
         <div className="w-full h-full p-8">
-          <AnimatePresence mode="wait">
-            <div className="w-full h-full grid gap-4" style={gridStyle}>
-              {gridItems}
-            </div>
-          </AnimatePresence>
+          <motion.div className="grid h-full w-full gap-4" style={gridStyle}>
+            {gridItems}
+          </motion.div>
         </div>
       </motion.div>
     );

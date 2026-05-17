@@ -26,8 +26,8 @@ type GLTFResult = GLTF & {
   };
 };
 
-export function LittleDuckModel(props: JSX.IntrinsicElements["group"]) {
-  const { nodes, materials } = useGLTF("/models/little-duck.glb") as GLTFResult;
+export function LittleDuckModel(props: React.JSX.IntrinsicElements["group"]) {
+  const { nodes, materials } = useGLTF("/models/little-duck.glb") as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.Cube.geometry} material={materials.Material} />

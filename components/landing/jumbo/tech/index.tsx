@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Canvas} from "@react-three/fiber";
 import {Environment} from "@react-three/drei";
+import { configureCanvasRenderer } from "@/lib/three/configureRenderer";
 
 import dynamic from "next/dynamic";
 import AnimatedScene from "@/components/landing/jumbo/tech/components/scene";
@@ -35,7 +36,7 @@ const TechStackComponent: React.FC<TechStackTowerProps> = ({
         <>
             {isModelLoaded && <BackTechBackground activeNeon={withEffects}/>}
             <div className="absolute inset-0">
-                <Canvas shadows gl={{antialias: true}}>
+                <Canvas gl={{ antialias: true }} onCreated={configureCanvasRenderer}>
                     <AnimatedScene withEffects={withEffects} isChatOpen={isChatOpen}/>
                     <Environment files='/models/potsdamer_platz_1k.hdr'/>
                 </Canvas>

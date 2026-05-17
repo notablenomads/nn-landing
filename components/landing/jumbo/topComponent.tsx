@@ -71,7 +71,7 @@ const TopComponent: React.FC = () => {
       opacity: 0,
       transition: {
         duration: 0.5,
-        ease: [0.4, 0, 0.2, 1],
+        ease: [0.4, 0, 0.2, 1] as const,
         opacity: {
           duration: 0.3,
         },
@@ -89,7 +89,7 @@ const TopComponent: React.FC = () => {
       opacity: 0,
       transition: {
         duration: 0.3,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
   };
@@ -104,7 +104,7 @@ const TopComponent: React.FC = () => {
       opacity: 0,
       transition: {
         duration: 0.3,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
   };
@@ -121,7 +121,7 @@ const TopComponent: React.FC = () => {
       y: 0,
       transition: {
         duration: 0.4,
-        ease: [0.4, 0, 0.2, 1],
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
     exit: {
@@ -146,7 +146,7 @@ const TopComponent: React.FC = () => {
       <div className="w-full min-h-dvh flex items-end sm:items-center pt-[98px]">
         {/* Content wrapper with responsive positioning */}
         <div className="w-full flex md:justify-start justify-center md:items-center items-end md:px-24 px-0 md:pb-0">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             {!isChatOpen ? (
               <motion.div
                 key="titles"

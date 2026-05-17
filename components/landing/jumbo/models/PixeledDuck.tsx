@@ -18,10 +18,10 @@ type GLTFResult = GLTF & {
   };
 };
 
-export function PixeledDuck(props: JSX.IntrinsicElements["group"]) {
+export function PixeledDuck(props: React.JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
     "/models/duck-transformed.glb"
-  ) as GLTFResult;
+  ) as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
       <mesh

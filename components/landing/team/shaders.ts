@@ -5,7 +5,6 @@ export const vertexShader = `
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
 `;
-
 export const fragmentShader = `
 uniform sampler2D uTexture;
 uniform sampler2D uGrid;
@@ -14,8 +13,14 @@ uniform vec2 uViewport;
 uniform float uDistortionStrength;
 uniform float uDistortionThreshold;
 uniform float uRgbShiftStrength;
+uniform vec2 uTextureScale;
+uniform vec2 uTextureOffset;
 
 varying vec2 vUv;
+
+vec2 coverUv(vec2 uv) {
+  return uv * uTextureScale + uTextureOffset;
+}
 
 float roundedBoxSDF(vec2 centerUV, vec2 size, float radius) {
   vec2 q = abs(centerUV) - size + radius;
@@ -32,15 +37,16 @@ void main() {
   vec4 displacement = texture2D(uGrid, vUv);
   
   // Calculate rounded corners
-  vec2 centerUV = vUv * 2.0 - 1.0;  // Convert UV to -1 to 1 range
-  float radius = 0.05;  // Adjust this value to control border radius (0.05 = 10px for a 400px wide image)
+  vec2 centerUV = vUv * 2.0 - 1.0;
+  float radius = 0.05;
   float distance = roundedBoxSDF(centerUV, vec2(1.0), radius);
   
   if (distance > 0.0) {
-    discard;  // Discard fragments outside the rounded rectangle
+    discard;
   }
   
   float dist = length(displacement.rg);
+  vec4 color;
   
   if(dist > uDistortionThreshold) {
     vec2 flow = displacement.rg;
@@ -55,14 +61,19 @@ void main() {
     greenUv = clamp(greenUv, 0.0, 1.0);
     blueUv = clamp(blueUv, 0.0, 1.0);
     
-    float r = texture2D(uTexture, redUv).r;
-    float g = texture2D(uTexture, greenUv).g;
-    float b = texture2D(uTexture, blueUv).b;
+    float r = texture2D(uTexture, coverUv(redUv)).r;
+    float g = texture2D(uTexture, coverUv(greenUv)).g;
+    float b = texture2D(uTexture, coverUv(blueUv)).b;
     
-    gl_FragColor = vec4(r, g, b, 1.0);
+    color = vec4(r, g, b, 1.0);
   } else {
-    gl_FragColor = texture2D(uTexture, uv);
+    // Only apply grayscale to the non-distorted parts
+    vec4 texColor = texture2D(uTexture, coverUv(uv));
+    float gray = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
+    color = vec4(vec3(gray), texColor.a);
   }
+  
+  gl_FragColor = color;
 }
 `;
 

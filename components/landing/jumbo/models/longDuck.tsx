@@ -29,8 +29,8 @@ type GLTFResult = GLTF & {
   };
 };
 
-export function LongDuckModel(props: JSX.IntrinsicElements["group"]) {
-  const { nodes, materials } = useGLTF("/models/long-duck.glb") as GLTFResult;
+export function LongDuckModel(props: React.JSX.IntrinsicElements["group"]) {
+  const { nodes, materials } = useGLTF("/models/long-duck.glb") as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.Cube.geometry} material={materials.Material} />

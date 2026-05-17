@@ -1,126 +1,95 @@
-import { Button } from "@/components/ui/button";
-import { SelectButton } from "@/components/ui/selectButton";
 import React from "react";
-import { StepWithOptionsProps } from "../types";
+import { StepWithOptionsProps, DesignStyle, Timeline, Budget } from "../types";
+import { SelectButton } from "@/components/ui/selectButton";
+import { Button } from "@/components/ui/button";
+import StepNavigation from "../components/StepNavigation";
 
-const PreferencesStep: React.FC<StepWithOptionsProps> = ({
-  onNext,
-  options,
-}) => {
-  const [preferences, setPreferences] = React.useState({
-    hasExistingBrand: false,
-    designStyle: "",
-    timeline: "",
-    budget: "",
-  });
+const PreferencesStep: React.FC<StepWithOptionsProps> = ({ onNext, onBack, currentData, options }) => {
+  const [hasExistingBrand, setHasExistingBrand] = React.useState<boolean>(currentData?.hasExistingBrand ?? false);
+  const [designStyle, setDesignStyle] = React.useState<DesignStyle | undefined>(currentData?.designStyle);
+  const [timeline, setTimeline] = React.useState<Timeline | undefined>(currentData?.timeline);
+  const [budget, setBudget] = React.useState<Budget | undefined>(currentData?.budget);
 
-  const handleInputChange = (
-    field: keyof typeof preferences,
-    value: unknown
-  ) => {
-    setPreferences((prev) => ({ ...prev, [field]: value }));
+  const isValid = designStyle && timeline && budget !== undefined;
+
+  const handleNext = () => {
+    if (!isValid) return;
+
+    onNext({
+      hasExistingBrand,
+      designStyle,
+      timeline,
+      budget,
+    });
   };
 
-  const isValid =
-    typeof preferences.hasExistingBrand === "boolean" &&
-    preferences.designStyle &&
-    preferences.timeline &&
-    preferences.budget;
-
   return (
-    <div className="flex flex-col gap-6 text-white">
-      {/* Brand Status */}
-      <div>
-        <p className="mb-4">Do you have existing brand guidelines?</p>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            {
-              value: true,
-              label: "Yes",
-              description: "We have brand guidelines",
-            },
-            { value: false, label: "No", description: "We need branding help" },
-          ].map((option) => (
-            <SelectButton
-              key={String(option.value)}
-              selected={preferences.hasExistingBrand === option.value}
-              onClick={() =>
-                handleInputChange("hasExistingBrand", option.value)
-              }
-            >
-              <span className="font-semibold">{option.label}</span>
-              <span className="text-sm opacity-70 text-left">
-                {option.description}
-              </span>
-            </SelectButton>
-          ))}
+    <div className="flex flex-col gap-8 w-full max-w-2xl mx-auto">
+      {/* Brand Guidelines */}
+      <div className="space-y-4">
+        <h3 className="text-xl font-semibold">Do you have existing brand guidelines?</h3>
+        <div className="flex gap-4">
+          <Button variant={hasExistingBrand ? "secondary" : "ghost"} onClick={() => setHasExistingBrand(true)}>
+            Yes
+          </Button>
+          <Button variant={!hasExistingBrand ? "secondary" : "ghost"} onClick={() => setHasExistingBrand(false)}>
+            No
+          </Button>
         </div>
       </div>
 
       {/* Design Style */}
-      <div>
-        <p className="mb-4">What's your preferred design style?</p>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {options?.designStyles?.map((style) => (
+      <div className="space-y-4">
+        <h3 className="text-xl font-semibold">What design style are you looking for?</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {options.designStyles.map((style) => (
             <SelectButton
               key={style.value}
-              selected={preferences.designStyle === style.value}
-              onClick={() => handleInputChange("designStyle", style.value)}
+              selected={designStyle === style.value}
+              onClick={() => setDesignStyle(style.value as DesignStyle)}
             >
-              <span className="font-semibold">{style.label}</span>
-              <span className="text-sm opacity-70 text-left">
-                {style.description}
-              </span>
+              <span className="font-semibold text-md">{style.label}</span>
+              <span className="text-sm opacity-70">{style.description}</span>
             </SelectButton>
           ))}
         </div>
       </div>
 
       {/* Timeline */}
-      <div>
-        <p className="mb-4">What's your ideal timeline?</p>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {options?.timelines?.map((timeline) => (
+      <div className="space-y-4">
+        <h3 className="text-xl font-semibold">What's your project timeline?</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {options.timelines.map((timelineOption) => (
             <SelectButton
-              key={timeline.value}
-              selected={preferences.timeline === timeline.value}
-              onClick={() => handleInputChange("timeline", timeline.value)}
+              key={timelineOption.value}
+              selected={timeline === timelineOption.value}
+              onClick={() => setTimeline(timelineOption.value as Timeline)}
             >
-              <span className="font-semibold">{timeline.label}</span>
-              <span className="text-sm opacity-70 text-left">
-                {timeline.description}
-              </span>
+              <span className="font-semibold text-md">{timelineOption.label}</span>
+              <span className="text-sm opacity-70">{timelineOption.description}</span>
             </SelectButton>
           ))}
         </div>
       </div>
 
       {/* Budget */}
-      <div>
-        <p className="mb-4">What's your estimated budget?</p>
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-          {options?.budgets?.map((budget) => (
+      <div className="space-y-4">
+        <h3 className="text-xl font-semibold">What's your budget range?</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {options.budgets.map((budgetOption) => (
             <SelectButton
-              key={budget.value}
-              selected={preferences.budget === budget.value}
-              onClick={() => handleInputChange("budget", budget.value)}
+              key={budgetOption.value}
+              selected={budget === budgetOption.value}
+              onClick={() => setBudget(budgetOption.value as Budget)}
             >
-              <span className="font-semibold text-md">{budget.label}</span>
-              <span className="text-md opacity-70 text-left">
-                {budget.description}
-              </span>
+              <span className="font-semibold text-md">{budgetOption.label}</span>
+              <span className="text-sm opacity-70">{budgetOption.description}</span>
             </SelectButton>
           ))}
         </div>
       </div>
 
-      <Button
-        onClick={() => onNext(preferences)}
-        className="mt-4 text-lg"
-        disabled={!isValid}
-      >
-        Next →
-      </Button>
+      <StepNavigation onBack={onBack} onNext={handleNext} isNextDisabled={!isValid} />
     </div>
   );
 };

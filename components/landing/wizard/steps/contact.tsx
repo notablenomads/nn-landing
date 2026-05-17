@@ -1,56 +1,49 @@
 import { Button } from "@/components/ui/button";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectButton } from "@/components/ui/selectButton";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, ChevronDown, Loader2 } from "lucide-react";
-import {
-  ContactStepProps,
-  SummarySectionProps,
-  WizardCurrentData,
-} from "../types";
+import { ChevronDown, Loader2 } from "lucide-react";
+import { ContactStepProps, SummarySectionProps, WizardCurrentData, ContactMethod, TechnicalExpertise } from "../types";
 import axios, { AxiosError } from "axios";
 import { toast } from "sonner";
 import React from "react";
 import { useMutation } from "@tanstack/react-query";
 
-const ContactStep: React.FC<ContactStepProps> = ({
-  currentData,
-  options,
-  onComplete,
-}) => {
+const ContactStep: React.FC<ContactStepProps> = ({ currentData, options, onComplete }) => {
   const typedCurrentData = currentData as WizardCurrentData;
 
   const [contactInfo, setContactInfo] = React.useState({
     name: "",
     email: "",
+    phone: "",
     company: "",
     contactMethod: "",
     wantsConsultation: false,
   });
   const [isOpen, setIsOpen] = React.useState(false);
   const [notes, setNotes] = React.useState("");
-  const [isSubmitted, setIsSubmitted] = React.useState(false);
 
   const submitMutation = useMutation({
     mutationFn: async (data: unknown) => {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BASE_URL}leads`,
-        data
-      );
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BASE_URL}leads`, data);
       if (response.data.statusCode >= 400) {
         throw new Error(response.data.message || "An error occurred");
       }
       return response.data.data;
     },
     onSuccess: () => {
-      setIsSubmitted(true);
-      onComplete?.();
+      onComplete?.({
+        ...typedCurrentData,
+        name: contactInfo.name,
+        email: contactInfo.email,
+        phone: contactInfo.phone,
+        company: contactInfo.company || undefined,
+        preferredContactMethod: contactInfo.contactMethod as ContactMethod,
+        wantsConsultation: contactInfo.wantsConsultation,
+        additionalNotes: notes || undefined,
+      });
     },
     onError: (error: AxiosError<{ statusCode: number; message: string }>) => {
       if (error.response?.data?.message) {
@@ -61,10 +54,7 @@ const ContactStep: React.FC<ContactStepProps> = ({
     },
   });
 
-  const handleInputChange = (
-    field: keyof typeof contactInfo,
-    value: string | boolean
-  ) => {
+  const handleInputChange = (field: keyof typeof contactInfo, value: string | boolean) => {
     setContactInfo((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -72,75 +62,87 @@ const ContactStep: React.FC<ContactStepProps> = ({
     return email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/);
   };
 
+  const validatePhone = (phone: string) => {
+    // More permissive regex that accepts plain numbers
+    return phone.match(/^\+?[0-9\s-()]+$/) || phone.match(/^[0-9]+$/);
+  };
+
   const isValid =
     contactInfo.name.trim() !== "" &&
     validateEmail(contactInfo.email) &&
-    contactInfo.contactMethod !== "";
+    contactInfo.contactMethod !== "" &&
+    (contactInfo.contactMethod === ContactMethod.PHONE || contactInfo.contactMethod === ContactMethod.WHATSAPP
+      ? contactInfo.phone.trim() !== "" && validatePhone(contactInfo.phone)
+      : true);
 
   // Inside ContactStep component
   const handleSubmit = () => {
-    // Transform all collected data to match BE schema
+    console.log("Contact info:", contactInfo);
+    console.log("Is valid:", isValid);
+    console.log("Phone validation:", validatePhone(contactInfo.phone));
+
     const submissionData = {
-      // Services from step 1
-      services: currentData.services,
-
-      // Project type from step 2
-      projectType: currentData.projectType,
-      ...(currentData.projectType === "EXISTING" && {
-        existingProjectChallenge: currentData.existingDetails?.challenge,
-      }),
-
-      // Project description from step 3 (Technical vs Non-technical path)
-      projectDescription:
-        currentData.userType === "technical"
-          ? `Technical requirements: ${currentData?.features?.join(", ")}`
-          : currentData.projectDescription,
-
-      // Audience & Industry from step 4
-      targetAudience: currentData.audience,
-      industry: currentData.industry,
-      hasCompetitors: currentData.hasCompetitors,
-      ...(currentData.hasCompetitors && {
-        competitorUrls: currentData?.competitorUrls
-          ?.split("\n")
-          .filter(Boolean),
-      }),
-
-      // These might come from previous steps or need to be added to the flow
-      hasExistingBrand: true, // This needs to be collected
-      designStyle: "MODERN", // This needs to be collected
-      timeline: "LESS_THAN_3_MONTHS", // This needs to be collected
-      budget: "LESS_THAN_10K", // This needs to be collected
-
-      // Contact info from final step
+      // Required fields
+      services: typedCurrentData.services,
+      projectType: typedCurrentData.projectType,
+      targetAudience: typedCurrentData.targetAudience,
+      industry: typedCurrentData.industry,
+      hasCompetitors: typedCurrentData.hasCompetitors,
+      hasExistingBrand: typedCurrentData.hasExistingBrand,
+      designStyle: typedCurrentData.designStyle,
+      timeline: typedCurrentData.timeline,
+      budget: typedCurrentData.budget,
       name: contactInfo.name,
       email: contactInfo.email,
-      company: contactInfo.company || undefined,
-      preferredContactMethod: contactInfo.contactMethod,
+      preferredContactMethod: contactInfo.contactMethod as ContactMethod,
       wantsConsultation: contactInfo.wantsConsultation,
-      additionalNotes: notes || undefined,
+      technicalExpertise: typedCurrentData.technicalExpertise,
+      phone: contactInfo.phone, // Always include phone in the submission data
+
+      // Optional fields
+      ...(typedCurrentData.existingProjectChallenges && {
+        existingProjectChallenges: typedCurrentData.existingProjectChallenges,
+      }),
+      ...(typedCurrentData.competitorUrls && {
+        competitorUrls: typedCurrentData.competitorUrls,
+      }),
+      ...(typedCurrentData.company && {
+        company: typedCurrentData.company,
+      }),
+      ...(typedCurrentData.additionalNotes && {
+        additionalNotes: typedCurrentData.additionalNotes,
+      }),
+      ...(typedCurrentData.mobileAppPlatform && {
+        mobileAppPlatform: typedCurrentData.mobileAppPlatform,
+      }),
+      ...(typedCurrentData.aimlDatasetStatus && {
+        aimlDatasetStatus: typedCurrentData.aimlDatasetStatus,
+      }),
+      ...(typedCurrentData.technicalExpertise === TechnicalExpertise.TECHNICAL &&
+        typedCurrentData.technicalFeatures && {
+          technicalFeatures: typedCurrentData.technicalFeatures,
+        }),
+      ...(typedCurrentData.technicalExpertise === TechnicalExpertise.NON_TECHNICAL &&
+        typedCurrentData.projectDescription && {
+          projectDescription: typedCurrentData.projectDescription,
+        }),
     };
 
+    console.log("Submission data:", submissionData);
     submitMutation.mutate(submissionData);
   };
 
   // Types for the BE schema
 
-  const SummarySection: React.FC<SummarySectionProps> = ({
-    currentData,
-    options,
-  }) => (
+  const SummarySection: React.FC<SummarySectionProps> = ({ currentData, options }) => (
     <div className="space-y-4">
       {/* Services */}
-      {currentData.services && currentData.services.length > 0 && (
+      {currentData?.services && currentData.services.length > 0 && (
         <div>
           <h4 className="font-medium mb-2">Selected Services:</h4>
           <ul className="list-disc list-inside opacity-70 space-y-1">
-            {currentData?.services?.map((service) => (
-              <li key={service}>
-                {options.services.find((s) => s.value === service)?.label ||
-                  service}
-              </li>
+            {currentData.services.map((service) => (
+              <li key={service}>{options.services.find((s) => s.value === service)?.label || service}</li>
             ))}
           </ul>
         </div>
@@ -150,39 +152,15 @@ const ContactStep: React.FC<ContactStepProps> = ({
       {currentData?.projectType && (
         <div>
           <h4 className="font-medium mb-2">Project Type:</h4>
-          <p className="opacity-70">
-            {
-              options.projectTypes.find(
-                (t) => t.value === currentData.projectType
-              )?.label
-            }
-          </p>
-        </div>
-      )}
-
-      {/* Features */}
-      {currentData.features && currentData.features.length > 0 && (
-        <div>
-          <h4 className="font-medium mb-2">Selected Features:</h4>
-          <ul className="list-disc list-inside opacity-70 space-y-1">
-            {currentData?.features?.map((feature) => (
-              <li key={feature}>{feature}</li>
-            ))}
-          </ul>
+          <p className="opacity-70">{options.projectTypes.find((t) => t.value === currentData.projectType)?.label}</p>
         </div>
       )}
 
       {/* Target Audience */}
-      {currentData?.audience && (
+      {currentData?.targetAudience && (
         <div>
           <h4 className="font-medium mb-2">Target Audience:</h4>
-          <p className="opacity-70">
-            {
-              options.targetAudiences.find(
-                (a) => a.value === currentData.audience
-              )?.label
-            }
-          </p>
+          <p className="opacity-70">{options.targetAudiences.find((a) => a.value === currentData.targetAudience)?.label}</p>
         </div>
       )}
 
@@ -190,33 +168,11 @@ const ContactStep: React.FC<ContactStepProps> = ({
       {currentData?.industry && (
         <div>
           <h4 className="font-medium mb-2">Industry:</h4>
-          <p className="opacity-70">
-            {
-              options.industries.find((i) => i.value === currentData.industry)
-                ?.label
-            }
-          </p>
+          <p className="opacity-70">{options.industries.find((i) => i.value === currentData.industry)?.label}</p>
         </div>
       )}
     </div>
   );
-
-  if (isSubmitted) {
-    return (
-      <div className="flex flex-col items-center justify-center gap-6 text-white h-full">
-        <div className="flex items-center justify-center w-20 h-20 rounded-full bg-green-500">
-          <Check className="w-10 h-10 text-white" />
-        </div>
-        <h3 className="text-2xl font-semibold text-center">Thank You!</h3>
-        <p className="text-center opacity-70 max-w-md">
-          We've received your project details and will get back to you shortly
-          via {contactInfo.contactMethod.toLowerCase()}.
-          {contactInfo.wantsConsultation &&
-            " Our team will contact you to schedule your free consultation."}
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-6 text-white">
@@ -241,11 +197,34 @@ const ContactStep: React.FC<ContactStepProps> = ({
               type="email"
               value={contactInfo.email}
               onChange={(e) => handleInputChange("email", e.target.value)}
-              className="mt-1 bg-white/10  min-h-[100px]"
+              className="mt-1 bg-white/10 text-xl"
               placeholder="your@email.com"
               disabled={submitMutation.isPending}
             />
           </div>
+        </div>
+
+        {/* Phone (Optional) */}
+        <div>
+          <Label htmlFor="phone">
+            Phone{" "}
+            {contactInfo.contactMethod === ContactMethod.PHONE || contactInfo.contactMethod === ContactMethod.WHATSAPP
+              ? "(Required)"
+              : "(Optional)"}
+          </Label>
+          <Input
+            id="phone"
+            value={contactInfo.phone}
+            onChange={(e) => handleInputChange("phone", e.target.value)}
+            className="mt-1 bg-white/10 text-lg"
+            placeholder="+1 (555) 555-5555"
+            disabled={submitMutation.isPending}
+          />
+          {contactInfo.contactMethod === ContactMethod.PHONE || contactInfo.contactMethod === ContactMethod.WHATSAPP ? (
+            <p className="text-sm text-zinc-400 mt-1">
+              Required for {contactInfo.contactMethod === ContactMethod.PHONE ? "Phone" : "WhatsApp"} contact
+            </p>
+          ) : null}
         </div>
 
         {/* Company (Optional) */}
@@ -255,7 +234,7 @@ const ContactStep: React.FC<ContactStepProps> = ({
             id="company"
             value={contactInfo.company}
             onChange={(e) => handleInputChange("company", e.target.value)}
-            className="mt-1 bg-white/10  min-h-[100px]"
+            className="mt-1 bg-white/10 text-lg"
             placeholder="Your company name"
             disabled={submitMutation.isPending}
           />
@@ -273,9 +252,7 @@ const ContactStep: React.FC<ContactStepProps> = ({
                 disabled={submitMutation.isPending}
               >
                 <span className="font-semibold text-md">{method.label}</span>
-                <span className="text-md opacity-70 text-left">
-                  {method.description}
-                </span>
+                <span className="text-md opacity-70 text-left">{method.description}</span>
               </SelectButton>
             ))}
           </div>
@@ -284,19 +261,11 @@ const ContactStep: React.FC<ContactStepProps> = ({
         {/* Free Consultation Checkbox */}
         <div
           className="flex items-center gap-2 p-4 bg-zinc-800/50 rounded-lg cursor-pointer hover:bg-zinc-800/70 transition-colors"
-          onClick={() =>
-            !submitMutation.isPending &&
-            handleInputChange(
-              "wantsConsultation",
-              !contactInfo.wantsConsultation
-            )
-          }
+          onClick={() => !submitMutation.isPending && handleInputChange("wantsConsultation", !contactInfo.wantsConsultation)}
         >
           <div
             className={`w-5 h-5 rounded border flex items-center justify-center transition-colors ${
-              contactInfo.wantsConsultation
-                ? "bg-secondary border-secondary"
-                : "border-zinc-600"
+              contactInfo.wantsConsultation ? "bg-secondary border-secondary" : "border-zinc-600"
             }`}
           >
             {contactInfo.wantsConsultation && (
@@ -315,12 +284,8 @@ const ContactStep: React.FC<ContactStepProps> = ({
             )}
           </div>
           <div className="flex-1">
-            <p className="font-medium text-white">
-              I would like a free consultation
-            </p>
-            <p className="text-sm text-zinc-400">
-              Get expert advice on your project from our team
-            </p>
+            <p className="font-medium text-white">I would like a free consultation</p>
+            <p className="text-sm text-zinc-400">Get expert advice on your project from our team</p>
           </div>
         </div>
 
@@ -338,19 +303,13 @@ const ContactStep: React.FC<ContactStepProps> = ({
         </div>
 
         {/* Project Summary Collapsible */}
-        <Collapsible
-          open={isOpen}
-          onOpenChange={setIsOpen}
-          className="w-full space-y-2"
-        >
+        <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-full space-y-2">
           <div className="flex items-center justify-between">
             <h4 className="text-lg font-semibold">Project Summary</h4>
             <CollapsibleTrigger asChild>
               <Button variant="ghost" size="sm" className="w-9 p-0">
                 <ChevronDown
-                  className={`h-4 w-4 transition-transform duration-200 ${
-                    isOpen ? "transform rotate-180" : ""
-                  }`}
+                  className={`h-4 w-4 transition-transform duration-200 ${isOpen ? "transform rotate-180" : ""}`}
                 />
                 <span className="sr-only">Toggle</span>
               </Button>
@@ -358,20 +317,13 @@ const ContactStep: React.FC<ContactStepProps> = ({
           </div>
           <CollapsibleContent className="space-y-2">
             <div className="rounded-md border p-4">
-              <SummarySection
-                currentData={typedCurrentData}
-                options={options}
-              />
+              <SummarySection currentData={typedCurrentData} options={options} />
             </div>
           </CollapsibleContent>
         </Collapsible>
       </div>
 
-      <Button
-        onClick={handleSubmit}
-        className="mt-4"
-        disabled={!isValid || submitMutation.isPending}
-      >
+      <Button onClick={handleSubmit} className="mt-4" disabled={!isValid || submitMutation.isPending}>
         {submitMutation.isPending ? (
           <div className="flex items-center gap-2">
             <Loader2 className="h-4 w-4 animate-spin" />

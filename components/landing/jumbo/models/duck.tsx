@@ -19,8 +19,8 @@ type GLTFResult = GLTF & {
   };
 };
 
-export function DuckModel(props: JSX.IntrinsicElements["group"]) {
-  const { nodes, materials } = useGLTF("/duck.glb") as GLTFResult;
+export function DuckModel(props: React.JSX.IntrinsicElements["group"]) {
+  const { nodes, materials } = useGLTF("/duck.glb") as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
       <mesh geometry={nodes.Cube.geometry} material={materials.Material} />

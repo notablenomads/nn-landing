@@ -1,3 +1,4 @@
+import "@/lib/three/patchClock";
 import * as THREE from "three";
 import type { RootState } from "@react-three/fiber";
 

@@ -4,6 +4,7 @@ import { SerwistProvider } from "@serwist/turbopack/react";
 import { RevolutionGothicFont } from "@/public/fonts/rev";
 import GoogleAnalytics from "./googleAnalytics";
 import { NavigationEvents } from "./navigatonEvent";
+import ThreePatch from "@/components/providers/ThreePatch";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -31,7 +32,9 @@ export default function RootLayout({
       className={`overflow-x-hidden ${RevolutionGothicFont.className}`}
     >
       <body>
-        <SerwistProvider swUrl="/serwist/sw.js">{children}</SerwistProvider>
+        <ThreePatch>
+          <SerwistProvider swUrl="/serwist/sw.js">{children}</SerwistProvider>
+        </ThreePatch>
         <GoogleAnalytics />
         <Suspense>
           <NavigationEvents />

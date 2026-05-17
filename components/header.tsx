@@ -147,8 +147,7 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
                     exit="hidden"
                     custom={i}
                     onClick={() => handleScroll(item.id)}
-                    className="text-gray-400 text-lg cursor-pointer hover:text-gray-200
-                             transition-colors bg-transparent whitespace-nowrap"
+                    className="nav-link rounded-sm bg-transparent px-1 text-lg text-gray-400 whitespace-nowrap transition-all duration-200 hover:scale-105 hover:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/60"
                   >
                     {item.title}
                   </motion.button>
@@ -242,8 +241,7 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
                       custom={index}
                       variants={navItemVariants}
                       onClick={() => handleScroll(item.id)}
-                      className="text-gray-400 text-2xl my-1.5 text-left hover:text-gray-200
-                               transition-colors cursor-pointer"
+                      className="nav-link my-1.5 cursor-pointer rounded-sm text-left text-2xl text-gray-400 transition-all duration-200 hover:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary/60"
                     >
                       {item.title}
                     </motion.div>

@@ -95,6 +95,21 @@ a {
   }
 }
 
+@layer utilities {
+  .animate-border-flow {
+    animation: border-flow 3s linear infinite;
+  }
+}
+
+@keyframes border-flow {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
@@ -104,8 +119,9 @@ a {
     @apply bg-background text-foreground;
   }
 
-  button {
-    @apply hover:bg-secondary hover:scale-105 hover:shadow-lg transition-all duration-200;
+  /* Default CTA hover — exclude nav links and branded header buttons */
+  button:not(.nav-link):not(.cta-button) {
+    @apply transition-all duration-200 hover:scale-105 hover:bg-secondary hover:shadow-lg;
   }
 }
 

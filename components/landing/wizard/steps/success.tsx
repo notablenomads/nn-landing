@@ -1,80 +1,82 @@
 import React from "react";
+import { StepComponentProps } from "../types";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { CheckCircle2 } from "lucide-react";
-import MatrixBackground from "@/components/matrixEffect";
+import { CheckCircle } from "lucide-react";
 
-const SuccessStep = () => {
+export const SuccessStep: React.FC<StepComponentProps> = ({ onNext, currentData }) => {
+  // Get the close function from the parent component
+  const handleClose = () => {
+    // Instead of trying to go to next step, we'll just pass empty data
+    // which signals to the parent to close the wizard
+    onNext();
+  };
+
   return (
-    <div className="relative w-full h-[100dvh] overflow-hidden">
-      {/* Background Animation */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{
-          delay: 2,
-          duration: 1.5,
-          ease: "easeInOut",
-        }}
-        className="absolute inset-0 z-0"
-      >
-        <MatrixBackground isHovered={true} className="w-full h-full" />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="relative flex flex-col items-center justify-center p-8 text-center max-w-2xl mx-auto"
+    >
+      <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2 }} className="mb-8">
+        <CheckCircle className="h-20 w-20 text-green-500" />
       </motion.div>
 
-      {/* Content Animation */}
-      <div className="relative z-10 flex items-center justify-center w-full h-full">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            delay: 3,
-            duration: 1,
-            ease: "easeOut",
-          }}
-          className="flex flex-col items-center justify-center bg-black/50 p-8 backdrop-blur-[2px] w-full h-[100dvh]"
+      <motion.h2
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="text-4xl font-bold mb-4 text-white"
+      >
+        Thank you for your submission!
+      </motion.h2>
+
+      {currentData?.email && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="text-xl text-zinc-300 mb-8"
         >
-          <div className="max-w-md">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{
-                delay: 3.2,
-                duration: 0.5,
-                type: "spring",
-                stiffness: 200,
-              }}
-            >
-              <CheckCircle2 className="h-32 w-32 text-green-500 mx-auto" />
-            </motion.div>
+          We'll be in touch at {currentData.email}
+        </motion.p>
+      )}
 
-            <motion.h2
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                delay: 3.4,
-                duration: 0.5,
-              }}
-              className="text-4xl font-bold text-white mt-4 text-center"
-            >
-              Thank You!
-            </motion.h2>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="text-left w-full bg-white/5 rounded-lg p-6 mb-8"
+      >
+        <h3 className="text-2xl font-semibold mb-4 text-white">Next steps:</h3>
+        <ul className="space-y-4">
+          <li className="flex items-center text-zinc-300">
+            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center mr-4 text-green-500">
+              1
+            </div>
+            <span>Our team will review your project requirements</span>
+          </li>
+          <li className="flex items-center text-zinc-300">
+            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center mr-4 text-green-500">
+              2
+            </div>
+            <span>We'll prepare a detailed project roadmap</span>
+          </li>
+          <li className="flex items-center text-zinc-300">
+            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center mr-4 text-green-500">
+              3
+            </div>
+            <span>You'll receive an email to schedule a consultation</span>
+          </li>
+        </ul>
+      </motion.div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{
-                delay: 3.6,
-                duration: 0.5,
-              }}
-              className="text-gray-200 mt-2 text-center text-lg"
-            >
-              We've received your information and will be in touch shortly. Our
-              team will review your requirements and get back to you within 1-2
-              business days.
-            </motion.p>
-          </div>
-        </motion.div>
-      </div>
-    </div>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}>
+        <Button onClick={handleClose} size="lg" className="min-w-[200px]">
+          Close
+        </Button>
+      </motion.div>
+    </motion.div>
   );
 };
 

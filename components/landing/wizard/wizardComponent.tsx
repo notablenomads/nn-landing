@@ -3,25 +3,19 @@ import { Button } from "@/components/ui/button";
 import SimplePopup from "@/components/simplePopup";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
-import type { WizardCurrentData } from "./types";
 
+// Lazy load the components that are only needed when the popup is open
 const WizardContent = lazy(() => import("./wizardContent"));
-const Toaster = lazy(() =>
-  import("sonner").then((mod) => ({ default: mod.Toaster }))
-);
+const Toaster = lazy(() => import("sonner").then((mod) => ({ default: mod.Toaster })));
 
+// Import these outside the component since they're small and needed for types/setup
 import { wizardSteps } from "./steps";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "..";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { WizardCurrentData } from "./types";
 
-const KickstartButton = ({
-  onClick,
-  isMobile,
-}: {
-  onClick: () => void;
-  isMobile: boolean;
-}) => {
+const KickstartButton = ({ onClick, isMobile }: { onClick: () => void; isMobile: boolean }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -30,23 +24,21 @@ const KickstartButton = ({
       whileHover={{ scale: 1.02 }}
       transition={{ duration: 0.2 }}
     >
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-lg bg-[#F5900D]/20 blur-xl transition-all duration-300 group-hover:bg-[#F5900D]/30"
-      />
+      {/* Glow effect */}
+      <div className="pointer-events-none absolute inset-0 rounded-lg bg-[#F5900D]/20 blur-xl transition-all duration-300 group-hover:bg-[#F5900D]/30" />
 
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 overflow-hidden rounded-lg"
-      >
+      {/* Animated border */}
+      <div className="absolute inset-0 rounded-lg overflow-hidden">
         <div
           className={cn(
             "absolute inset-0 bg-gradient-to-r from-[#F5900D] via-[#FFA940] to-[#F5900D] opacity-50",
             isHovered && "animate-border-flow"
           )}
-          style={{ backgroundSize: "200% 100%" }}
+          style={{
+            backgroundSize: "200% 100%",
+          }}
         />
-      </motion.div>
+      </div>
 
       <Button
         type="button"
@@ -62,13 +54,8 @@ const KickstartButton = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <span className="relative z-10 drop-shadow-lg">
-          {isMobile ? "Kickstart" : "Kickstart Your Vision"}
-        </span>
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-500 group-hover:translate-x-full"
-        />
+        <span className="relative z-10 drop-shadow-lg">{isMobile ? "Kickstart" : "Kickstart Your Vision"}</span>
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent group-hover:translate-x-full transition-transform duration-500" />
       </Button>
     </motion.div>
   );
@@ -76,10 +63,22 @@ const KickstartButton = ({
 
 function WizardWrapper() {
   const [isOpen, setIsOpen] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
   const isMobile = useMediaQuery("(max-width: 768px)");
 
-  const handleComplete = (data: Record<string, unknown>) => {
-    console.log("Wizard completed with data:", data as WizardCurrentData);
+  const handleComplete = (data: WizardCurrentData) => {
+    console.log("Wizard completed with data:", data);
+  };
+
+  const handleStepChange = (step: number) => {
+    if (step >= wizardSteps.length) {
+      // If we try to go beyond the last step, close the wizard
+      setIsOpen(false);
+      setCurrentStep(0); // Reset to first step for next time
+      return;
+    }
+    setCurrentStep(step);
+    console.log("Current step:", step);
   };
 
   return (
@@ -89,16 +88,18 @@ function WizardWrapper() {
         isOpen={isOpen}
         onClose={() => {
           setIsOpen(false);
+          setCurrentStep(0); // Reset to first step when closing
         }}
       >
         {isOpen && (
-          <Suspense fallback={<motion.div className="p-4">Loading...</motion.div>}>
+          <Suspense>
             <QueryClientProvider client={queryClient}>
               <Toaster />
               <WizardContent
                 steps={wizardSteps}
                 onComplete={handleComplete}
-                onStepChange={(step) => console.log("Current step:", step)}
+                onStepChange={handleStepChange}
+                currentStep={currentStep}
               />
             </QueryClientProvider>
           </Suspense>

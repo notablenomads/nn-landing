@@ -33,7 +33,7 @@ export default function RootLayout({
     >
       <body>
         <ThreePatch>
-          <SerwistProvider swUrl="/serwist/sw.js">{children}</SerwistProvider>
+          <SerwistProvider swUrl="/sw.js">{children}</SerwistProvider>
         </ThreePatch>
         <GoogleAnalytics />
         <Suspense>

@@ -12,6 +12,11 @@
 # next.js
 /.next/
 /out/
+.open-next
+
+# Serwist (generated at build time for Cloudflare Pages)
+/public/sw.js
+/public/sw.js.map
 
 # production
 /build

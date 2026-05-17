@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
-const { withSerwist } = require("@serwist/turbopack");
+const { initOpenNextCloudflareForDev } = require("@opennextjs/cloudflare");
 
 const nextConfig = {
   reactStrictMode: true,
-  output: "standalone",
   transpilePackages: ["three", "@react-three/fiber", "@react-three/drei"],
   turbopack: {},
   images: {
@@ -36,4 +35,6 @@ const nextConfig = {
   },
 };
 
-module.exports = withSerwist(nextConfig);
+module.exports = nextConfig;
+
+initOpenNextCloudflareForDev();

@@ -18,14 +18,12 @@ import {
   SiJenkins,
   SiJira,
   SiKubernetes,
-  SiLinux,
   SiMongodb,
   SiNestjs,
   SiNextdotjs,
   SiNodedotjs,
   SiPostgresql,
   SiReact,
-  SiRedis,
   SiTailwindcss,
   SiTrello,
   SiTypescript,
@@ -33,6 +31,8 @@ import {
   SiVite,
   SiVuedotjs,
   SiWebpack,
+  SiOpenai,
+  SiPython,
 } from "react-icons/si";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 
@@ -62,8 +62,13 @@ interface IconsLayoutProps {
 
 const services: Service[] = [
   {
-    title: "Backend and Cloud-Native Services",
+    title: "Backend, Cloud-Native & AI Services",
     items: [
+      {
+        title: "AI & Machine Learning Solutions",
+        description:
+          "Building intelligent applications with LLMs, custom ML models, RAG systems, and AI agents using OpenAI, PyTorch, and TensorFlow.",
+      },
       {
         title: "Cloud-Native Application Development",
         description:
@@ -72,7 +77,7 @@ const services: Service[] = [
       {
         title: "Backend Development",
         description:
-          "Developing robust backend solutions with Node.js, NestJS, and Express.js.",
+          "Developing robust backend solutions with Node.js, NestJS, Express.js, and modern databases.",
       },
       {
         title: "Cloud Infrastructure Management",
@@ -91,8 +96,8 @@ const services: Service[] = [
       { Icon: SiExpress, color: "#FFF" },
       { Icon: SiMongodb, color: "#47A248" },
       { Icon: SiPostgresql, color: "#4169E1" },
-      { Icon: SiRedis, color: "#DC382D" },
-      { Icon: SiLinux, color: "#FCC624" },
+      { Icon: SiOpenai, color: "#412991" },
+      { Icon: SiPython, color: "#3776AB" },
     ],
   },
   {

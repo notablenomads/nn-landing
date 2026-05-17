@@ -1,5 +1,6 @@
-@import "tailwindcss";
-@config "../tailwind.config.js";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 body {
   margin: 0;
   background: #000;
@@ -40,15 +41,15 @@ a {
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 255 255 255;
+    --foreground: 0 0% 100%; /* Fixed from 255 255 255 to proper HSL */
     --card: 0 0% 100%;
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
     --primary: 240 5.9% 10%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 36, 91%, 55%;
-    --third: #1a2954;
+    --secondary: 36 91% 55%; /* Removed comma */
+    --third: 220 40% 22%; /* Converted hex to HSL */
     --secondary-foreground: 240 5.9% 10%;
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
@@ -69,14 +70,14 @@ a {
 
   .dark {
     --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
+    --foreground: 0 0% 100%; /* Fixed from 0 0% 98% for consistency */
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
     --primary: 0 0% 98%;
     --primary-foreground: 240 5.9% 10%;
-    --secondary: 36, 91%, 55%;
+    --secondary: 36 91% 55%; /* Removed comma */
     --secondary-foreground: 0 0% 98%;
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;

@@ -26,10 +26,70 @@ interface EffectConfig {
   flowStrength: number;
 }
 
+interface TeamFrameLayout {
+  frameWidth: number;
+  frameHeight: number;
+  spacing: number;
+  labelOffset: number;
+}
+
 interface ImageWithEffectProps {
   imageUrl: string;
+  frame: TeamFrameLayout;
   config?: EffectConfig;
   borderRadius?: number;
+}
+
+/** Uniform portrait frame (width ÷ height). */
+const PORTRAIT_RATIO = 3 / 5;
+
+function getTextureCoverTransform(imageWidth: number, imageHeight: number) {
+  const imageAspect = imageWidth / imageHeight;
+
+  if (imageAspect > PORTRAIT_RATIO) {
+    const scaleX = PORTRAIT_RATIO / imageAspect;
+    return {
+      scale: new THREE.Vector2(scaleX, 1),
+      offset: new THREE.Vector2((1 - scaleX) / 2, 0),
+    };
+  }
+
+  const scaleY = imageAspect / PORTRAIT_RATIO;
+  return {
+    scale: new THREE.Vector2(1, scaleY),
+    offset: new THREE.Vector2(0, (1 - scaleY) / 2),
+  };
+}
+
+function useTeamWebGLLayout(): TeamFrameLayout {
+  const [layout, setLayout] = useState<TeamFrameLayout>({
+    frameWidth: 3.25,
+    frameHeight: 3.25 / PORTRAIT_RATIO,
+    spacing: 4.25,
+    labelOffset: 3.8,
+  });
+
+  useEffect(() => {
+    const update = () => {
+      const vw = window.innerWidth;
+      const scale = Math.min(Math.max(vw / 1280, 0.92), 1.22);
+      const frameWidth = 3.25 * scale;
+      const frameHeight = frameWidth / PORTRAIT_RATIO;
+
+      setLayout({
+        frameWidth,
+        frameHeight,
+        spacing: 4.25 * scale,
+        labelOffset: frameHeight / 2 + 1.15,
+      });
+    };
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return layout;
 }
 
 type ComputeVariable = {
@@ -96,6 +156,7 @@ const teamMembers: TeamMember[] = [
 // WebGL Image Effect Component
 const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
   imageUrl,
+  frame,
   config = defaultConfig,
   borderRadius = 10,
 }) => {
@@ -111,10 +172,9 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
   const currentMouse = useRef<THREE.Vector2>(new THREE.Vector2(0.5, 0.5));
 
   const image = texture.image as HTMLImageElement | undefined;
-  const aspect =
-    image?.width && image?.height ? image.width / image.height : 1;
-  const width = 3;
-  const height = width / aspect;
+  const imageWidth = image?.width || 1;
+  const imageHeight = image?.height || 1;
+  const coverTransform = getTextureCoverTransform(imageWidth, imageHeight);
 
   useEffect(() => {
     timeRef.current = 0;
@@ -206,7 +266,9 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
     >
-      <planeGeometry args={[width, height, 32, 32]} />
+      <planeGeometry
+        args={[frame.frameWidth, frame.frameHeight, 32, 32]}
+      />
       <shaderMaterial
         ref={materialRef}
         vertexShader={vertexShader}
@@ -216,16 +278,18 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
           uTexture: { value: texture },
           uGrid: { value: null },
           uImageResolution: {
-            value: new THREE.Vector2(image?.width || 1, image?.height || 1),
+            value: new THREE.Vector2(imageWidth, imageHeight),
           },
           uViewport: {
             value: new THREE.Vector2(viewport.width, viewport.height),
           },
+          uTextureScale: { value: coverTransform.scale },
+          uTextureOffset: { value: coverTransform.offset },
           uDistortionStrength: { value: config.distortionStrength },
           uDistortionThreshold: { value: config.distortionThreshold },
           uRgbShiftStrength: { value: config.rgbShiftStrength },
           uBorderRadius: {
-            value: borderRadius / (image?.width || 200),
+            value: borderRadius / imageWidth,
           },
         }}
       />
@@ -236,21 +300,21 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({
 const MobileTeamSection: React.FC = () => {
   return (
     <div className="w-full py-12 sm:bg-gray-950">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="space-y-8">
+      <div className="mx-auto max-w-5xl px-4">
+        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
           {teamMembers.map((member, index) => (
             <div key={index} className="flex flex-col items-center">
-              <div className="relative mb-4 h-64 w-64 overflow-hidden rounded-lg">
+              <div className="relative mb-4 aspect-[3/5] w-full max-w-[300px] overflow-hidden rounded-lg shadow-lg shadow-black/40 ring-1 ring-white/10 sm:max-w-none">
                 <Image
                   src={member.image}
                   alt={member.name}
                   fill
-                  className="object-cover filter grayscale transition-all duration-300 hover:grayscale-0"
-                  sizes="100vw"
+                  className="object-cover object-top filter grayscale transition-all duration-300 hover:grayscale-0"
+                  sizes="(max-width: 640px) 100vw, 50vw"
                   priority={index < 2}
                 />
               </div>
-              <div className="text-center bg-black bg-opacity-75 p-4 w-64 rounded">
+              <div className="w-full max-w-[300px] rounded bg-black/75 p-4 text-center sm:max-w-none">
                 <h3 className="text-lg font-semibold text-white mb-2">
                   {member.name}
                 </h3>
@@ -298,16 +362,17 @@ const MobileTeamSection: React.FC = () => {
 };
 
 const WebGLTeamSection: React.FC = () => {
+  const layout = useTeamWebGLLayout();
   const memberCount = teamMembers.length;
-  const spacing = 4; // Space between each member
-  const totalWidth = (memberCount - 1) * spacing;
-
-  // Calculate the camera position and FOV based on number of members
-  const cameraZ = Math.max(15, totalWidth * 1.2); // Increase camera distance for more members
-  const cameraFOV = Math.max(25, 20 + memberCount * 2); // Adjust FOV based on member count
+  const totalWidth = (memberCount - 1) * layout.spacing;
+  const cameraZ = Math.max(
+    18,
+    totalWidth * 1.35 + layout.frameHeight * 0.55
+  );
+  const cameraFOV = Math.max(25, 20 + memberCount * 2);
 
   return (
-    <div className="w-full h-[600px]">
+    <div className="w-full min-h-[560px] h-[min(860px,88vh)]">
       <Canvas
         camera={{
           position: [0, 0, cameraZ],
@@ -317,13 +382,13 @@ const WebGLTeamSection: React.FC = () => {
         }}
       >
         {teamMembers.map((member, index) => {
-          // Center the group by offsetting by half the total width
-          const xPosition = (index - (memberCount - 1) / 2) * spacing;
+          const xPosition =
+            (index - (memberCount - 1) / 2) * layout.spacing;
 
           return (
             <group key={index} position={[xPosition, 0, 0]}>
-              <ImageWithEffect imageUrl={member.image} />
-              <Html position={[0, -2, 0]} center>
+              <ImageWithEffect imageUrl={member.image} frame={layout} />
+              <Html position={[0, -layout.labelOffset, 0]} center>
                 <div className="text-center bg-black bg-opacity-75 p-4 w-72 rounded">
                   <h3 className="text-lg font-semibold text-white">
                     {member.name}
@@ -375,7 +440,7 @@ const TeamSection: React.FC = () => {
   useEffect(() => {
     setIsClient(true);
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 1024);
     };
 
     checkMobile();

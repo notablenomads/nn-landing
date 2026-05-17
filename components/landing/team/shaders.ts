@@ -13,8 +13,14 @@ uniform vec2 uViewport;
 uniform float uDistortionStrength;
 uniform float uDistortionThreshold;
 uniform float uRgbShiftStrength;
+uniform vec2 uTextureScale;
+uniform vec2 uTextureOffset;
 
 varying vec2 vUv;
+
+vec2 coverUv(vec2 uv) {
+  return uv * uTextureScale + uTextureOffset;
+}
 
 float roundedBoxSDF(vec2 centerUV, vec2 size, float radius) {
   vec2 q = abs(centerUV) - size + radius;
@@ -55,14 +61,14 @@ void main() {
     greenUv = clamp(greenUv, 0.0, 1.0);
     blueUv = clamp(blueUv, 0.0, 1.0);
     
-    float r = texture2D(uTexture, redUv).r;
-    float g = texture2D(uTexture, greenUv).g;
-    float b = texture2D(uTexture, blueUv).b;
+    float r = texture2D(uTexture, coverUv(redUv)).r;
+    float g = texture2D(uTexture, coverUv(greenUv)).g;
+    float b = texture2D(uTexture, coverUv(blueUv)).b;
     
     color = vec4(r, g, b, 1.0);
   } else {
     // Only apply grayscale to the non-distorted parts
-    vec4 texColor = texture2D(uTexture, uv);
+    vec4 texColor = texture2D(uTexture, coverUv(uv));
     float gray = dot(texColor.rgb, vec3(0.299, 0.587, 0.114));
     color = vec4(vec3(gray), texColor.a);
   }

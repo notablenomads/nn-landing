@@ -12,10 +12,10 @@ type GLTFResult = GLTF & {
   };
 };
 
-export function CartoonDuckModel(props: JSX.IntrinsicElements["group"]) {
+export function CartoonDuckModel(props: React.JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
     "/models/cartoon-duck-transformed.glb"
-  ) as GLTFResult;
+  ) as unknown as GLTFResult;
   return (
     <group {...props} dispose={null}>
       <mesh

@@ -1,6 +1,7 @@
 import type {Metadata} from "next";
 import "./app.css";
 // import {Toaster} from 'sonner'
+import { SerwistProvider } from "@serwist/turbopack/react";
 import { RevolutionGothicFont } from "@/public/fonts/rev";
 
 
@@ -28,7 +29,9 @@ export default function RootLayout({
     return (
         <html lang="en" className={`overflow-x-hidden ${RevolutionGothicFont.className}`}>
         {/* <Toaster/> */}
-        <body>{children}</body>
+        <body>
+          <SerwistProvider swUrl="/serwist/sw.js">{children}</SerwistProvider>
+        </body>
         </html>
     );
 }

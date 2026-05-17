@@ -71,7 +71,7 @@ const TopComponent: React.FC = () => {
       opacity: 0,
       transition: {
         duration: 0.5,
-        ease: [0.4, 0, 0.2, 1],
+        ease: [0.4, 0, 0.2, 1] as const,
         opacity: {
           duration: 0.3,
         },
@@ -89,7 +89,7 @@ const TopComponent: React.FC = () => {
       opacity: 0,
       transition: {
         duration: 0.3,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
   };
@@ -104,7 +104,7 @@ const TopComponent: React.FC = () => {
       opacity: 0,
       transition: {
         duration: 0.3,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
   };
@@ -121,7 +121,7 @@ const TopComponent: React.FC = () => {
       y: 0,
       transition: {
         duration: 0.4,
-        ease: [0.4, 0, 0.2, 1],
+        ease: [0.4, 0, 0.2, 1] as const,
       },
     },
     exit: {

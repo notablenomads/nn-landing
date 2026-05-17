@@ -67,7 +67,7 @@ const IconComponent = memo(({ icon, isNeon, opacity, delay }: IconProps) => {
       transition: {
         duration: 0.3,
         delay: delay,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
     normal: {
@@ -77,7 +77,7 @@ const IconComponent = memo(({ icon, isNeon, opacity, delay }: IconProps) => {
       transition: {
         duration: 0.3,
         delay: delay,
-        ease: "easeInOut",
+        ease: "easeInOut" as const,
       },
     },
   };

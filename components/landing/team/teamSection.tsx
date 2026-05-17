@@ -103,12 +103,13 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({imageUrl, config = def
     const texture = useTexture(imageUrl);
     const {gl, viewport} = useThree();
 
-    const gpuCompute = useRef<GPUComputationRenderer>();
-    const computeVariable = useRef<ComputeVariable>();
+    const gpuCompute = useRef<GPUComputationRenderer | null>(null);
+    const computeVariable = useRef<ComputeVariable | null>(null);
     const prevMouse = useRef<THREE.Vector2>(new THREE.Vector2(0.5, 0.5));
     const currentMouse = useRef<THREE.Vector2>(new THREE.Vector2(0.5, 0.5));
 
-    const aspect = texture.image ? texture.image.width / texture.image.height : 1;
+    const image = texture.image as HTMLImageElement | undefined;
+    const aspect = image?.width && image?.height ? image.width / image.height : 1;
     const width = 3;
     const height = width / aspect;
 
@@ -198,7 +199,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({imageUrl, config = def
                     uTexture: {value: texture},
                     uGrid: {value: null},
                     uImageResolution: {
-                        value: new THREE.Vector2(texture.image?.width || 1, texture.image?.height || 1),
+                        value: new THREE.Vector2(image?.width || 1, image?.height || 1),
                     },
                     uViewport: {
                         value: new THREE.Vector2(viewport.width, viewport.height),
@@ -207,7 +208,7 @@ const ImageWithEffect: React.FC<ImageWithEffectProps> = ({imageUrl, config = def
                     uDistortionThreshold: {value: config.distortionThreshold},
                     uRgbShiftStrength: {value: config.rgbShiftStrength},
                     uBorderRadius: {
-                        value: borderRadius / (texture.image?.width || 200),
+                        value: borderRadius / (image?.width || 200),
                     },
                 }}
             />

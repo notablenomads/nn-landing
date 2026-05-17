@@ -18,7 +18,7 @@ interface StepComponentProps {
 interface WizardStep {
   header?: string;
   description?: string;
-  content: (props: StepComponentProps) => JSX.Element;
+  content: (props: StepComponentProps) => React.JSX.Element;
 }
 
 interface WizardContentProps {

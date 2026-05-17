@@ -64,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
       transition: {
         delay: i * 0.1,
         duration: 0.2,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     }),
     hidden: {
@@ -72,7 +72,7 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
       x: -20,
       transition: {
         duration: 0.2,
-        ease: "easeIn",
+        ease: "easeIn" as const,
       },
     },
   };
@@ -91,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
       marginLeft: "1rem",
       transition: {
         duration: 0.3,
-        ease: "easeOut",
+        ease: "easeOut" as const,
       },
     },
     exit: {
@@ -101,7 +101,7 @@ const Header: React.FC<HeaderProps> = ({ isChatOpen = false }) => {
       marginLeft: 0,
       transition: {
         duration: 0.2,
-        ease: "easeIn",
+        ease: "easeIn" as const,
       },
     },
   };

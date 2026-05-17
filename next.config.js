@@ -1,16 +1,11 @@
 /** @type {import('next').NextConfig} */
-
-const withPWA = require("next-pwa")({
-  dest: "public",
-  disable: process.env.NODE_ENV === "development",
-  register: true,
-  skipWaiting: true,
-});
+const { withSerwist } = require("@serwist/turbopack");
 
 const nextConfig = {
   reactStrictMode: true,
   output: "standalone",
   transpilePackages: ["three", "@react-three/fiber", "@react-three/drei"],
+  turbopack: {},
   images: {
     remotePatterns: [
       {
@@ -40,5 +35,5 @@ const nextConfig = {
     ],
   },
 };
-// @ts-ignore
-module.exports = withPWA(nextConfig);
+
+module.exports = withSerwist(nextConfig);

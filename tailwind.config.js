@@ -1,4 +1,6 @@
-import { fontFamily } from "tailwindcss/defaultTheme";
+import defaultTheme from "tailwindcss/defaultTheme";
+
+const { fontFamily } = defaultTheme;
 
 /** @type {import('tailwindcss').Config} */
 module.exports = {

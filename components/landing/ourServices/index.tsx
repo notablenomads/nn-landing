@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+import { FaAws } from "react-icons/fa6";
 import { VscAzure } from "react-icons/vsc";
 import { IconType } from "react-icons";
 import {
-  SiAmazon,
   SiAngular,
   SiBitbucket,
   SiChakraui,
@@ -81,7 +81,7 @@ const services: Service[] = [
       },
     ],
     icons: [
-      { Icon: SiAmazon, color: "#FF9900" },
+      { Icon: FaAws, color: "#FF9900" },
       { Icon: VscAzure, color: "#0078D4" },
       { Icon: SiGooglecloud, color: "#4285F4" },
       { Icon: SiDocker, color: "#2496ED" },

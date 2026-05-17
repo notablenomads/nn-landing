@@ -36,7 +36,7 @@ const LazyLoadingWrapper: React.FC<{ children: React.ReactNode }> = ({ children 
   </Suspense>
 );
 
-const WizardStepWrapper = (props: StepComponentProps): JSX.Element => {
+const WizardStepWrapper = (props: StepComponentProps): React.JSX.Element => {
   const { data: options, isLoading, error } = useWizardOptions();
   const safeCurrentData: WizardCurrentData = props.currentData as WizardCurrentData || {
     services: [],

@@ -28,6 +28,8 @@ const CustomButton = ({
     lg: 'h-8 w-8'
   };
 
+  const iconElement = icon as React.ReactElement<{ className?: string }>;
+
   return (
     <Button
       {...props}
@@ -43,8 +45,8 @@ const CustomButton = ({
         ${props.className || ''}
       `}
     >
-      {React.cloneElement(icon as React.ReactElement, {
-        className: `${iconSizes[size]} ${(icon as React.ReactElement).props.className || ''}`
+      {React.cloneElement(iconElement, {
+        className: `${iconSizes[size]} ${iconElement.props.className || ""}`,
       })}
       <span className="text-sm">{children}</span>
     </Button>
